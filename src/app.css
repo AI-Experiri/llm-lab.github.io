@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+
+:root {
+	--color-bg: #1a1a2e;
+	--color-surface: #16213e;
+	--color-primary: #e94560;
+	--color-secondary: #0f3460;
+	--color-text: #eaeaea;
+	--color-muted: #9ca3af;
+
+	/* Typography scale - mobile first */
+	--text-h1: 1.125rem;
+	--text-h2: 1rem;
+	--text-h3: 0.9375rem;
+	--text-body: 0.875rem;
+	--text-small: 0.75rem;
+	--text-tiny: 0.625rem;
+}
+
+@media (min-width: 768px) {
+	:root {
+		/* Desktop typography - larger */
+		--text-h1: 1.5rem;
+		--text-h2: 1.25rem;
+		--text-h3: 1.125rem;
+		--text-body: 1rem;
+		--text-small: 0.875rem;
+		--text-tiny: 0.75rem;
+	}
+}
+
+body {
+	background-color: var(--color-bg);
+	color: var(--color-text);
+	min-height: 100vh;
+	font-family: 'Segoe UI', system-ui, sans-serif;
+	margin: 0;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--color-secondary);
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--color-primary);
+}
+
+/* MathJax inline rendering */
+mjx-container,
+mjx-container[jax='SVG'],
+mjx-container[display='true'],
+mjx-container[display='block'] {
+	display: inline !important;
+	margin: 0 !important;
+}
+
+mjx-container svg {
+	display: inline !important;
+}

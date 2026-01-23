@@ -1,0 +1,16 @@
+{
+	"$schema": "https://unpkg.com/knip@5/schema.json",
+	"ignore": [
+		".svelte-kit/**",
+		"build/**",
+		"src/lib/llm-eval/components/formats/**",
+		"src/lib/llm-eval/components/CollapsibleJSON.svelte",
+		"src/lib/llm-data/components/CollapsibleJSON.svelte",
+		"src/lib/llm-eval/components/EvaluationOverview.svelte",
+		"src/lib/llm-pos-enc/components/AttentionFlow.svelte",
+		"src/lib/llm-eval/data/**",
+		"src/lib/llm-pos-enc/utils/**",
+		"src/lib/llm-tokenizing/lib/**"
+	],
+	"ignoreExportsUsedInFile": true
+}
