@@ -294,11 +294,11 @@ return vocab`
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 			<!-- Left: Description -->
 			<div class="rounded-xl bg-white/10 p-4 backdrop-blur">
-				<h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-white">
+				<h3 class="mb-3 flex items-center gap-2 font-semibold text-[var(--text-body)] text-white">
 					<span class="h-2 w-2 rounded-full bg-indigo-400"></span>
 					How AG-BPE Works
 				</h3>
-				<div class="space-y-3 text-sm leading-relaxed text-slate-300">
+				<div class="space-y-3 leading-relaxed text-[var(--text-small)] text-slate-300">
 					{#each algorithmDetails.description as para, i (i)}
 						<p>{para}</p>
 					{/each}
@@ -307,12 +307,12 @@ return vocab`
 
 			<!-- Right: Pseudocode -->
 			<div class="rounded-xl bg-white/10 p-4 backdrop-blur">
-				<h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-white">
+				<h3 class="mb-3 flex items-center gap-2 font-semibold text-[var(--text-body)] text-white">
 					<span class="h-2 w-2 rounded-full bg-blue-400"></span>
 					Pseudocode
 				</h3>
 				<pre
-					class="overflow-x-auto rounded-lg bg-slate-800/50 p-3 font-mono text-sm text-slate-300">{algorithmDetails.pseudocode}</pre>
+					class="overflow-x-auto rounded-lg bg-slate-800/50 p-3 font-mono text-[var(--text-small)] text-slate-300">{algorithmDetails.pseudocode}</pre>
 			</div>
 		</div>
 	{:else}
@@ -338,7 +338,7 @@ return vocab`
 				onReset={handleReset}
 			>
 				<div class="flex items-center gap-2">
-					<label for="agbpe-alpha" class="text-sm text-indigo-400">α:</label>
+					<label for="agbpe-alpha" class="text-[var(--text-small)] text-indigo-400">α:</label>
 					<input
 						id="agbpe-alpha"
 						type="range"
@@ -348,10 +348,10 @@ return vocab`
 						bind:value={alpha}
 						class="w-20 accent-indigo-500"
 					/>
-					<span class="w-8 text-sm text-indigo-300">{alpha.toFixed(1)}</span>
+					<span class="w-8 text-[var(--text-small)] text-indigo-300">{alpha.toFixed(1)}</span>
 				</div>
 				<div class="flex items-center gap-2">
-					<label for="agbpe-merges" class="text-sm text-slate-300">Merges:</label>
+					<label for="agbpe-merges" class="text-[var(--text-small)] text-slate-300">Merges:</label>
 					<input
 						id="agbpe-merges"
 						type="number"
@@ -367,12 +367,12 @@ return vocab`
 		<!-- Scoring Info -->
 		<ExtraInfo>
 			<span class="font-medium text-indigo-400">Hybrid Score:</span>
-			<code class="rounded bg-slate-800 px-1.5 py-0.5 text-xs text-cyan-300"
+			<code class="rounded bg-slate-800 px-1.5 py-0.5 text-[var(--text-tiny)] text-cyan-300"
 				>{alpha.toFixed(1)}×freq + {(1 - alpha).toFixed(1)}×attn</code
 			>
 			<span class="text-slate-400">|</span>
 			<span class="font-medium text-cyan-400">Attn (simulated):</span>
-			<code class="rounded bg-slate-800 px-1.5 py-0.5 text-xs text-cyan-300"
+			<code class="rounded bg-slate-800 px-1.5 py-0.5 text-[var(--text-tiny)] text-cyan-300"
 				>pairFreq / min(count₁, count₂)</code
 			>
 			<span class="text-slate-400">|</span>
@@ -420,23 +420,23 @@ return vocab`
 			<!-- Right: Hybrid Scores + Vocabulary (always together) -->
 			<div class="grid grid-cols-2 gap-4 lg:col-span-6">
 				<AlgorithmSteps title="Hybrid Scores" emptyMessage="Scores appear here during each step...">
-					<p class="mb-3 text-xs text-indigo-400">α×freq + (1-α)×attn</p>
+					<p class="mb-3 text-[var(--text-tiny)] text-indigo-400">α×freq + (1-α)×attn</p>
 					{#if pairScores.length === 0}
-						<p class="py-4 text-center text-sm text-slate-500">
+						<p class="py-4 text-center text-[var(--text-small)] text-slate-500">
 							Scores appear here during each step...
 						</p>
 					{:else}
 						{#each pairScores as item (item.pair)}
 							<div
-								class="rounded-lg px-3 py-2 font-mono text-xs transition-all
+								class="rounded-lg px-3 py-2 font-mono text-[var(--text-tiny)] transition-all
               {item.isMax
 									? 'bg-indigo-400 font-bold text-indigo-900 shadow-lg'
 									: 'bg-slate-700/70 text-slate-300'}"
 							>
 								<div class="mb-1 flex items-center justify-between">
-									<span class="text-sm">{item.display}</span>
+									<span class="text-[var(--text-small)]">{item.display}</span>
 									<span
-										class="rounded px-1.5 py-0.5 text-xs {item.isMax
+										class="rounded px-1.5 py-0.5 text-[var(--text-tiny)] {item.isMax
 											? 'bg-indigo-600 text-indigo-100'
 											: 'bg-slate-600'}">{item.hybridScore.toFixed(3)}</span
 									>
@@ -455,11 +455,13 @@ return vocab`
 					currentToken={currentMerge?.newToken}
 				>
 					{#if vocabulary.length === 0}
-						<p class="py-4 text-center text-sm text-slate-500">Vocabulary appears here...</p>
+						<p class="py-4 text-center text-[var(--text-small)] text-slate-500">
+							Vocabulary appears here...
+						</p>
 					{:else}
 						{#each [...vocabulary].reverse() as item (item.token)}
 							<div
-								class="flex items-center justify-between rounded-lg px-2 py-1.5 text-sm transition-all
+								class="flex items-center justify-between rounded-lg px-2 py-1.5 text-[var(--text-small)] transition-all
                 {item.token === currentMerge?.newToken
 									? 'bg-yellow-400 font-bold text-yellow-900 shadow-lg'
 									: 'bg-slate-800/50'}"
@@ -474,7 +476,9 @@ return vocab`
 								{#if item.hybridScore}
 									<span class="text-[10px] text-indigo-400">{item.hybridScore.toFixed(3)}</span>
 								{:else if item.from}
-									<span class="ml-2 truncate text-xs text-slate-500">{item.from}</span>
+									<span class="ml-2 truncate text-[var(--text-tiny)] text-slate-500"
+										>{item.from}</span
+									>
 								{/if}
 							</div>
 						{/each}

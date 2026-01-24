@@ -296,11 +296,11 @@ return cleaned_vocab`
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 			<!-- Left: Description -->
 			<div class="rounded-xl bg-white/10 p-4 backdrop-blur">
-				<h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-white">
+				<h3 class="mb-3 flex items-center gap-2 font-semibold text-[var(--text-body)] text-white">
 					<span class="h-2 w-2 rounded-full bg-orange-400"></span>
 					How Scaffold-BPE Works
 				</h3>
-				<div class="space-y-3 text-sm leading-relaxed text-slate-300">
+				<div class="space-y-3 leading-relaxed text-[var(--text-small)] text-slate-300">
 					{#each algorithmDetails.description as para, i (i)}
 						<p>{para}</p>
 					{/each}
@@ -309,12 +309,12 @@ return cleaned_vocab`
 
 			<!-- Right: Pseudocode -->
 			<div class="rounded-xl bg-white/10 p-4 backdrop-blur">
-				<h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-white">
+				<h3 class="mb-3 flex items-center gap-2 font-semibold text-[var(--text-body)] text-white">
 					<span class="h-2 w-2 rounded-full bg-amber-400"></span>
 					Pseudocode
 				</h3>
 				<pre
-					class="overflow-x-auto rounded-lg bg-slate-800/50 p-3 font-mono text-sm text-slate-300">{algorithmDetails.pseudocode}</pre>
+					class="overflow-x-auto rounded-lg bg-slate-800/50 p-3 font-mono text-[var(--text-small)] text-slate-300">{algorithmDetails.pseudocode}</pre>
 			</div>
 		</div>
 	{:else}
@@ -341,14 +341,16 @@ return cleaned_vocab`
 			>
 				<button
 					onclick={toggleDemolish}
-					class="rounded-lg px-3 py-1.5 text-sm font-medium {showDemolished
+					class="rounded-lg px-3 py-1.5 font-medium text-[var(--text-small)] {showDemolished
 						? 'bg-orange-600 text-white'
 						: 'bg-orange-600/30 text-orange-300'}"
 				>
 					{showDemolished ? 'Demolish ON' : 'Demolish OFF'}
 				</button>
 				<div class="flex items-center gap-2">
-					<label for="scaffold-merges" class="text-sm text-slate-300">Merges:</label>
+					<label for="scaffold-merges" class="text-[var(--text-small)] text-slate-300"
+						>Merges:</label
+					>
 					<input
 						id="scaffold-merges"
 						type="number"
@@ -402,7 +404,7 @@ return cleaned_vocab`
 							<span class="px-1 font-bold text-slate-600">│</span>
 						{:else}
 							<span
-								class="token rounded-lg px-2 py-1 font-mono text-sm font-medium transition-all duration-200
+								class="token rounded-lg px-2 py-1 font-mono font-medium text-[var(--text-small)] transition-all duration-200
                 {token.highlight
 									? 'highlight bg-yellow-400 text-yellow-900 shadow-lg shadow-yellow-400/50'
 									: ''}
@@ -437,11 +439,13 @@ return cleaned_vocab`
 
 				<VocabularyPanel {vocabulary}>
 					{#if vocabulary.length === 0}
-						<p class="py-4 text-center text-sm text-slate-500">Vocabulary appears here...</p>
+						<p class="py-4 text-center text-[var(--text-small)] text-slate-500">
+							Vocabulary appears here...
+						</p>
 					{:else}
 						{#each [...vocabulary].reverse() as item (item.token)}
 							<div
-								class="flex items-center justify-between rounded-lg px-2 py-1.5 text-sm transition-all
+								class="flex items-center justify-between rounded-lg px-2 py-1.5 text-[var(--text-small)] transition-all
                   {item.token === currentMerge?.newToken
 									? 'bg-yellow-400 font-bold text-yellow-900 shadow-lg'
 									: 'bg-slate-800/50'}
@@ -465,13 +469,14 @@ return cleaned_vocab`
 									<span
 										class="{item.token === currentMerge?.newToken
 											? 'text-yellow-700'
-											: 'text-orange-400'} text-xs">{showDemolished ? 'removed' : 'scaffold'}</span
+											: 'text-orange-400'} text-[var(--text-tiny)]"
+										>{showDemolished ? 'removed' : 'scaffold'}</span
 									>
 								{:else if item.from}
 									<span
 										class="{item.token === currentMerge?.newToken
 											? 'text-yellow-700'
-											: 'text-slate-500'} ml-2 truncate text-xs">{item.from}</span
+											: 'text-slate-500'} ml-2 truncate text-[var(--text-tiny)]">{item.from}</span
 									>
 								{/if}
 							</div>

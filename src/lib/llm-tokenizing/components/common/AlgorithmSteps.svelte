@@ -13,7 +13,7 @@
 
 <div>
 	<div class="h-full rounded-xl bg-white/10 p-4 backdrop-blur">
-		<h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-white">
+		<h3 class="mb-3 flex items-center gap-2 font-semibold text-[var(--text-body)] text-white">
 			<span class="h-2 w-2 rounded-full bg-blue-400"></span>
 			{title}
 		</h3>
@@ -23,11 +23,11 @@
 			{#if children}
 				{@render children()}
 			{:else if pairs.length === 0}
-				<p class="py-4 text-center text-sm text-slate-500">{emptyMessage}</p>
+				<p class="py-4 text-center text-[var(--text-small)] text-slate-500">{emptyMessage}</p>
 			{:else}
 				{#each pairs as pair (pair.pair)}
 					<div
-						class="rounded-lg px-3 py-2 font-mono text-sm transition-all
+						class="rounded-lg px-3 py-2 font-mono text-[var(--text-small)] transition-all
             {pair.isMax
 							? highlightColor + ' font-bold shadow-lg'
 							: 'bg-slate-700/70 text-slate-300'}"
@@ -35,8 +35,9 @@
 						<div class="flex items-center justify-between">
 							<span>{pair.display}</span>
 							<span
-								class="rounded px-1.5 py-0.5 text-xs {pair.isMax ? highlightBadge : 'bg-slate-600'}"
-								>{pair.count}×</span
+								class="rounded px-1.5 py-0.5 text-[var(--text-tiny)] {pair.isMax
+									? highlightBadge
+									: 'bg-slate-600'}">{pair.count}×</span
 							>
 						</div>
 					</div>

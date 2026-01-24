@@ -338,11 +338,11 @@ return vocab`
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 			<!-- Left: Description -->
 			<div class="rounded-xl bg-white/10 p-4 backdrop-blur">
-				<h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-white">
+				<h3 class="mb-3 flex items-center gap-2 font-semibold text-[var(--text-body)] text-white">
 					<span class="h-2 w-2 rounded-full bg-fuchsia-400"></span>
 					How Boundless BPE Works
 				</h3>
-				<div class="space-y-3 text-sm leading-relaxed text-slate-300">
+				<div class="space-y-3 leading-relaxed text-[var(--text-small)] text-slate-300">
 					{#each algorithmDetails.description as para, i (i)}
 						<p>{para}</p>
 					{/each}
@@ -351,12 +351,12 @@ return vocab`
 
 			<!-- Right: Pseudocode -->
 			<div class="rounded-xl bg-white/10 p-4 backdrop-blur">
-				<h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-white">
+				<h3 class="mb-3 flex items-center gap-2 font-semibold text-[var(--text-body)] text-white">
 					<span class="h-2 w-2 rounded-full bg-blue-400"></span>
 					Pseudocode
 				</h3>
 				<pre
-					class="overflow-x-auto rounded-lg bg-slate-800/50 p-3 font-mono text-sm text-slate-300">{algorithmDetails.pseudocode}</pre>
+					class="overflow-x-auto rounded-lg bg-slate-800/50 p-3 font-mono text-[var(--text-small)] text-slate-300">{algorithmDetails.pseudocode}</pre>
 			</div>
 		</div>
 	{:else}
@@ -382,7 +382,9 @@ return vocab`
 				onReset={handleReset}
 			>
 				<div class="flex items-center gap-2">
-					<label for="boundless-merges" class="text-sm text-slate-300">Merges:</label>
+					<label for="boundless-merges" class="text-[var(--text-small)] text-slate-300"
+						>Merges:</label
+					>
 					<input
 						id="boundless-merges"
 						type="number"
@@ -421,10 +423,12 @@ return vocab`
 				<!-- Sequence Card (Boundless BPE specific) -->
 				{#if preTokenSequence.length > 0}
 					<div class="rounded-xl bg-white/10 p-4 backdrop-blur">
-						<h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-white">
+						<h3
+							class="mb-3 flex items-center gap-2 font-semibold text-[var(--text-body)] text-white"
+						>
 							<span class="h-2 w-2 rounded-full bg-fuchsia-400"></span>
 							Sequence
-							<span class="text-sm font-normal text-slate-400"
+							<span class="font-normal text-[var(--text-small)] text-slate-400"
 								>(first {preTokenSequence.length}{boundlessBpe &&
 								boundlessBpe.originalSequence.length > 20
 									? ` of ${boundlessBpe.originalSequence.length}`
@@ -438,7 +442,7 @@ return vocab`
 									((pt === currentMerge.pt1 && preTokenSequence[i + 1] === currentMerge.pt2) ||
 										(pt === currentMerge.pt2 && preTokenSequence[i - 1] === currentMerge.pt1))}
 								<span
-									class="rounded-lg px-2 py-1 font-mono text-sm transition-all
+									class="rounded-lg px-2 py-1 font-mono text-[var(--text-small)] transition-all
                     {isPartOfSupermerge
 										? 'bg-yellow-400 font-bold text-yellow-900 shadow-lg shadow-yellow-400/50'
 										: 'bg-fuchsia-500/20 text-fuchsia-300'}"
@@ -447,7 +451,7 @@ return vocab`
 								</span>
 							{/each}
 							{#if boundlessBpe && boundlessBpe.originalSequence.length > 20}
-								<span class="self-center text-sm text-slate-500">...</span>
+								<span class="self-center text-[var(--text-small)] text-slate-500">...</span>
 							{/if}
 						</div>
 					</div>
@@ -467,7 +471,7 @@ return vocab`
 							<span class="px-1 font-bold text-slate-600">│</span>
 						{:else}
 							<span
-								class="token rounded-lg px-2 py-1 font-mono text-sm font-medium transition-all duration-200
+								class="token rounded-lg px-2 py-1 font-mono font-medium text-[var(--text-small)] transition-all duration-200
                 {token.highlight
 									? 'highlight bg-yellow-400 text-yellow-900 shadow-lg shadow-yellow-400/50'
 									: ''}
@@ -505,13 +509,13 @@ return vocab`
 			<div class="grid grid-cols-2 gap-4 lg:col-span-6">
 				<AlgorithmSteps pairs={pairCounts}>
 					{#if pairCounts.length === 0 && supermergeDisplay.length === 0}
-						<p class="py-4 text-center text-sm text-slate-500">
+						<p class="py-4 text-center text-[var(--text-small)] text-slate-500">
 							Pair counts appear here during each step...
 						</p>
 					{:else}
 						{#each pairCounts as pair (pair.pair)}
 							<div
-								class="rounded-lg px-3 py-2 font-mono text-sm transition-all
+								class="rounded-lg px-3 py-2 font-mono text-[var(--text-small)] transition-all
               {pair.isMax
 									? 'bg-yellow-400 font-bold text-yellow-900 shadow-lg'
 									: 'bg-slate-700/70 text-slate-300'}"
@@ -519,7 +523,7 @@ return vocab`
 								<div class="flex items-center justify-between">
 									<span>{pair.display}</span>
 									<span
-										class="rounded px-1.5 py-0.5 text-xs {pair.isMax
+										class="rounded px-1.5 py-0.5 text-[var(--text-tiny)] {pair.isMax
 											? 'bg-yellow-600 text-yellow-100'
 											: 'bg-slate-600'}">{pair.count}×</span
 									>
@@ -528,7 +532,7 @@ return vocab`
 						{/each}
 						{#each supermergeDisplay as item (item.pair)}
 							<div
-								class="rounded-lg px-3 py-2 font-mono text-sm transition-all
+								class="rounded-lg px-3 py-2 font-mono text-[var(--text-small)] transition-all
               {item.isMax
 									? 'bg-fuchsia-400 font-bold text-fuchsia-900 shadow-lg'
 									: 'bg-fuchsia-700/50 text-fuchsia-300'}"
@@ -536,7 +540,7 @@ return vocab`
 								<div class="flex items-center justify-between">
 									<span>{item.display}</span>
 									<span
-										class="rounded px-1.5 py-0.5 text-xs {item.isMax
+										class="rounded px-1.5 py-0.5 text-[var(--text-tiny)] {item.isMax
 											? 'bg-fuchsia-600 text-fuchsia-100'
 											: 'bg-fuchsia-800'}">{item.count}×</span
 									>
@@ -548,12 +552,14 @@ return vocab`
 
 				<VocabularyPanel {vocabulary}>
 					{#if vocabulary.length === 0}
-						<p class="py-4 text-center text-sm text-slate-500">Vocabulary appears here...</p>
+						<p class="py-4 text-center text-[var(--text-small)] text-slate-500">
+							Vocabulary appears here...
+						</p>
 					{:else}
 						{@const currentToken = currentMerge?.newToken || currentMerge?.superword}
 						{#each [...vocabulary].reverse() as item (item.token)}
 							<div
-								class="flex items-center justify-between rounded-lg px-2 py-1.5 text-sm transition-all
+								class="flex items-center justify-between rounded-lg px-2 py-1.5 text-[var(--text-small)] transition-all
                   {item.token === currentToken
 									? 'bg-yellow-400 font-bold text-yellow-900 shadow-lg'
 									: 'bg-slate-800/50'}
@@ -580,7 +586,7 @@ return vocab`
 									<span
 										class="{item.token === currentToken
 											? 'text-yellow-700'
-											: 'text-slate-500'} ml-2 truncate text-xs">{item.from}</span
+											: 'text-slate-500'} ml-2 truncate text-[var(--text-tiny)]">{item.from}</span
 									>
 								{/if}
 							</div>

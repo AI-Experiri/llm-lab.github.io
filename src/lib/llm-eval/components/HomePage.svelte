@@ -1,61 +1,107 @@
+<!-- ABOUTME: Evaluation overview page with framework, benchmarks, and metrics -->
+<!-- ABOUTME: Refactored to use shared components for consistent styling -->
+
 <script>
-	// Home page - evaluation introduction from Stanford CS336 Lecture 12
+	import { Section, ContentBox, KeyTakeaway, HeroSection, CategoryList } from '$lib/shared';
+
+	const benchmarkCategories = [
+		{
+			label: 'Knowledge',
+			description: 'MMLU, MMLU-Pro, TriviaQA - factual recall',
+			color: 'purple'
+		},
+		{ label: 'Expert-Level', description: "GPQA (PhD-level), Humanity's Last Exam", color: 'blue' },
+		{ label: 'Math', description: 'GSM8K, MATH - problem solving', color: 'yellow' },
+		{ label: 'Coding', description: 'HumanEval, MBPP - programming', color: 'green' },
+		{ label: 'Instruction', description: 'IFEval, AlpacaEval, Chatbot Arena', color: 'cyan' },
+		{ label: 'Agents', description: 'SWE-bench, CyBench, MLEBench', color: 'orange' },
+		{ label: 'Safety', description: 'TruthfulQA, HarmBench, AIR-Bench', color: 'red' }
+	];
 </script>
 
-<div class="space-y-4">
-	<!-- Hero + Why Evaluate -->
-	<div class="grid gap-4 lg:grid-cols-2">
-		<!-- Hero -->
-		<section
-			class="rounded-lg border border-[#0f3460] bg-gradient-to-br from-[#16213e] to-[#1a1a2e] p-4"
-		>
-			<h2 class="mb-2 font-bold text-[var(--color-primary)] text-[var(--text-h2)]">
-				Evaluation: How "Good" is a Model?
-			</h2>
-			<p class="leading-relaxed text-[var(--color-text)] text-[var(--text-small)]">
-				Evaluation looks simple but is far from it. Models are evaluated on benchmarks like MMLU,
-				MATH, GPQA, and SWE-bench. But what are these benchmarks? What do the numbers actually mean?
-			</p>
-			<p class="mt-2 text-[var(--color-muted)] text-[var(--text-tiny)] italic">
-				Based on Stanford CS336 Lecture 12 - Language Modeling from Scratch
-			</p>
-		</section>
+<div class="space-y-6">
+	<HeroSection title="Evaluation is How We Understand Models">
+		<p class="max-w-3xl leading-relaxed text-[var(--color-muted)] text-[var(--text-body)]">
+			Without evaluation, we're flying blind.
+			<span class="font-semibold text-[var(--color-primary)]"
+				>How do we know if a model is "good"?</span
+			>
+			Evaluation provides the framework, benchmarks, and metrics for measuring LLM capabilities across
+			knowledge, reasoning, coding, and safety.
+		</p>
+		<div class="mt-4 flex flex-wrap gap-3">
+			<span
+				class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-[var(--color-accent)] text-[var(--text-small)]"
+			>
+				Purchase Decisions
+			</span>
+			<span
+				class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-[var(--color-accent)] text-[var(--text-small)]"
+			>
+				Scientific Progress
+			</span>
+			<span
+				class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-[var(--color-accent)] text-[var(--text-small)]"
+			>
+				Development Feedback
+			</span>
+			<span
+				class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-[var(--color-accent)] text-[var(--text-small)]"
+			>
+				Policy & Safety
+			</span>
+		</div>
+	</HeroSection>
 
-		<!-- Why Evaluate -->
-		<section class="rounded-lg bg-[var(--color-surface)] p-4">
-			<h3 class="mb-2 font-semibold text-[var(--color-primary)] text-[var(--text-body)]">
-				Why Evaluate? (Different Goals)
-			</h3>
-			<div class="grid grid-cols-2 gap-2 text-[var(--text-tiny)]">
-				<div class="rounded border-l-2 border-blue-500 bg-[var(--color-bg)] p-2">
-					<span class="font-medium text-blue-300">Purchase Decision</span>
-					<p class="text-[var(--color-muted)]">Which model for my use case?</p>
+	<!-- Why Evaluation Matters -->
+	<Section title="Why Evaluation Matters">
+		<p class="mb-6 text-[var(--color-muted)] text-[var(--text-small)]">
+			Different stakeholders need evaluation for different reasons.
+		</p>
+		<div class="grid gap-4 md:grid-cols-4">
+			<ContentBox variant="dark" class="transition-colors hover:border-blue-500/50">
+				<div class="mb-3 flex items-center gap-3">
+					<span class="text-3xl">🛒</span>
+					<h3 class="font-bold text-blue-300">Purchase Decision</h3>
 				</div>
-				<div class="rounded border-l-2 border-purple-500 bg-[var(--color-bg)] p-2">
-					<span class="font-medium text-purple-300">Scientific Progress</span>
-					<p class="text-[var(--color-muted)]">Are we advancing AI capabilities?</p>
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">
+					Which model is best for my use case? Compare capabilities vs cost.
+				</p>
+			</ContentBox>
+			<ContentBox variant="dark" class="transition-colors hover:border-purple-500/50">
+				<div class="mb-3 flex items-center gap-3">
+					<span class="text-3xl">🔬</span>
+					<h3 class="font-bold text-purple-300">Scientific Progress</h3>
 				</div>
-				<div class="rounded border-l-2 border-green-500 bg-[var(--color-bg)] p-2">
-					<span class="font-medium text-green-300">Development Feedback</span>
-					<p class="text-[var(--color-muted)]">How to improve the model?</p>
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">
+					Are we actually advancing AI capabilities? Track progress over time.
+				</p>
+			</ContentBox>
+			<ContentBox variant="dark" class="transition-colors hover:border-green-500/50">
+				<div class="mb-3 flex items-center gap-3">
+					<span class="text-3xl">🔧</span>
+					<h3 class="font-bold text-green-300">Development Feedback</h3>
 				</div>
-				<div class="rounded border-l-2 border-red-500 bg-[var(--color-bg)] p-2">
-					<span class="font-medium text-red-300">Policy & Safety</span>
-					<p class="text-[var(--color-muted)]">Benefits and harms assessment</p>
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">
+					How can we improve the model? Identify weaknesses and guide training.
+				</p>
+			</ContentBox>
+			<ContentBox variant="dark" class="transition-colors hover:border-red-500/50">
+				<div class="mb-3 flex items-center gap-3">
+					<span class="text-3xl">⚖️</span>
+					<h3 class="font-bold text-red-300">Policy & Safety</h3>
 				</div>
-			</div>
-		</section>
-	</div>
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">
+					What are the benefits and harms? Inform regulations and deployment.
+				</p>
+			</ContentBox>
+		</div>
+	</Section>
 
 	<!-- Evaluation Framework -->
-	<section class="rounded-lg bg-[var(--color-surface)] p-4">
-		<h3 class="mb-3 font-semibold text-[var(--color-primary)] text-[var(--text-body)]">
-			Evaluation Framework
-		</h3>
+	<Section title="Evaluation Framework">
 		<div class="grid gap-3 text-[var(--text-tiny)] md:grid-cols-4">
-			<div
-				class="rounded-lg border border-indigo-800/30 bg-gradient-to-br from-indigo-900/30 to-transparent p-3"
-			>
+			<ContentBox variant="dark" class="border border-indigo-800/30">
 				<div class="mb-1 flex items-center gap-2">
 					<span
 						class="flex h-5 w-5 items-center justify-center rounded bg-indigo-600 text-[10px] font-bold text-white"
@@ -66,10 +112,8 @@
 				<p class="text-[var(--color-muted)]">
 					Where do prompts come from? What use cases are covered? Tail distribution?
 				</p>
-			</div>
-			<div
-				class="rounded-lg border border-cyan-800/30 bg-gradient-to-br from-cyan-900/30 to-transparent p-3"
-			>
+			</ContentBox>
+			<ContentBox variant="dark" class="border border-cyan-800/30">
 				<div class="mb-1 flex items-center gap-2">
 					<span
 						class="flex h-5 w-5 items-center justify-center rounded bg-cyan-600 text-[10px] font-bold text-white"
@@ -80,10 +124,8 @@
 				<p class="text-[var(--color-muted)]">
 					Zero-shot vs few-shot? Chain of thought? Tool use or RAG?
 				</p>
-			</div>
-			<div
-				class="rounded-lg border border-amber-800/30 bg-gradient-to-br from-amber-900/30 to-transparent p-3"
-			>
+			</ContentBox>
+			<ContentBox variant="dark" class="border border-amber-800/30">
 				<div class="mb-1 flex items-center gap-2">
 					<span
 						class="flex h-5 w-5 items-center justify-center rounded bg-amber-600 text-[10px] font-bold text-white"
@@ -94,10 +136,8 @@
 				<p class="text-[var(--color-muted)]">
 					Reference outputs clean? What metrics - pass@1, pass@10? Cost factored?
 				</p>
-			</div>
-			<div
-				class="rounded-lg border border-rose-800/30 bg-gradient-to-br from-rose-900/30 to-transparent p-3"
-			>
+			</ContentBox>
+			<ContentBox variant="dark" class="border border-rose-800/30">
 				<div class="mb-1 flex items-center gap-2">
 					<span
 						class="flex h-5 w-5 items-center justify-center rounded bg-rose-600 text-[10px] font-bold text-white"
@@ -108,72 +148,21 @@
 				<p class="text-[var(--color-muted)]">
 					Does 91% mean it's good enough? Train-test overlap? Method vs system?
 				</p>
-			</div>
+			</ContentBox>
 		</div>
-	</section>
+	</Section>
 
 	<!-- Benchmark Categories + Metrics side by side -->
 	<div class="grid gap-4 lg:grid-cols-2">
 		<!-- Benchmark Categories -->
-		<section class="rounded-lg bg-[var(--color-surface)] p-4">
-			<h3 class="mb-3 font-semibold text-[var(--color-primary)] text-[var(--text-body)]">
-				Benchmark Categories
-			</h3>
-			<div class="space-y-1.5 text-[var(--text-tiny)]">
-				<div
-					class="flex items-center gap-2 rounded border-l-2 border-purple-500 bg-gradient-to-r from-purple-900/40 to-transparent px-2 py-1.5"
-				>
-					<span class="w-24 font-medium text-purple-300">Knowledge</span>
-					<span class="text-[var(--color-muted)]">MMLU, MMLU-Pro, TriviaQA - factual recall</span>
-				</div>
-				<div
-					class="flex items-center gap-2 rounded border-l-2 border-blue-500 bg-gradient-to-r from-blue-900/40 to-transparent px-2 py-1.5"
-				>
-					<span class="w-24 font-medium text-blue-300">Expert-Level</span>
-					<span class="text-[var(--color-muted)]">GPQA (PhD-level), Humanity's Last Exam</span>
-				</div>
-				<div
-					class="flex items-center gap-2 rounded border-l-2 border-yellow-500 bg-gradient-to-r from-yellow-900/40 to-transparent px-2 py-1.5"
-				>
-					<span class="w-24 font-medium text-yellow-300">Math</span>
-					<span class="text-[var(--color-muted)]">GSM8K, MATH - problem solving</span>
-				</div>
-				<div
-					class="flex items-center gap-2 rounded border-l-2 border-green-500 bg-gradient-to-r from-green-900/40 to-transparent px-2 py-1.5"
-				>
-					<span class="w-24 font-medium text-green-300">Coding</span>
-					<span class="text-[var(--color-muted)]">HumanEval, MBPP - programming</span>
-				</div>
-				<div
-					class="flex items-center gap-2 rounded border-l-2 border-cyan-500 bg-gradient-to-r from-cyan-900/40 to-transparent px-2 py-1.5"
-				>
-					<span class="w-24 font-medium text-cyan-300">Instruction</span>
-					<span class="text-[var(--color-muted)]">IFEval, AlpacaEval, Chatbot Arena</span>
-				</div>
-				<div
-					class="flex items-center gap-2 rounded border-l-2 border-orange-500 bg-gradient-to-r from-orange-900/40 to-transparent px-2 py-1.5"
-				>
-					<span class="w-24 font-medium text-orange-300">Agents</span>
-					<span class="text-[var(--color-muted)]">SWE-bench, CyBench, MLEBench</span>
-				</div>
-				<div
-					class="flex items-center gap-2 rounded border-l-2 border-red-500 bg-gradient-to-r from-red-900/40 to-transparent px-2 py-1.5"
-				>
-					<span class="w-24 font-medium text-red-300">Safety</span>
-					<span class="text-[var(--color-muted)]">TruthfulQA, HarmBench, AIR-Bench</span>
-				</div>
-			</div>
-		</section>
+		<Section title="Benchmark Categories">
+			<CategoryList items={benchmarkCategories} />
+		</Section>
 
 		<!-- Evaluation Metrics -->
-		<section class="rounded-lg bg-[var(--color-surface)] p-4">
-			<h3 class="mb-3 font-semibold text-[var(--color-primary)] text-[var(--text-body)]">
-				Evaluation Metrics
-			</h3>
+		<Section title="Evaluation Metrics">
 			<div class="space-y-2">
-				<div
-					class="rounded-lg border border-orange-800/30 bg-gradient-to-r from-orange-900/30 to-[var(--color-secondary)] p-3"
-				>
+				<ContentBox variant="dark" class="border border-orange-800/30">
 					<div class="mb-1 flex items-center gap-2">
 						<span class="h-2 w-2 rounded-full bg-orange-500"></span>
 						<h4 class="font-medium text-[var(--text-small)] text-orange-300">Perplexity</h4>
@@ -187,10 +176,8 @@
 						<span><span class="text-green-400">+</span> Smooth, universal</span>
 						<span><span class="text-red-400">-</span> Not task-specific</span>
 					</div>
-				</div>
-				<div
-					class="rounded-lg border border-emerald-800/30 bg-gradient-to-r from-emerald-900/30 to-[var(--color-secondary)] p-3"
-				>
+				</ContentBox>
+				<ContentBox variant="dark" class="border border-emerald-800/30">
 					<div class="mb-1 flex items-center gap-2">
 						<span class="h-2 w-2 rounded-full bg-emerald-500"></span>
 						<h4 class="font-medium text-[var(--text-small)] text-emerald-300">Accuracy</h4>
@@ -204,142 +191,106 @@
 						<span><span class="text-green-400">+</span> Easy to interpret</span>
 						<span><span class="text-red-400">-</span> Prompt sensitive</span>
 					</div>
-				</div>
+				</ContentBox>
 			</div>
-		</section>
+		</Section>
 	</div>
 
 	<!-- Perplexity Deep Dive -->
-	<section class="rounded-lg bg-[var(--color-surface)] p-4">
-		<h3 class="mb-3 font-semibold text-[var(--color-primary)] text-[var(--text-body)]">
-			Perplexity: A Deeper Look
-		</h3>
-		<div class="grid gap-3 lg:grid-cols-2">
-			<div class="space-y-2">
+	<Section title="Perplexity: A Deeper Look">
+		<div class="space-y-2">
+			<ContentBox variant="dark" class="border border-[var(--color-secondary)]">
+				<h4 class="mb-2 font-medium text-[var(--text-small)] text-green-400">Why It's Useful</h4>
 				<div
-					class="rounded-lg border border-orange-800/30 bg-gradient-to-r from-orange-900/30 to-[var(--color-secondary)] p-3"
+					class="grid grid-cols-2 gap-x-6 gap-y-1 text-[var(--color-muted)] text-[var(--text-tiny)]"
 				>
-					<div class="mb-1 flex items-center gap-2">
-						<span class="h-2 w-2 rounded-full bg-orange-500"></span>
-						<h4 class="font-medium text-[var(--text-small)] text-orange-300">
-							What is Perplexity?
-						</h4>
-						<span class="ml-auto text-[var(--text-tiny)] text-orange-400">Lower = better</span>
-					</div>
-					<p class="text-[var(--color-muted)] text-[var(--text-tiny)]">
-						Measures model "surprise" at text. PPL of 10 = as uncertain as choosing uniformly from
-						10 options. Defined as exp(cross-entropy loss) against a validation set.
-					</p>
+					<span
+						><span class="text-green-400">+</span> <strong>Smooth metric</strong> - scaling laws use it
+						because curves fit better</span
+					>
+					<span
+						><span class="text-green-400">+</span> <strong>Universal</strong> - pays for everything in
+						the distribution</span
+					>
+					<span
+						><span class="text-green-400">+</span> <strong>Not gameable</strong> - hard to hack unlike
+						accuracy benchmarks</span
+					>
+					<span
+						><span class="text-green-400">+</span> <strong>No labels needed</strong> - just need text
+						data</span
+					>
 				</div>
-				<div class="rounded-lg border border-[var(--color-secondary)] bg-[var(--color-bg)] p-3">
-					<h4 class="mb-2 font-medium text-[var(--text-small)] text-green-400">Why It's Useful</h4>
-					<ul class="space-y-1 text-[var(--color-muted)] text-[var(--text-tiny)]">
-						<li>
-							<span class="text-green-400">+</span> <strong>Smooth metric</strong> - all scaling laws
-							use perplexity because curves fit better than task accuracy
-						</li>
-						<li>
-							<span class="text-green-400">+</span> <strong>Universal</strong> - pays for everything in
-							the distribution, not just right/wrong
-						</li>
-						<li>
-							<span class="text-green-400">+</span> <strong>Not gameable</strong> - as long as train/test
-							are separate, hard to hack unlike accuracy benchmarks
-						</li>
-						<li>
-							<span class="text-green-400">+</span> <strong>No labels needed</strong> - just need text
-							data for evaluation
-						</li>
-					</ul>
+			</ContentBox>
+			<ContentBox variant="dark" class="border border-red-900/30">
+				<h4 class="mb-2 font-medium text-[var(--text-small)] text-red-400">Important Caveats</h4>
+				<div
+					class="grid grid-cols-2 gap-x-6 gap-y-1 text-[var(--color-muted)] text-[var(--text-tiny)]"
+				>
+					<span
+						><span class="text-red-400">!</span> <strong>Not always correlated with tasks</strong> - correlation
+						is "all over the place"</span
+					>
+					<span
+						><span class="text-red-400">!</span> <strong>Requires deep access</strong> - need logits/probabilities</span
+					>
+					<span
+						><span class="text-red-400">!</span> <strong>Easy to screw up</strong> - tokenizer mismatches
+						make comparison invalid</span
+					>
+					<span
+						><span class="text-red-400">!</span>
+						<strong>Different tokenizers = incomparable</strong></span
+					>
 				</div>
-			</div>
-			<div class="space-y-2">
-				<div class="rounded-lg border border-red-900/30 bg-[var(--color-bg)] p-3">
-					<h4 class="mb-2 font-medium text-[var(--text-small)] text-red-400">Important Caveats</h4>
-					<ul class="space-y-1 text-[var(--color-muted)] text-[var(--text-tiny)]">
-						<li>
-							<span class="text-red-400">!</span> <strong>Not always correlated with tasks</strong> -
-							correlation with downstream performance is "all over the place"
-						</li>
-						<li>
-							<span class="text-red-400">!</span> <strong>Requires deep access</strong> - need logits/probabilities,
-							not just API outputs
-						</li>
-						<li>
-							<span class="text-red-400">!</span> <strong>Easy to screw up</strong> - vocabulary/tokenizer
-							mismatches make comparison invalid
-						</li>
-						<li>
-							<span class="text-red-400">!</span>
-							<strong>Different tokenizers = incomparable</strong> - can't compare PPL across models with
-							different vocabularies
-						</li>
-					</ul>
-				</div>
-				<div class="rounded-lg border border-blue-900/30 bg-[var(--color-bg)] p-3">
-					<h4 class="mb-2 font-medium text-[var(--text-small)] text-blue-400">
-						Perplexity-like Tasks (Saturated)
-					</h4>
-					<p class="text-[var(--color-muted)] text-[var(--text-tiny)]">
-						Tasks like <strong>LAMBADA</strong> (predict last word) and <strong>HellaSwag</strong> (choose
-						continuation) are essentially perplexity measures and have been "obliterated" by modern LLMs.
-					</p>
-				</div>
-			</div>
+			</ContentBox>
+			<ContentBox variant="dark" class="border border-blue-900/30">
+				<h4 class="mb-2 font-medium text-[var(--text-small)] text-blue-400">
+					Perplexity-like Tasks (Saturated)
+				</h4>
+				<p class="text-[var(--color-muted)] text-[var(--text-tiny)]">
+					Tasks like <strong>LAMBADA</strong> (predict last word) and <strong>HellaSwag</strong> (choose
+					continuation) are essentially perplexity measures and have been "obliterated" by modern LLMs.
+				</p>
+			</ContentBox>
 		</div>
-	</section>
+	</Section>
 
 	<!-- Issues & Considerations -->
-	<section class="rounded-lg bg-[var(--color-surface)] p-4">
-		<h3 class="mb-3 font-semibold text-[var(--color-primary)] text-[var(--text-body)]">
-			Key Issues in Evaluation
-		</h3>
+	<Section title="Key Issues in Evaluation">
 		<div class="grid gap-2 text-[var(--text-tiny)] sm:grid-cols-2 lg:grid-cols-4">
-			<div
-				class="rounded-lg border border-red-900/30 bg-gradient-to-br from-red-900/20 to-[var(--color-bg)] p-2.5"
-			>
+			<ContentBox variant="dark" class="border border-red-900/30">
 				<span class="font-medium text-red-400">Train-Test Contamination</span>
 				<p class="mt-1 text-[var(--color-muted)]">
 					Training on web data may include test sets. 13-gram dedup helps but paraphrases slip
 					through.
 				</p>
-			</div>
-			<div
-				class="rounded-lg border border-yellow-900/30 bg-gradient-to-br from-yellow-900/20 to-[var(--color-bg)] p-2.5"
-			>
+			</ContentBox>
+			<ContentBox variant="dark" class="border border-yellow-900/30">
 				<span class="font-medium text-yellow-400">Benchmark Gaming</span>
 				<p class="mt-1 text-[var(--color-muted)]">
 					Goodhart's Law: once measured, it gets hacked. MMLU may be saturated or gamed.
 				</p>
-			</div>
-			<div
-				class="rounded-lg border border-blue-900/30 bg-gradient-to-br from-blue-900/20 to-[var(--color-bg)] p-2.5"
-			>
+			</ContentBox>
+			<ContentBox variant="dark" class="border border-blue-900/30">
 				<span class="font-medium text-blue-400">LLM as Judge Bias</span>
 				<p class="mt-1 text-[var(--color-muted)]">
 					GPT-4 judging prefers longer responses. AlpacaEval had to add length correction.
 				</p>
-			</div>
-			<div
-				class="rounded-lg border border-purple-900/30 bg-gradient-to-br from-purple-900/20 to-[var(--color-bg)] p-2.5"
-			>
+			</ContentBox>
+			<ContentBox variant="dark" class="border border-purple-900/30">
 				<span class="font-medium text-purple-400">Asking vs Quizzing</span>
 				<p class="mt-1 text-[var(--color-muted)]">
 					Standardized exams = quizzing. Real users ask questions they don't know answers to.
 				</p>
-			</div>
+			</ContentBox>
 		</div>
-	</section>
+	</Section>
 
 	<!-- Key Takeaways -->
-	<section class="rounded-lg bg-[var(--color-surface)] p-4">
-		<h3 class="mb-3 font-semibold text-[var(--color-primary)] text-[var(--text-body)]">
-			Key Takeaways
-		</h3>
+	<Section title="Key Takeaways">
 		<div class="grid gap-2 text-[var(--text-tiny)] sm:grid-cols-2 lg:grid-cols-4">
-			<div
-				class="rounded-lg border border-pink-900/30 bg-gradient-to-br from-pink-900/20 to-[var(--color-bg)] p-2.5"
-			>
+			<ContentBox variant="dark" class="border border-pink-900/30">
 				<div class="mb-1 flex items-center gap-2">
 					<span
 						class="flex h-5 w-5 items-center justify-center rounded bg-pink-600 text-[10px] font-bold text-white"
@@ -348,10 +299,8 @@
 					<span class="font-medium text-pink-400">No Single Eval</span>
 				</div>
 				<p class="text-[var(--color-muted)]">Choose based on what you're trying to measure</p>
-			</div>
-			<div
-				class="rounded-lg border border-violet-900/30 bg-gradient-to-br from-violet-900/20 to-[var(--color-bg)] p-2.5"
-			>
+			</ContentBox>
+			<ContentBox variant="dark" class="border border-violet-900/30">
 				<div class="mb-1 flex items-center gap-2">
 					<span
 						class="flex h-5 w-5 items-center justify-center rounded bg-violet-600 text-[10px] font-bold text-white"
@@ -360,10 +309,8 @@
 					<span class="font-medium text-violet-400">Look at Instances</span>
 				</div>
 				<p class="text-[var(--color-muted)]">Aggregate scores hide important details</p>
-			</div>
-			<div
-				class="rounded-lg border border-sky-900/30 bg-gradient-to-br from-sky-900/20 to-[var(--color-bg)] p-2.5"
-			>
+			</ContentBox>
+			<ContentBox variant="dark" class="border border-sky-900/30">
 				<div class="mb-1 flex items-center gap-2">
 					<span
 						class="flex h-5 w-5 items-center justify-center rounded bg-sky-600 text-[10px] font-bold text-white"
@@ -372,10 +319,8 @@
 					<span class="font-medium text-sky-400">Multiple Aspects</span>
 				</div>
 				<p class="text-[var(--color-muted)]">Capabilities + safety + cost. Use Pareto frontiers</p>
-			</div>
-			<div
-				class="rounded-lg border border-teal-900/30 bg-gradient-to-br from-teal-900/20 to-[var(--color-bg)] p-2.5"
-			>
+			</ContentBox>
+			<ContentBox variant="dark" class="border border-teal-900/30">
 				<div class="mb-1 flex items-center gap-2">
 					<span
 						class="flex h-5 w-5 items-center justify-center rounded bg-teal-600 text-[10px] font-bold text-white"
@@ -384,25 +329,20 @@
 					<span class="font-medium text-teal-400">Methods vs Systems</span>
 				</div>
 				<p class="text-[var(--color-muted)]">Define what exactly is being evaluated</p>
-			</div>
+			</ContentBox>
 		</div>
-	</section>
+	</Section>
 
 	<!-- CTA -->
-	<section
-		class="rounded-lg border border-[var(--color-primary)]/30 bg-gradient-to-r from-[var(--color-primary)]/20 to-purple-900/20 p-3 text-center"
-	>
-		<p class="text-[var(--color-text)] text-[var(--text-small)]">
+	<KeyTakeaway title="Next Step">
+		<p>
 			Go to <span class="font-semibold text-[var(--color-primary)]">Sample Data</span> to explore actual
 			evaluation datasets from HuggingFace.
 		</p>
-	</section>
+	</KeyTakeaway>
 
 	<!-- References -->
-	<section class="rounded-lg bg-[var(--color-surface)] p-4">
-		<h3 class="mb-3 font-semibold text-[var(--color-primary)] text-[var(--text-body)]">
-			References
-		</h3>
+	<Section title="References">
 		<ul class="space-y-2 text-[var(--text-tiny)]">
 			<li class="flex items-start gap-2">
 				<span class="text-[var(--color-primary)]">1.</span>
@@ -446,5 +386,5 @@
 				</span>
 			</li>
 		</ul>
-	</section>
+	</Section>
 </div>

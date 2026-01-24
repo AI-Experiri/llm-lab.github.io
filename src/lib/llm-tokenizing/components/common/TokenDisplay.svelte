@@ -20,11 +20,11 @@
 
 <div class="rounded-xl bg-white/10 p-4 backdrop-blur">
 	<div class="mb-3 flex items-center justify-between">
-		<h3 class="flex items-center gap-2 text-base font-semibold text-white">
+		<h3 class="flex items-center gap-2 font-semibold text-[var(--text-body)] text-white">
 			<span class="h-2 w-2 {accentColor} rounded-full"></span>
 			Current Tokens
 		</h3>
-		<div class="flex items-center gap-3 text-sm">
+		<div class="flex items-center gap-3 text-[var(--text-small)]">
 			<span class="text-slate-400"
 				>Count: <span class="font-bold text-white">{currentTokenCount}</span></span
 			>
@@ -47,7 +47,7 @@
 					<span class="px-1 font-bold text-slate-600">│</span>
 				{:else}
 					<span
-						class="token rounded-lg px-2 py-1 font-mono text-sm font-medium transition-all duration-200
+						class="token rounded-lg px-2 py-1 font-mono font-medium text-[var(--text-small)] transition-all duration-200
               {token.highlight
 							? 'highlight bg-yellow-400 text-yellow-900 shadow-lg shadow-yellow-400/50'
 							: ''}

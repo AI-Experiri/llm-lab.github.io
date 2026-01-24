@@ -1,300 +1,276 @@
+<!-- ABOUTME: Kaplan 2020 scaling laws paper deep dive -->
+<!-- ABOUTME: Uses shared components for consistent styling -->
+
 <script>
-	const keyPaper = {
-		title: 'Scaling Laws for Neural Language Models',
-		authors: 'Kaplan et al. (2020)',
-		url: 'https://arxiv.org/abs/2001.08361',
-		description:
-			'Foundational OpenAI paper establishing power law relationships between loss, compute, data, and model parameters for language models'
-	};
+	import { HeroSection, Section, ContentBox, KeyTakeaway, Math } from '$lib/shared';
 
 	const dataScalingInsights = [
 		{
 			title: 'Power Law Relationship',
-			content:
-				'Loss scales as L(D) = (D_c / D)^α where α is typically 0.095-0.13 for language models. Much slower than the 1/√n rate simple theory predicts.'
+			content: 'Loss scales as L(D) = (D_c / D)^α where α ≈ 0.095-0.13.'
 		},
 		{
 			title: 'Intrinsic Dimensionality',
-			content:
-				'The scaling slope is affected by the intrinsic dimensionality of the data distribution, not just sample size.'
+			content: 'Scaling slope affected by data distribution complexity.'
 		},
 		{
 			title: 'Data Composition',
-			content:
-				'Mixing multiple data sources follows predictable scaling. The optimal mixture depends on the target task distribution.'
+			content: 'Mixing multiple sources follows predictable scaling.'
 		},
 		{
 			title: 'Multi-epoch Training',
-			content:
-				'Repeated passes over data show diminishing returns. Fresh data is more valuable than repeated data.'
+			content: 'Repeated passes show diminishing returns vs fresh data.'
 		}
 	];
 
 	const modelScalingInsights = [
 		{
 			title: 'Architecture Comparison',
-			content:
-				'Transformers consistently outperform LSTMs by constant factors across scales. The gap remains stable as models grow.'
+			content: 'Transformers outperform LSTMs by constant factors across scales.'
 		},
 		{
 			title: 'Depth vs Width',
-			content:
-				'Optimal aspect ratios (depth/width) of 10-100 remain stable across scales. Wider models are not always better.'
+			content: 'Optimal aspect ratios (10-100) remain stable across scales.'
 		},
 		{
 			title: 'Batch Size',
-			content:
-				'Critical batch size diminishes as loss target decreases. Larger models benefit from larger batch sizes.'
+			content: 'Critical batch size diminishes as loss target decreases.'
 		},
 		{
 			title: 'Learning Rate',
-			content:
-				'Optimal learning rates shift predictably with scale, following approximately a 1/width relationship.'
+			content: 'Optimal LR shifts predictably, ~1/width relationship.'
 		}
 	];
 
 	const architectureDecisions = [
 		{
 			title: 'Transformers vs LSTMs',
-			content:
-				'Transformers show better scaling constants but similar exponents. The gap is a constant multiplier, not growing.'
+			content: 'Similar exponents, better constants. Gap is constant multiplier.'
 		},
 		{
 			title: 'GLU Variants',
-			content:
-				'Gated Linear Units (SwiGLU, GeGLU) improve constants without changing scaling behavior.'
+			content: 'SwiGLU, GeGLU improve constants without changing scaling.'
 		},
 		{
 			title: 'Mixture of Experts',
-			content: 'MoE models require different scaling analysis due to sparse activation patterns.'
+			content: 'MoE requires different analysis due to sparse activation.'
 		},
 		{
 			title: 'Optimizer Choice',
-			content:
-				'Adam generally preferred over SGD for transformers, but scaling behavior is similar.'
+			content: 'Adam preferred for transformers, similar scaling behavior.'
 		}
 	];
 
-	const keyTakeaways = [
-		{
-			title: 'Power laws are universal',
-			content:
-				'Loss scaling follows power law relationships across architectures, tasks, and modalities.'
-		},
-		{
-			title: 'Small-scale predicts large-scale',
-			content: 'Experiments on 10-100x smaller models reliably predict behavior at scale.'
-		},
-		{
-			title: 'Scaling exponents matter',
-			content: 'The slope (α) determines how efficiently resources translate to performance.'
-		},
-		{
-			title: 'Architecture affects constants, not slopes',
-			content: 'Better architectures shift curves up but maintain similar scaling.'
-		}
-	];
+	// Formulas stored as constants to avoid template parsing issues with escape sequences
+	const formulas = {
+		dataScaling: 'L(D) = \\left(\\frac{D_c}{D}\\right)^{\\alpha_D}',
+		alphaD: '\\alpha_D \\approx 0.095',
+		alphaDRange: '\\alpha_D \\approx 0.095 \\text{ to } 0.13',
+		modelScaling: 'L(N) = \\left(\\frac{N_c}{N}\\right)^{\\alpha_N}',
+		alphaN: '\\alpha_N \\approx 0.076',
+		computeScaling: 'L(C) = \\left(\\frac{C_c}{C}\\right)^{\\alpha_C}',
+		alphaC: '\\alpha_C \\approx 0.050',
+		oneOverN: '1/n',
+		computeFLOPs: 'C \\approx 6 \\times N \\times D',
+		computeShort: 'C \\approx 6ND',
+		C: 'C',
+		twoN: '2N',
+		fourN: '4N',
+		sixN: '6N'
+	};
 </script>
 
-<div class="space-y-8">
-	<!-- Section Header -->
-	<section
-		class="rounded-2xl border border-[var(--color-primary)]/30 bg-gradient-to-br from-[var(--color-primary)]/20 to-pink-600/20 p-8"
-	>
-		<div class="flex items-start gap-4">
-			<div class="text-4xl">📈</div>
-			<div>
-				<h2 class="mb-2 font-bold text-[var(--color-text)] text-[var(--text-h2)]">
-					Kaplan 2020: Neural Language Model Scaling
-				</h2>
-				<p class="text-lg text-[var(--color-muted)]">
-					The foundational OpenAI paper that established predictable power law relationships between
-					loss and three key factors: data, model parameters, and compute.
-				</p>
-			</div>
-		</div>
-	</section>
+<div class="space-y-6">
+	<HeroSection icon="📈" title="Kaplan 2020: Neural Language Model Scaling">
+		<p class="max-w-3xl leading-relaxed text-[var(--color-muted)] text-[var(--text-body)]">
+			The foundational OpenAI paper that established predictable power law relationships between
+			loss and three key factors: data, model parameters, and compute.
+		</p>
+	</HeroSection>
 
-	<!-- Key Paper -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">Paper</h3>
-		<a
-			href={keyPaper.url}
-			target="_blank"
-			rel="noopener noreferrer external"
-			class="block rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-4 transition-colors hover:border-[var(--color-primary)]/50"
-		>
-			<h4 class="font-semibold text-[var(--color-text)]">{keyPaper.title}</h4>
-			<p class="text-sm text-[var(--color-muted)]">{keyPaper.authors}</p>
-			<p class="mt-2 text-sm text-[var(--color-muted)]">{keyPaper.description}</p>
-		</a>
-	</section>
+	<Section title="Paper">
+		<ContentBox variant="dark" class="transition-colors hover:border-[var(--color-primary)]/50">
+			<a
+				href="https://arxiv.org/abs/2001.08361"
+				target="_blank"
+				rel="noopener noreferrer external"
+				class="block"
+			>
+				<h4 class="mb-1 font-semibold text-[var(--color-primary)] text-[var(--text-body)]">
+					Scaling Laws for Neural Language Models
+				</h4>
+				<p class="mb-2 text-[var(--color-accent)] text-[var(--text-small)]">
+					Kaplan et al. (2020) — OpenAI
+				</p>
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">
+					Foundational paper establishing power law relationships between loss, compute, data, and
+					model parameters. Introduced the key exponents α_D, α_N, α_C that govern scaling behavior.
+				</p>
+			</a>
+		</ContentBox>
+	</Section>
 
 	<!-- Core Equations -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">Core Scaling Equations</h3>
-		<p class="mb-6 text-[var(--color-muted)]">
-			Kaplan et al. discovered that loss follows power law relationships with each scaling factor:
+	<Section title="Core Scaling Equations">
+		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
+			Loss follows power law relationships with each scaling factor:
 		</p>
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-			<div
-				class="rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-4 text-center"
-			>
-				<p class="mb-2 font-mono text-lg text-[var(--color-accent)]">
-					L(D) = (D<sub>c</sub> / D)<sup>α<sub>D</sub></sup>
+		<div class="grid gap-4 md:grid-cols-3">
+			<ContentBox variant="dark" class="text-center">
+				<div class="mb-2 text-[var(--color-accent)] text-[var(--text-body)]">
+					<Math formula={formulas.dataScaling} />
+				</div>
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">Data Scaling</p>
+				<p class="mt-1 text-[var(--color-text)] text-[var(--text-tiny)]">
+					<Math formula={formulas.alphaD} />
 				</p>
-				<p class="text-sm text-[var(--color-muted)]">Data Scaling</p>
-				<p class="mt-1 text-xs text-[var(--color-text)]">α<sub>D</sub> ≈ 0.095</p>
-			</div>
-			<div
-				class="rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-4 text-center"
-			>
-				<p class="mb-2 font-mono text-lg text-[var(--color-accent)]">
-					L(N) = (N<sub>c</sub> / N)<sup>α<sub>N</sub></sup>
+			</ContentBox>
+			<ContentBox variant="dark" class="text-center">
+				<div class="mb-2 text-[var(--color-accent)] text-[var(--text-body)]">
+					<Math formula={formulas.modelScaling} />
+				</div>
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">Model Scaling</p>
+				<p class="mt-1 text-[var(--color-text)] text-[var(--text-tiny)]">
+					<Math formula={formulas.alphaN} />
 				</p>
-				<p class="text-sm text-[var(--color-muted)]">Model Scaling</p>
-				<p class="mt-1 text-xs text-[var(--color-text)]">α<sub>N</sub> ≈ 0.076</p>
-			</div>
-			<div
-				class="rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-4 text-center"
-			>
-				<p class="mb-2 font-mono text-lg text-[var(--color-accent)]">
-					L(C) = (C<sub>c</sub> / C)<sup>α<sub>C</sub></sup>
+			</ContentBox>
+			<ContentBox variant="dark" class="text-center">
+				<div class="mb-2 text-[var(--color-accent)] text-[var(--text-body)]">
+					<Math formula={formulas.computeScaling} />
+				</div>
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">Compute Scaling</p>
+				<p class="mt-1 text-[var(--color-text)] text-[var(--text-tiny)]">
+					<Math formula={formulas.alphaC} />
 				</p>
-				<p class="text-sm text-[var(--color-muted)]">Compute Scaling</p>
-				<p class="mt-1 text-xs text-[var(--color-text)]">α<sub>C</sub> ≈ 0.050</p>
-			</div>
+			</ContentBox>
 		</div>
-	</section>
+	</Section>
 
 	<!-- Data Scaling Laws -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">Data Scaling Laws</h3>
-		<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+	<Section title="Data Scaling Laws">
+		<div class="grid gap-6 lg:grid-cols-2">
 			<div>
-				<div class="mb-4 rounded-lg bg-[var(--color-bg)] p-4 font-mono">
-					<p class="text-center text-lg text-[var(--color-accent)]">
-						L(D) = (D<sub>c</sub> / D)<sup>α<sub>D</sub></sup>
+				<ContentBox variant="dark" class="mb-4 text-center">
+					<div class="text-[var(--color-accent)] text-[var(--text-body)]">
+						<Math formula={formulas.dataScaling} />
+					</div>
+					<p class="mt-2 text-[var(--color-muted)] text-[var(--text-small)]">
+						<Math formula={formulas.alphaDRange} />
 					</p>
-					<p class="mt-2 text-center text-sm text-[var(--color-muted)]">
-						α<sub>D</sub> ≈ 0.095 to 0.13
-					</p>
-				</div>
-				<p class="text-sm text-[var(--color-muted)]">
-					<strong class="text-[var(--color-text)]">Theoretical Motivation:</strong> For mean estimation,
-					error scales as 1/n. However, language modeling shows much slower scaling due to high intrinsic
-					dimensionality of natural language.
+				</ContentBox>
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">
+					<strong class="text-[var(--color-primary)]">Theoretical Motivation:</strong> For mean
+					estimation, error scales as <Math formula={formulas.oneOverN} />. Language modeling shows
+					slower scaling due to high intrinsic dimensionality.
 				</p>
 			</div>
 			<div class="space-y-3">
 				{#each dataScalingInsights as insight (insight.title)}
-					<div class="rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-3">
-						<h4 class="text-sm font-medium text-[var(--color-accent)]">{insight.title}</h4>
-						<p class="text-sm text-[var(--color-muted)]">{insight.content}</p>
-					</div>
+					<ContentBox variant="dark">
+						<h4 class="font-medium text-[var(--color-accent)] text-[var(--text-small)]">
+							{insight.title}
+						</h4>
+						<p class="text-[var(--color-muted)] text-[var(--text-small)]">{insight.content}</p>
+					</ContentBox>
 				{/each}
 			</div>
 		</div>
-	</section>
+	</Section>
 
 	<!-- Model Scaling Laws -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">Model Scaling Laws</h3>
-		<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+	<Section title="Model Scaling Laws">
+		<div class="grid gap-6 lg:grid-cols-2">
 			<div>
-				<div class="mb-4 rounded-lg bg-[var(--color-bg)] p-4 font-mono">
-					<p class="text-center text-lg text-[var(--color-accent)]">
-						L(N) = (N<sub>c</sub> / N)<sup>α<sub>N</sub></sup>
+				<ContentBox variant="dark" class="mb-4 text-center">
+					<div class="text-[var(--color-accent)] text-[var(--text-body)]">
+						<Math formula={formulas.modelScaling} />
+					</div>
+					<p class="mt-2 text-[var(--color-muted)] text-[var(--text-small)]">
+						<Math formula={formulas.alphaN} />
 					</p>
-					<p class="mt-2 text-center text-sm text-[var(--color-muted)]">α<sub>N</sub> ≈ 0.076</p>
-				</div>
-				<p class="text-sm text-[var(--color-muted)]">
-					<strong class="text-[var(--color-text)]">Key Finding:</strong> Model size scaling is highly
-					predictable. Doubling parameters provides consistent loss reduction, but with diminishing returns
-					in absolute terms.
+				</ContentBox>
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">
+					<strong class="text-[var(--color-primary)]">Key Finding:</strong> Model size scaling is highly
+					predictable. Doubling parameters provides consistent loss reduction.
 				</p>
 			</div>
 			<div class="space-y-3">
 				{#each modelScalingInsights as insight (insight.title)}
-					<div class="rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-3">
-						<h4 class="text-sm font-medium text-[var(--color-accent)]">{insight.title}</h4>
-						<p class="text-sm text-[var(--color-muted)]">{insight.content}</p>
-					</div>
+					<ContentBox variant="dark">
+						<h4 class="font-medium text-[var(--color-accent)] text-[var(--text-small)]">
+							{insight.title}
+						</h4>
+						<p class="text-[var(--color-muted)] text-[var(--text-small)]">{insight.content}</p>
+					</ContentBox>
 				{/each}
 			</div>
 		</div>
-	</section>
+	</Section>
 
 	<!-- Architecture Decisions -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">
-			Architecture & Optimizer Decisions
-		</h3>
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+	<Section title="Architecture & Optimizer Decisions">
+		<div class="grid gap-4 md:grid-cols-2">
 			{#each architectureDecisions as decision (decision.title)}
-				<div class="rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-4">
+				<ContentBox variant="dark" class="transition-colors hover:border-[var(--color-primary)]/50">
 					<h4 class="mb-2 font-medium text-[var(--color-accent)]">{decision.title}</h4>
-					<p class="text-sm text-[var(--color-muted)]">{decision.content}</p>
-				</div>
+					<p class="text-[var(--color-muted)] text-[var(--text-small)]">{decision.content}</p>
+				</ContentBox>
 			{/each}
 		</div>
-	</section>
+	</Section>
 
 	<!-- Compute Scaling -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">Compute Scaling</h3>
-		<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+	<Section title="Compute Scaling">
+		<div class="grid gap-6 lg:grid-cols-2">
 			<div>
-				<div class="mb-4 rounded-lg bg-[var(--color-bg)] p-4 font-mono">
-					<p class="text-center text-lg text-[var(--color-accent)]">
-						L(C) = (C<sub>c</sub> / C)<sup>α<sub>C</sub></sup>
+				<ContentBox variant="dark" class="mb-4 text-center">
+					<div class="text-[var(--color-accent)] text-[var(--text-body)]">
+						<Math formula={formulas.computeScaling} />
+					</div>
+					<p class="mt-2 text-[var(--color-muted)] text-[var(--text-small)]">
+						<Math formula={formulas.computeFLOPs} /> (FLOPs)
 					</p>
-					<p class="mt-2 text-center text-sm text-[var(--color-muted)]">C ≈ 6 × N × D (FLOPs)</p>
-				</div>
-				<p class="text-sm text-[var(--color-muted)]">
-					Compute budget C determines the total training FLOPs. Since C ≈ 6ND, increasing either
-					model size or data increases compute. Loss also follows a power law with compute.
+				</ContentBox>
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">
+					Compute budget <Math formula={formulas.C} /> determines total training FLOPs. Since <Math
+						formula={formulas.computeShort}
+					/>, increasing model size or data increases compute.
 				</p>
 			</div>
-			<div class="rounded-lg bg-[var(--color-bg)] p-4">
-				<h4 class="mb-3 font-medium text-[var(--color-text)]">Key Relationships</h4>
-				<div class="space-y-2 text-sm">
+			<ContentBox variant="dark">
+				<h4 class="mb-3 font-medium text-[var(--color-primary)]">Key Relationships</h4>
+				<div class="space-y-2 text-[var(--text-small)]">
 					<div class="flex justify-between">
 						<span class="text-[var(--color-muted)]">Compute (FLOPs):</span>
-						<span class="font-mono text-[var(--color-accent)]">C ≈ 6ND</span>
+						<span class="text-[var(--color-accent)]"><Math formula={formulas.computeShort} /></span>
 					</div>
 					<div class="flex justify-between">
 						<span class="text-[var(--color-muted)]">Forward pass:</span>
-						<span class="font-mono text-[var(--color-accent)]">2N FLOPs/token</span>
+						<span class="text-[var(--color-accent)]"
+							><Math formula={formulas.twoN} /> FLOPs/token</span
+						>
 					</div>
 					<div class="flex justify-between">
 						<span class="text-[var(--color-muted)]">Backward pass:</span>
-						<span class="font-mono text-[var(--color-accent)]">4N FLOPs/token</span>
+						<span class="text-[var(--color-accent)]"
+							><Math formula={formulas.fourN} /> FLOPs/token</span
+						>
 					</div>
 					<div class="flex justify-between">
 						<span class="text-[var(--color-muted)]">Total per token:</span>
-						<span class="font-mono text-[var(--color-accent)]">6N FLOPs</span>
+						<span class="text-[var(--color-accent)]"><Math formula={formulas.sixN} /> FLOPs</span>
 					</div>
 				</div>
-			</div>
+			</ContentBox>
 		</div>
-	</section>
+	</Section>
 
-	<!-- Key Takeaways -->
-	<section
-		class="rounded-xl border border-[var(--color-accent)]/30 bg-gradient-to-r from-[var(--color-accent)]/10 to-[var(--color-primary)]/10 p-6"
-	>
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">Key Takeaways</h3>
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-			{#each keyTakeaways as takeaway, i (i)}
-				<div class="flex items-start gap-3">
-					<span class="font-bold text-[var(--color-primary)]">{i + 1}.</span>
-					<p class="text-[var(--color-muted)]">
-						<strong class="text-[var(--color-text)]">{takeaway.title}:</strong>
-						{takeaway.content}
-					</p>
-				</div>
-			{/each}
-		</div>
-	</section>
+	<KeyTakeaway
+		items={[
+			'Power laws are universal across architectures, tasks, and modalities',
+			'Small-scale experiments (10-100x smaller) reliably predict large-scale behavior',
+			'Scaling exponents (α) determine how efficiently resources translate to performance',
+			'Better architectures shift curves up but maintain similar scaling slopes'
+		]}
+	/>
 </div>

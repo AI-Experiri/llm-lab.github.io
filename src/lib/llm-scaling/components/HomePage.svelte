@@ -1,4 +1,9 @@
+<!-- ABOUTME: Overview page for Scaling Lab -->
+<!-- ABOUTME: Uses shared components for consistent styling -->
+
 <script>
+	import { HeroSection, Section, ContentBox, KeyTakeaway } from '$lib/shared';
+
 	const keyInsights = [
 		{
 			title: 'Predictability',
@@ -25,13 +30,6 @@
 			icon: '🚀'
 		}
 	];
-
-	const motivatingQuestion = {
-		title: 'The Core Question',
-		scenario: 'You have 100,000 H100 GPUs for a month. How do you build the best open-source LLM?',
-		insight:
-			'Scaling laws provide a principled answer: train small models to learn scaling behavior, then extrapolate to determine the optimal model size and data requirements.'
-	};
 
 	const lectureTopics = [
 		{
@@ -63,102 +61,103 @@
 		{
 			title: 'Scaling Laws for Neural Language Models',
 			authors: 'Kaplan et al. (2020)',
-			url: 'https://arxiv.org/abs/2001.08361',
-			description: 'Foundational OpenAI paper establishing scaling law relationships'
+			url: 'https://arxiv.org/abs/2001.08361'
 		},
 		{
 			title: 'Training Compute-Optimal Large Language Models',
 			authors: 'Hoffmann et al. (2022)',
-			url: 'https://arxiv.org/abs/2203.15556',
-			description: 'The Chinchilla paper on compute-optimal training'
+			url: 'https://arxiv.org/abs/2203.15556'
 		},
 		{
-			title:
-				'Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer',
+			title: 'Tensor Programs V: Zero-Shot Hyperparameter Transfer',
 			authors: 'Yang et al. (2022)',
-			url: 'https://arxiv.org/abs/2203.03466',
-			description: 'The muP paper on hyperparameter transfer across scales'
+			url: 'https://arxiv.org/abs/2203.03466'
 		},
 		{
 			title: 'Deep Learning Scaling is Predictable, Empirically',
 			authors: 'Hestness et al. (2017)',
-			url: 'https://arxiv.org/abs/1712.00409',
-			description: 'Early large-scale neural network scaling study'
+			url: 'https://arxiv.org/abs/1712.00409'
 		}
 	];
 </script>
 
-<div class="space-y-8">
-	<!-- Hero Section -->
-	<section
-		class="rounded-2xl border border-[var(--color-primary)]/30 bg-gradient-to-br from-[var(--color-primary)]/20 to-pink-600/20 p-8"
-	>
-		<div class="flex items-start gap-4">
-			<div class="text-4xl">📊</div>
-			<div>
-				<h2 class="mb-2 font-bold text-[var(--color-text)] text-[var(--text-h2)]">
-					Understanding Scaling Laws
-				</h2>
-				<p class="text-lg text-[var(--color-muted)]">
-					Scaling laws describe how the performance of language models improves predictably as we
-					increase compute, data, and model size. They enable researchers to make informed decisions
-					about resource allocation without expensive trial-and-error at scale.
-				</p>
-			</div>
+<div class="space-y-6">
+	<HeroSection icon="📊" title="Understanding Scaling Laws">
+		<p class="max-w-3xl leading-relaxed text-[var(--color-muted)] text-[var(--text-body)]">
+			Scaling laws describe how the performance of language models improves predictably as we
+			increase compute, data, and model size. They enable researchers to make informed decisions
+			about resource allocation without expensive trial-and-error at scale.
+		</p>
+		<div class="mt-4 flex flex-wrap gap-3">
+			<span
+				class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-[var(--color-accent)] text-[var(--text-small)]"
+			>
+				Power Laws
+			</span>
+			<span
+				class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-[var(--color-accent)] text-[var(--text-small)]"
+			>
+				Compute-Optimal
+			</span>
+			<span
+				class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-[var(--color-accent)] text-[var(--text-small)]"
+			>
+				Hyperparameter Transfer
+			</span>
 		</div>
-	</section>
+	</HeroSection>
 
 	<!-- Motivating Question -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-accent)]">
-			{motivatingQuestion.title}
-		</h3>
-		<div class="mb-4 rounded-lg border-l-4 border-[var(--color-primary)] bg-[var(--color-bg)] p-4">
-			<p class="text-lg font-medium text-[var(--color-text)]">{motivatingQuestion.scenario}</p>
-		</div>
-		<p class="text-[var(--color-muted)]">{motivatingQuestion.insight}</p>
-	</section>
+	<Section title="The Core Question">
+		<ContentBox variant="dark" class="border-l-4 border-[var(--color-primary)]">
+			<p class="font-medium text-[var(--color-text)] text-[var(--text-body)]">
+				You have 100,000 H100 GPUs for a month. How do you build the best open-source LLM?
+			</p>
+		</ContentBox>
+		<p class="mt-4 text-[var(--color-muted)] text-[var(--text-small)]">
+			Scaling laws provide a principled answer: train small models to learn scaling behavior, then
+			extrapolate to determine the optimal model size and data requirements.
+		</p>
+	</Section>
 
 	<!-- Key Insights Grid -->
-	<section>
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">Key Insights</h3>
+	<Section title="Key Insights">
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 			{#each keyInsights as insight (insight.title)}
-				<div
-					class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-5 transition-colors hover:border-[var(--color-primary)]/50"
-				>
+				<ContentBox variant="dark" class="transition-colors hover:border-[var(--color-primary)]/50">
 					<div class="flex items-start gap-3">
 						<span class="text-2xl">{insight.icon}</span>
 						<div>
 							<h4 class="mb-1 font-semibold text-[var(--color-text)]">{insight.title}</h4>
-							<p class="text-sm text-[var(--color-muted)]">{insight.description}</p>
+							<p class="text-[var(--color-muted)] text-[var(--text-small)]">
+								{insight.description}
+							</p>
 						</div>
 					</div>
-				</div>
+				</ContentBox>
 			{/each}
 		</div>
-	</section>
+	</Section>
 
 	<!-- Power Law Visualization -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">The Power Law Relationship</h3>
+	<Section title="The Power Law Relationship">
 		<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
 			<div>
-				<p class="mb-4 text-[var(--color-muted)]">
+				<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
 					Loss scales as a power law with compute (C), data (D), and model parameters (N):
 				</p>
-				<div class="rounded-lg bg-[var(--color-bg)] p-4 text-center font-mono">
-					<p class="text-lg text-[var(--color-accent)]">
+				<ContentBox variant="dark" class="text-center font-mono">
+					<p class="text-[var(--color-accent)] text-[var(--text-body)]">
 						L(C) = (C<sub>c</sub> / C)<sup>α<sub>C</sub></sup>
 					</p>
-					<p class="mt-2 text-lg text-[var(--color-accent)]">
+					<p class="mt-2 text-[var(--color-accent)] text-[var(--text-body)]">
 						L(N) = (N<sub>c</sub> / N)<sup>α<sub>N</sub></sup>
 					</p>
-					<p class="mt-2 text-lg text-[var(--color-accent)]">
+					<p class="mt-2 text-[var(--color-accent)] text-[var(--text-body)]">
 						L(D) = (D<sub>c</sub> / D)<sup>α<sub>D</sub></sup>
 					</p>
-				</div>
-				<p class="mt-3 text-sm text-[var(--color-muted)]">
+				</ContentBox>
+				<p class="mt-3 text-[var(--color-muted)] text-[var(--text-tiny)]">
 					Where α values represent the scaling exponents (typically 0.05-0.13 for language models).
 				</p>
 			</div>
@@ -169,7 +168,7 @@
 						<span class="h-3 w-3 rounded-full bg-red-500"></span>
 						<div>
 							<span class="font-medium text-[var(--color-text)]">Best Guess Region</span>
-							<span class="ml-2 text-sm text-[var(--color-muted)]"
+							<span class="ml-2 text-[var(--color-muted)] text-[var(--text-small)]"
 								>- Random/baseline performance</span
 							>
 						</div>
@@ -178,14 +177,16 @@
 						<span class="h-3 w-3 rounded-full bg-[var(--color-primary)]"></span>
 						<div>
 							<span class="font-medium text-[var(--color-text)]">Power Law Region</span>
-							<span class="ml-2 text-sm text-[var(--color-muted)]">- Predictable scaling</span>
+							<span class="ml-2 text-[var(--color-muted)] text-[var(--text-small)]"
+								>- Predictable scaling</span
+							>
 						</div>
 					</div>
 					<div class="flex items-center gap-3">
 						<span class="h-3 w-3 rounded-full bg-green-500"></span>
 						<div>
 							<span class="font-medium text-[var(--color-text)]">Asymptotic Region</span>
-							<span class="ml-2 text-sm text-[var(--color-muted)]"
+							<span class="ml-2 text-[var(--color-muted)] text-[var(--text-small)]"
 								>- Approaching irreducible error</span
 							>
 						</div>
@@ -193,61 +194,56 @@
 				</div>
 			</div>
 		</div>
-	</section>
+	</Section>
 
 	<!-- Lecture Coverage -->
-	<section>
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">What You'll Learn</h3>
+	<Section title="What You'll Learn">
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 			{#each lectureTopics as lecture (lecture.lecture)}
-				<div
-					class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-5"
-				>
+				<ContentBox variant="dark">
 					<h4 class="mb-3 font-semibold text-[var(--color-accent)]">{lecture.lecture}</h4>
 					<ul class="space-y-2">
 						{#each lecture.topics as topic, i (i)}
-							<li class="flex items-center gap-2 text-[var(--color-muted)]">
+							<li
+								class="flex items-center gap-2 text-[var(--color-muted)] text-[var(--text-small)]"
+							>
 								<span class="h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]"></span>
 								{topic}
 							</li>
 						{/each}
 					</ul>
-				</div>
+				</ContentBox>
 			{/each}
 		</div>
-	</section>
+	</Section>
 
 	<!-- Why This Matters -->
-	<section
-		class="rounded-xl border border-[var(--color-accent)]/30 bg-gradient-to-r from-[var(--color-accent)]/10 to-[var(--color-primary)]/10 p-6"
-	>
-		<h3 class="mb-3 text-xl font-semibold text-[var(--color-text)]">Why Scaling Laws Matter</h3>
-		<div class="grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
-			<div>
+	<Section title="Why Scaling Laws Matter">
+		<div class="grid grid-cols-1 gap-4 text-[var(--text-small)] md:grid-cols-3">
+			<ContentBox variant="dark" class="border border-[var(--color-accent)]/30">
 				<h4 class="mb-2 font-medium text-[var(--color-accent)]">Resource Planning</h4>
 				<p class="text-[var(--color-muted)]">
 					Predict compute, data, and time requirements before committing to expensive training runs.
 				</p>
-			</div>
-			<div>
+			</ContentBox>
+			<ContentBox variant="dark" class="border border-[var(--color-accent)]/30">
 				<h4 class="mb-2 font-medium text-[var(--color-accent)]">Architecture Decisions</h4>
 				<p class="text-[var(--color-muted)]">
 					Choose optimal model width, depth, and batch size based on principled analysis.
 				</p>
-			</div>
-			<div>
+			</ContentBox>
+			<ContentBox variant="dark" class="border border-[var(--color-accent)]/30">
 				<h4 class="mb-2 font-medium text-[var(--color-accent)]">Cost Efficiency</h4>
 				<p class="text-[var(--color-muted)]">
 					Avoid over-training or under-training by finding the compute-optimal balance.
 				</p>
-			</div>
+			</ContentBox>
 		</div>
-	</section>
+	</Section>
 
 	<!-- References Section -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">References</h3>
-		<ol class="space-y-2">
+	<Section title="References">
+		<ul class="space-y-2 text-[var(--text-small)]">
 			{#each references as ref, i (ref.title)}
 				<li class="flex items-start gap-3">
 					<span class="font-medium text-[var(--color-primary)]">{i + 1}.</span>
@@ -261,11 +257,20 @@
 							{ref.title}
 						</a>
 						{#if ref.authors}
-							<span class="text-sm text-[var(--color-muted)]"> — {ref.authors}</span>
+							<span class="text-[var(--color-muted)]"> — {ref.authors}</span>
 						{/if}
 					</div>
 				</li>
 			{/each}
-		</ol>
-	</section>
+		</ul>
+	</Section>
+
+	<KeyTakeaway
+		items={[
+			'Loss follows power laws: L(x) = (x_c / x)^α for compute, data, and model size',
+			'Chinchilla ratio: ~20 tokens per parameter for compute-optimal training',
+			'muP enables zero-shot hyperparameter transfer from small to large models',
+			'Modern labs (Cerebras, MiniCPM, DeepSeek) use scaling laws for efficient training'
+		]}
+	/>
 </div>

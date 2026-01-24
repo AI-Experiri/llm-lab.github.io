@@ -1,95 +1,21 @@
+<!-- ABOUTME: Overview page for LLM Inference fundamentals -->
+<!-- ABOUTME: Covers why inference matters, key metrics, and compute analysis -->
+
 <script>
-	// Historical timeline of inference improvements
-	const inferenceTimeline = [
-		{
-			year: '2017',
-			name: 'Attention Is All You Need',
-			contribution: 'Transformer architecture with Multi-Head Attention',
-			tokens: 'Foundation',
-			icon: '🔬',
-			link: 'https://arxiv.org/abs/1706.03762'
-		},
-		{
-			year: '2019',
-			name: 'Grouped-Query Attention',
-			contribution: 'Share KV heads across query heads to reduce KV cache',
-			tokens: 'N/K reduction',
-			icon: '🎯',
-			link: 'https://arxiv.org/abs/1911.02150'
-		},
-		{
-			year: '2020',
-			name: 'GPT-3 / Scaling Laws',
-			contribution: 'Established compute-optimal training, inference at scale',
-			tokens: '175B params',
-			icon: '📈',
-			link: 'https://arxiv.org/abs/2005.14165'
-		},
-		{
-			year: '2022',
-			name: 'FlashAttention',
-			contribution: 'IO-aware exact attention, tiling for memory efficiency',
-			tokens: '2-4x speedup',
-			icon: '⚡',
-			link: 'https://arxiv.org/abs/2205.14135'
-		},
-		{
-			year: '2023',
-			name: 'LLM.int8()',
-			contribution: 'Mixed-precision quantization with outlier handling',
-			tokens: 'fp16→int8',
-			icon: '🔢',
-			link: 'https://arxiv.org/abs/2208.07339'
-		},
-		{
-			year: '2023',
-			name: 'Speculative Decoding',
-			contribution: 'Use draft model to predict, verify in parallel',
-			tokens: '2-3x speedup',
-			icon: '🚀',
-			link: 'https://arxiv.org/abs/2302.01318'
-		},
-		{
-			year: '2023',
-			name: 'vLLM / PagedAttention',
-			contribution: 'OS-style paging for KV cache, continuous batching',
-			tokens: '24x throughput',
-			icon: '📄',
-			link: 'https://arxiv.org/abs/2309.06180'
-		},
-		{
-			year: '2024',
-			name: 'Mamba / State Space',
-			contribution: 'Linear-time sequence modeling as Transformer alternative',
-			tokens: 'O(n) complexity',
-			icon: '🐍',
-			link: 'https://arxiv.org/abs/2312.00752'
-		},
-		{
-			year: '2024',
-			name: 'Multi-Head Latent Attention',
-			contribution: 'Project KV to lower dimension (DeepSeek v2)',
-			tokens: '32x reduction',
-			icon: '🎭',
-			link: 'https://arxiv.org/abs/2405.04434'
-		},
-		{
-			year: '2024',
-			name: 'EAGLE / Medusa',
-			contribution: 'Multi-token speculative decoding with learned draft',
-			tokens: '3x speedup',
-			icon: '🦅',
-			link: 'https://arxiv.org/abs/2401.15077'
-		},
-		{
-			year: '2025',
-			name: 'Diffusion LLMs',
-			contribution: 'Parallel token generation via diffusion process',
-			tokens: '10x faster coding',
-			icon: '🌊',
-			link: 'https://arxiv.org/abs/2502.09992'
-		}
-	];
+	import { HeroSection, Section, ContentBox, KeyTakeaway, Math } from '$lib/shared';
+
+	// Formulas stored as constants to avoid template parsing issues
+	const formulas = {
+		intensity: '\\text{Arithmetic Intensity} = \\frac{\\text{FLOPs}}{\\text{Memory Accesses}}',
+		matmulFlops: '\\text{FLOPs} = 2mnk',
+		matmulMemory: '\\text{Memory} = (mn + nk + mk) \\times \\text{bytes}',
+		intensityPrefill: 'S/2',
+		intensityGen: '<1',
+		intensityBT: 'B \\cdot T',
+		intensityST: '\\frac{S \\cdot T}{S + T}',
+		threshold: '295',
+		sixN: '6N'
+	};
 
 	// Key metrics
 	const keyMetrics = [
@@ -97,31 +23,28 @@
 			name: 'TTFT',
 			fullName: 'Time to First Token',
 			description: 'How long until the first token is generated',
-			importance: 'Critical for interactive applications',
-			icon: '⏱️'
+			importance: 'Critical for interactive applications'
 		},
 		{
 			name: 'Latency',
 			fullName: 'Seconds per Token',
 			description: 'Time to generate each subsequent token',
-			importance: 'Determines perceived speed',
-			icon: '🏃'
+			importance: 'Determines perceived speed'
 		},
 		{
 			name: 'Throughput',
 			fullName: 'Tokens per Second',
 			description: 'Total tokens generated across all requests',
-			importance: 'Determines serving cost',
-			icon: '📊'
+			importance: 'Determines serving cost'
 		}
 	];
 
 	// Inference contexts
 	const inferenceContexts = [
-		{ context: 'Chatbots & Assistants', desc: 'Interactive Q&A, code completion', icon: '💬' },
-		{ context: 'Model Evaluation', desc: 'Running benchmarks, perplexity calculation', icon: '📋' },
-		{ context: 'Test-Time Compute', desc: 'Chain-of-thought, self-consistency', icon: '🧠' },
-		{ context: 'RL Training', desc: 'Sampling from policy during RLHF', icon: '🎮' }
+		{ context: 'Chatbots & Assistants', desc: 'Interactive Q&A, code completion' },
+		{ context: 'Model Evaluation', desc: 'Running benchmarks, perplexity calculation' },
+		{ context: 'Test-Time Compute', desc: 'Chain-of-thought, self-consistency' },
+		{ context: 'RL Training', desc: 'Sampling from policy during RLHF' }
 	];
 
 	// Arithmetic intensity analysis
@@ -154,112 +77,88 @@
 </script>
 
 <div class="space-y-6">
-	<!-- Hero Section -->
-	<div
-		class="rounded-2xl border border-[var(--color-primary)]/30 bg-gradient-to-br from-[var(--color-primary)]/20 to-pink-600/20 p-8"
-	>
-		<div class="flex items-start gap-4">
-			<div class="text-5xl">🚀</div>
-			<div>
-				<h2 class="mb-3 text-2xl font-bold text-[var(--color-text)] md:text-3xl">
-					Why Inference Efficiency Matters
-				</h2>
-				<p class="max-w-3xl text-lg leading-relaxed text-[var(--color-muted)]">
-					Training a model is a <span class="font-semibold text-[var(--color-primary)]"
-						>one-time cost</span
-					>. Inference happens
-					<span class="font-semibold text-[var(--color-primary)]">every time</span> someone uses the model.
-					A model trained once may be queried billions of times - making inference optimization critical
-					for cost and latency.
-				</p>
-				<div class="mt-4 flex flex-wrap gap-3">
-					<span
-						class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-sm text-[var(--color-accent)]"
-					>
-						Training: Parallelizable
-					</span>
-					<span
-						class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-sm text-[var(--color-accent)]"
-					>
-						Inference: Sequential
-					</span>
-					<span
-						class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-sm text-[var(--color-accent)]"
-					>
-						Generation: Memory-Limited
-					</span>
-				</div>
-			</div>
+	<HeroSection title="Why Inference Efficiency Matters">
+		<p class="max-w-3xl leading-relaxed text-[var(--color-muted)] text-[var(--text-body)]">
+			Training a model is a
+			<span class="font-semibold text-[var(--color-primary)]">one-time cost</span>. Inference
+			happens
+			<span class="font-semibold text-[var(--color-primary)]">every time</span> someone uses the model.
+			A model trained once may be queried billions of times - making inference optimization critical for
+			cost and latency.
+		</p>
+		<div class="mt-4 flex flex-wrap gap-3">
+			<span
+				class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-[var(--color-accent)] text-[var(--text-small)]"
+			>
+				Training: Parallelizable
+			</span>
+			<span
+				class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-[var(--color-accent)] text-[var(--text-small)]"
+			>
+				Inference: Sequential
+			</span>
+			<span
+				class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-[var(--color-accent)] text-[var(--text-small)]"
+			>
+				Generation: Memory-Limited
+			</span>
 		</div>
-	</div>
+	</HeroSection>
 
-	<!-- Inference Contexts -->
-	<div class="rounded-xl bg-[var(--color-secondary)] p-6">
-		<h2 class="mb-4 flex items-center gap-2 text-xl font-bold text-[var(--color-primary)]">
-			<span>🎯</span> Where Inference Happens
-		</h2>
-		<p class="mb-6 text-[var(--color-muted)]">
+	<!-- Where Inference Happens -->
+	<Section title="Where Inference Happens">
+		<p class="mb-6 text-[var(--color-muted)] text-[var(--text-small)]">
 			Inference isn't just chatbots - it appears throughout the ML pipeline in surprising places.
 		</p>
 		<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 			{#each inferenceContexts as ctx (ctx.context)}
-				<div
-					class="rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-4 transition-colors hover:border-[var(--color-primary)]/50"
+				<ContentBox
+					title={ctx.context}
+					variant="dark"
+					class="transition-colors hover:border-[var(--color-primary)]/50"
 				>
-					<div class="mb-2 text-3xl">{ctx.icon}</div>
-					<h3 class="mb-1 text-sm font-bold text-[var(--color-text)]">{ctx.context}</h3>
-					<p class="text-xs text-[var(--color-muted)]">{ctx.desc}</p>
-				</div>
+					<p class="text-[var(--color-muted)] text-[var(--text-tiny)]">{ctx.desc}</p>
+				</ContentBox>
 			{/each}
 		</div>
-	</div>
+	</Section>
 
-	<!-- Key Metrics -->
-	<div class="rounded-xl bg-[var(--color-secondary)] p-6">
-		<h2 class="mb-4 flex items-center gap-2 text-xl font-bold text-[var(--color-primary)]">
-			<span>📊</span> Key Performance Metrics
-		</h2>
+	<!-- Key Performance Metrics -->
+	<Section title="Key Performance Metrics">
 		<div class="grid gap-4 md:grid-cols-3">
 			{#each keyMetrics as metric (metric.name)}
-				<div
-					class="rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-5 transition-colors hover:border-[var(--color-primary)]/50"
-				>
-					<div class="mb-3 flex items-center gap-3">
-						<span class="text-3xl">{metric.icon}</span>
-						<div>
-							<h3 class="font-bold text-[var(--color-accent)]">{metric.name}</h3>
-							<span class="text-xs text-[var(--color-muted)]">{metric.fullName}</span>
-						</div>
+				<ContentBox variant="dark" class="transition-colors hover:border-[var(--color-primary)]/50">
+					<div class="mb-3">
+						<h3 class="font-bold text-[var(--color-primary)]">{metric.name}</h3>
+						<span class="text-[var(--color-muted)] text-[var(--text-tiny)]">{metric.fullName}</span>
 					</div>
-					<p class="mb-2 text-sm text-[var(--color-muted)]">{metric.description}</p>
+					<p class="mb-2 text-[var(--color-muted)] text-[var(--text-small)]">
+						{metric.description}
+					</p>
 					<div
-						class="rounded bg-[var(--color-secondary)] px-2 py-1 text-xs text-[var(--color-text)]/70"
+						class="rounded bg-[var(--color-secondary)] px-2 py-1 text-[var(--color-text)]/70 text-[var(--text-tiny)]"
 					>
 						{metric.importance}
 					</div>
-				</div>
+				</ContentBox>
 			{/each}
 		</div>
-	</div>
+	</Section>
 
 	<!-- Two Stages of Inference -->
-	<div class="rounded-xl bg-[var(--color-secondary)] p-6">
-		<h2 class="mb-4 flex items-center gap-2 text-xl font-bold text-[var(--color-primary)]">
-			<span>🔄</span> Two Stages of Inference
-		</h2>
-		<p class="mb-6 text-[var(--color-muted)]">
+	<Section title="Two Stages of Inference">
+		<p class="mb-6 text-[var(--color-muted)] text-[var(--text-small)]">
 			Inference has fundamentally different compute characteristics depending on the stage.
 		</p>
 		<div class="grid gap-6 md:grid-cols-2">
-			<div class="rounded-lg border-2 border-green-500/30 bg-[var(--color-bg)] p-5">
-				<div class="mb-3 flex items-center gap-3">
-					<span class="text-3xl">📥</span>
-					<div>
-						<h3 class="font-bold text-green-400">Prefill Stage</h3>
-						<span class="text-xs text-[var(--color-muted)]">Processing the prompt</span>
-					</div>
+			<ContentBox variant="dark" class="border-2 border-green-500/30">
+				<div class="mb-3">
+					<h3 class="font-bold text-green-400">Prefill Stage</h3>
+					<span class="text-[var(--color-muted)] text-[var(--text-tiny)]"
+						>Processing the prompt</span
+					>
 				</div>
-				<ul class="space-y-2 text-sm text-[var(--color-muted)]">
+				<ul class="space-y-2 text-[var(--color-muted)] text-[var(--text-small)]">
 					<li class="flex items-start gap-2">
 						<span class="text-green-400">+</span>
 						<span
@@ -278,20 +177,21 @@
 						>
 					</li>
 				</ul>
-				<div class="mt-3 rounded bg-[var(--color-secondary)] p-2 text-xs">
-					<span class="text-[var(--color-accent)]">Arithmetic Intensity:</span> S/2 (high for long prompts)
+				<div class="mt-3 rounded bg-[var(--color-secondary)] p-2 text-[var(--text-tiny)]">
+					<span class="text-[var(--color-muted)]">Arithmetic Intensity:</span>
+					<span class="font-mono text-[var(--color-accent)]">S/2</span>
+					<span class="text-[var(--color-muted)]">(high for long prompts)</span>
 				</div>
-			</div>
+			</ContentBox>
 
-			<div class="rounded-lg border-2 border-red-500/30 bg-[var(--color-bg)] p-5">
-				<div class="mb-3 flex items-center gap-3">
-					<span class="text-3xl">📤</span>
-					<div>
-						<h3 class="font-bold text-red-400">Generation Stage</h3>
-						<span class="text-xs text-[var(--color-muted)]">Producing output tokens</span>
-					</div>
+			<ContentBox variant="dark" class="border-2 border-red-500/30">
+				<div class="mb-3">
+					<h3 class="font-bold text-red-400">Generation Stage</h3>
+					<span class="text-[var(--color-muted)] text-[var(--text-tiny)]"
+						>Producing output tokens</span
+					>
 				</div>
-				<ul class="space-y-2 text-sm text-[var(--color-muted)]">
+				<ul class="space-y-2 text-[var(--color-muted)] text-[var(--text-small)]">
 					<li class="flex items-start gap-2">
 						<span class="text-red-400">-</span>
 						<span>Generate tokens <span class="text-[var(--color-text)]">one at a time</span></span>
@@ -307,35 +207,39 @@
 						>
 					</li>
 				</ul>
-				<div class="mt-3 rounded bg-[var(--color-secondary)] p-2 text-xs">
-					<span class="text-[var(--color-accent)]">Arithmetic Intensity:</span> &lt;1 (very low!)
+				<div class="mt-3 rounded bg-[var(--color-secondary)] p-2 text-[var(--text-tiny)]">
+					<span class="text-[var(--color-muted)]">Arithmetic Intensity:</span>
+					<span class="font-mono text-[var(--color-accent)]">&lt;1</span>
+					<span class="text-[var(--color-muted)]">(very low!)</span>
 				</div>
-			</div>
+			</ContentBox>
 		</div>
-	</div>
+	</Section>
 
-	<!-- Arithmetic Intensity -->
-	<div class="rounded-xl bg-[var(--color-secondary)] p-6">
-		<h2 class="mb-4 flex items-center gap-2 text-xl font-bold text-[var(--color-primary)]">
-			<span>⚡</span> Arithmetic Intensity Analysis
-		</h2>
-		<p class="mb-4 text-[var(--color-muted)]">
-			H100 GPU has arithmetic intensity of <span class="font-mono text-[var(--color-accent)]"
-				>295 FLOPs/byte</span
-			>. Operations are compute-limited if intensity &gt; 295, memory-limited if &lt; 295.
+	<!-- Arithmetic Intensity Analysis -->
+	<Section title="Arithmetic Intensity Analysis">
+		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
+			H100 GPU has arithmetic intensity of
+			<span class="font-mono text-[var(--color-accent)]">295 FLOPs/byte</span>. Operations are
+			compute-limited if intensity
+			<span class="font-mono text-[var(--color-accent)]">&gt; 295</span>, memory-limited if
+			<span class="font-mono text-[var(--color-accent)]">&lt; 295</span>.
 		</p>
 
-		<div class="mb-4 rounded-lg bg-[var(--color-bg)] p-4">
-			<div class="mb-2 font-mono text-sm text-[var(--color-accent)]">
-				Arithmetic Intensity = FLOPs / Memory Accesses
+		<ContentBox variant="dark" class="mb-4">
+			<div class="mb-2 text-center text-[var(--text-small)]">
+				<Math formula={formulas.intensity} />
 			</div>
-			<p class="text-xs text-[var(--color-muted)]">
-				For matrix multiplication W @ x: FLOPs = 2*m*n*k, Memory = (m*n + n*k + m*k) * bytes
+			<p class="mt-3 text-center text-[var(--text-tiny)]">
+				<span class="text-[var(--color-muted)]">For matrix multiplication:</span>
+				<Math formula={formulas.matmulFlops} />
+				<span class="text-[var(--color-muted)]">,</span>
+				<Math formula={formulas.matmulMemory} />
 			</p>
-		</div>
+		</ContentBox>
 
 		<div class="overflow-x-auto">
-			<table class="w-full text-sm">
+			<table class="w-full text-[var(--text-small)]">
 				<thead>
 					<tr class="border-b border-[var(--color-muted)]/20 text-left text-[var(--color-muted)]">
 						<th class="pr-4 pb-3">Operation</th>
@@ -350,7 +254,7 @@
 							<td class="py-3 pr-4 font-mono text-[var(--color-accent)]">{item.intensity}</td>
 							<td class="py-3">
 								<span
-									class="rounded px-2 py-0.5 text-xs {item.color === 'green'
+									class="rounded px-2 py-0.5 text-[var(--text-tiny)] {item.color === 'green'
 										? 'bg-green-500/20 text-green-400'
 										: item.color === 'red'
 											? 'bg-red-500/20 text-red-400'
@@ -365,137 +269,82 @@
 			</table>
 		</div>
 
-		<div class="mt-4 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
-			<p class="text-sm text-amber-200">
-				<span class="font-semibold">Key insight:</span> During generation, we do matrix-vector products
-				(B=1). With arithmetic intensity ~1 vs GPU's 295 FLOPs/byte, we waste 99%+ of compute capability!
+		<KeyTakeaway title="Key insight" class="mt-4">
+			<p>
+				During generation, we do matrix-vector products
+				<span class="font-mono text-[var(--color-accent)]">(B=1)</span>. With arithmetic intensity
+				<span class="font-mono text-[var(--color-accent)]">~1</span>
+				vs GPU's
+				<span class="font-mono text-[var(--color-accent)]">295 FLOPs/byte</span>, we waste 99%+ of
+				compute capability!
 			</p>
-		</div>
-	</div>
+		</KeyTakeaway>
+	</Section>
 
-	<!-- Historical Timeline -->
-	<div class="rounded-xl bg-[var(--color-secondary)] p-6">
-		<h2 class="mb-4 flex items-center gap-2 text-xl font-bold text-[var(--color-primary)]">
-			<span>📅</span> Historical Evolution of Inference Optimization
-		</h2>
-		<p class="mb-6 text-[var(--color-muted)]">
-			Key papers and techniques that have improved LLM inference efficiency over time.
-		</p>
-		<div class="relative">
-			<!-- Timeline line -->
-			<div
-				class="absolute top-0 bottom-0 left-6 w-0.5 bg-gradient-to-b from-[var(--color-primary)] to-pink-600"
-			></div>
+	<KeyTakeaway
+		items={[
+			'Training is one-time, inference is forever. Optimization effort at inference has multiplicative returns.',
+			'Generation is memory-limited. Matrix-vector products have arithmetic intensity ~1, wasting GPU compute.',
+			'Prefill vs Generation are different. Prefill is parallelizable and compute-limited; generation is sequential and memory-limited.',
+			'Batching helps MLP but not attention. Attention intensity depends on sequence length, not batch size.'
+		]}
+	/>
 
-			<div class="space-y-4">
-				{#each inferenceTimeline as item (item.name)}
-					<div class="relative flex items-center gap-4 pl-14">
-						<!-- Timeline dot -->
-						<div
-							class="absolute left-4 flex h-5 w-5 items-center justify-center rounded-full border-2 border-[var(--color-primary)] bg-[var(--color-bg)]"
-						>
-							<div class="h-2 w-2 rounded-full bg-[var(--color-primary)]"></div>
-						</div>
-
-						<a
-							href={item.link}
-							target="_blank"
-							rel="noopener noreferrer external"
-							class="group flex-1 rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-4 transition-colors hover:border-[var(--color-primary)]/40"
-						>
-							<div class="grid grid-cols-[auto_1fr_auto_auto] items-center gap-4">
-								<!-- Year -->
-								<span class="font-mono text-sm text-[var(--color-accent)]">{item.year}</span>
-								<!-- Name -->
-								<div class="flex items-center gap-2">
-									<span class="text-xl">{item.icon}</span>
-									<div>
-										<span
-											class="font-bold text-[var(--color-text)] transition-colors group-hover:text-[var(--color-primary)]"
-											>{item.name}</span
-										>
-										<p class="hidden text-xs text-[var(--color-muted)] sm:block">
-											{item.contribution}
-										</p>
-									</div>
-								</div>
-								<!-- Impact -->
-								<span
-									class="rounded bg-[var(--color-primary)]/20 px-2 py-0.5 font-mono text-sm text-[var(--color-primary)]"
-								>
-									{item.tokens}
-								</span>
-								<!-- Link arrow -->
-								<span
-									class="text-[var(--color-muted)] transition-colors group-hover:text-[var(--color-primary)]"
-									>↗</span
-								>
-							</div>
-						</a>
-					</div>
-				{/each}
-			</div>
-		</div>
-	</div>
-
-	<!-- Key Takeaways -->
-	<div
-		class="rounded-xl border border-[var(--color-primary)]/20 bg-gradient-to-br from-[var(--color-primary)]/10 to-pink-600/10 p-6"
-	>
-		<h2 class="mb-4 flex items-center gap-2 text-xl font-bold text-[var(--color-text)]">
-			<span>💡</span> Key Takeaways
-		</h2>
-		<div class="grid gap-4 sm:grid-cols-2">
-			<div class="flex items-start gap-3">
-				<div
-					class="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)]/20 text-sm font-bold text-[var(--color-primary)]"
-				>
-					1
-				</div>
-				<p class="text-sm text-[var(--color-muted)]">
-					<span class="font-semibold text-[var(--color-text)]"
-						>Training is one-time, inference is forever.</span
+	<!-- References -->
+	<Section title="References">
+		<ul class="space-y-2 text-[var(--text-tiny)]">
+			<li class="flex items-start gap-2">
+				<span class="text-[var(--color-primary)]">1.</span>
+				<span class="text-[var(--color-muted)]">
+					<a
+						href="https://www.youtube.com/watch?v=ZxWJ1rAHoV0&list=PLoROMvodv4rOY23Y0BoGoBGgQ1zmU_MT_&index=11"
+						target="_blank"
+						rel="noopener noreferrer external"
+						class="text-[var(--color-primary)] underline transition-colors hover:text-pink-400"
 					>
-					Optimization effort at inference has multiplicative returns.
-				</p>
-			</div>
-			<div class="flex items-start gap-3">
-				<div
-					class="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)]/20 text-sm font-bold text-[var(--color-primary)]"
-				>
-					2
-				</div>
-				<p class="text-sm text-[var(--color-muted)]">
-					<span class="font-semibold text-[var(--color-text)]">Generation is memory-limited.</span>
-					Matrix-vector products have arithmetic intensity ~1, wasting GPU compute.
-				</p>
-			</div>
-			<div class="flex items-start gap-3">
-				<div
-					class="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)]/20 text-sm font-bold text-[var(--color-primary)]"
-				>
-					3
-				</div>
-				<p class="text-sm text-[var(--color-muted)]">
-					<span class="font-semibold text-[var(--color-text)]"
-						>Prefill vs Generation are different.</span
+						Stanford CS336: Language Modeling from Scratch | Spring 2025 | Lecture 10: Inference
+					</a>
+				</span>
+			</li>
+			<li class="flex items-start gap-2">
+				<span class="text-[var(--color-primary)]">2.</span>
+				<span class="text-[var(--color-muted)]">
+					<a
+						href="https://arxiv.org/abs/2309.06180"
+						target="_blank"
+						rel="noopener noreferrer external"
+						class="text-[var(--color-primary)] underline transition-colors hover:text-pink-400"
 					>
-					Prefill is parallelizable and compute-limited; generation is sequential and memory-limited.
-				</p>
-			</div>
-			<div class="flex items-start gap-3">
-				<div
-					class="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)]/20 text-sm font-bold text-[var(--color-primary)]"
-				>
-					4
-				</div>
-				<p class="text-sm text-[var(--color-muted)]">
-					<span class="font-semibold text-[var(--color-text)]"
-						>Batching helps MLP but not attention.</span
+						Efficient Memory Management for Large Language Model Serving with PagedAttention (vLLM)
+					</a>
+				</span>
+			</li>
+			<li class="flex items-start gap-2">
+				<span class="text-[var(--color-primary)]">3.</span>
+				<span class="text-[var(--color-muted)]">
+					<a
+						href="https://arxiv.org/abs/2205.14135"
+						target="_blank"
+						rel="noopener noreferrer external"
+						class="text-[var(--color-primary)] underline transition-colors hover:text-pink-400"
 					>
-					Attention intensity depends on sequence length, not batch size.
-				</p>
-			</div>
-		</div>
-	</div>
+						FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness
+					</a>
+				</span>
+			</li>
+			<li class="flex items-start gap-2">
+				<span class="text-[var(--color-primary)]">4.</span>
+				<span class="text-[var(--color-muted)]">
+					<a
+						href="https://arxiv.org/abs/2302.01318"
+						target="_blank"
+						rel="noopener noreferrer external"
+						class="text-[var(--color-primary)] underline transition-colors hover:text-pink-400"
+					>
+						Fast Inference from Transformers via Speculative Decoding
+					</a>
+				</span>
+			</li>
+		</ul>
+	</Section>
 </div>

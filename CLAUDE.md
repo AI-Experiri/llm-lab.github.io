@@ -56,6 +56,8 @@ Only pause to ask for confirmation when:
 ## Writing code
 
 - When submitting work, verify that you have FOLLOWED ALL RULES. (See Rule #1)
+- YOU MUST fix all linter warnings and errors. Code quality must pass with 0 warnings and 0 errors.
+- YOU MUST NEVER use ESLint disable comments (`eslint-disable`, `eslint-disable-next-line`, `@ts-ignore`, etc.) to suppress warnings or errors. If you encounter a warning/error that seems unfixable, YOU MUST STOP and communicate the issue to Jay instead of suppressing it.
 - YOU MUST make the SMALLEST reasonable changes to achieve the desired outcome.
 - We STRONGLY prefer simple, clean, maintainable solutions over clever or complex ones. Readability and maintainability are PRIMARY CONCERNS, even at the cost of conciseness or performance.
 - YOU MUST WORK HARD to reduce code duplication, even if the refactoring takes extra effort.
@@ -186,3 +188,50 @@ when changing drawings for attention flow diagrams
 2. This is a Vite + Svelte 5 project, always use runes ($state, $derived, $effect, $props, $bindable).
 3. Main visualization lives in src/App.svelte with components in src/lib/components/
 4. Positional encoding utilities are in src/lib/utils/positionalEncoding.js
+5. All lectures from which the web page content are derived are in docs/references/2025/
+6. Each page name maps to a folder inside docs/references/2025/ based on lectures from Stanford CS336 Spring 2025 (https://stanford-cs336.github.io/spring2025/index.html#schedule)
+
+## Design System Constraints
+
+**Component locations:**
+
+- `src/lib/layout/` - PageLayout, PageHeader, TabBar, Footer
+- `src/lib/shared/` - Section, ContentBox, Timeline, KeyPoint, CodeBlock, ComparisonGrid, ReferenceLink, StepList, LabCard
+
+**Page structure (all labs):**
+
+- Overview tab (default landing) + Timeline tab + Topic tabs (no "Home" tab)
+- Timeline tab MUST include Timeline component with historical evolution
+- Uniform tabs: pink active (`--color-primary`), muted inactive
+- Footer: OHGOD Models, Debug Arguments | bicepjai, "Created with claude"
+
+**Home page:**
+
+- Title: "LLM Lab", Subtitle: "Language Modeling from Scratch"
+- LabCard grid (keep current card design)
+- Same PageHeader/Footer as other pages
+
+**Content components (use these, don't inline styles):**
+
+- Section: rounded container with optional title
+- ContentBox: inner box (default/dark variants)
+- Timeline: vertical timeline with year markers
+- KeyPoint: bordered highlight for insights
+- CodeBlock: code/formula display
+- ComparisonGrid: side-by-side comparisons
+- ReferenceLink: paper/source links
+- StepList: numbered steps
+
+**Theme:** Vibrant technical - colorful content, consistent pink/cyan accents. All theming controlled from shared components.
+
+**Font sizing (MUST use CSS variables, not hardcoded Tailwind):**
+
+- `text-[var(--text-tiny)]` - smallest text (labels, badges, code blocks)
+- `text-[var(--text-small)]` - body text, descriptions
+- `text-[var(--text-body)]` - larger body text
+- `text-[var(--text-h2)]` - section headings
+- `text-[var(--text-h3)]` - subsection headings
+
+NEVER use `text-xs`, `text-sm`, `text-base` directly. Always use CSS variables so font sizes can be changed globally from `app.css`.
+
+**Inline formulas/code:** Use `InlineCode` component or `font-mono text-[var(--color-accent)]` for formulas within text.

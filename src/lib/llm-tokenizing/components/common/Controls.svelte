@@ -33,31 +33,31 @@
 				<button
 					onclick={onStart}
 					disabled={!canStart}
-					class="px-4 py-1.5 {startColor} rounded-lg text-sm font-medium text-white disabled:opacity-50"
+					class="px-4 py-1.5 {startColor} rounded-lg font-medium text-[var(--text-small)] text-white disabled:opacity-50"
 					>Start</button
 				>
 				<button
 					onclick={onBack}
 					disabled={!canBack}
-					class="rounded-lg bg-slate-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-500 disabled:opacity-50"
+					class="rounded-lg bg-slate-600 px-3 py-1.5 font-medium text-[var(--text-small)] text-white hover:bg-slate-500 disabled:opacity-50"
 					>←</button
 				>
 				<button
 					onclick={onStep}
 					disabled={!canStep}
-					class="rounded-lg bg-slate-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-500 disabled:opacity-50"
+					class="rounded-lg bg-slate-600 px-3 py-1.5 font-medium text-[var(--text-small)] text-white hover:bg-slate-500 disabled:opacity-50"
 					>→</button
 				>
 				<button
 					onclick={onPlay}
 					disabled={!canPlay}
-					class="rounded-lg bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
+					class="rounded-lg bg-emerald-600 px-4 py-1.5 font-medium text-[var(--text-small)] text-white hover:bg-emerald-500 disabled:opacity-50"
 					>{isPlaying ? 'Pause' : 'Play'}</button
 				>
 				<button
 					onclick={onReset}
 					disabled={!canReset}
-					class="rounded-lg bg-slate-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-slate-500 disabled:opacity-50"
+					class="rounded-lg bg-slate-600 px-4 py-1.5 font-medium text-[var(--text-small)] text-white hover:bg-slate-500 disabled:opacity-50"
 					>Reset</button
 				>
 			</div>
@@ -67,7 +67,7 @@
 		<div
 			class="bg-gradient-to-r {gradientFrom} {gradientTo} flex items-center justify-center rounded-lg px-3 py-2"
 		>
-			<p class="text-center text-sm font-medium text-white">{statusMessage}</p>
+			<p class="text-center font-medium text-[var(--text-small)] text-white">{statusMessage}</p>
 		</div>
 	</div>
 </div>

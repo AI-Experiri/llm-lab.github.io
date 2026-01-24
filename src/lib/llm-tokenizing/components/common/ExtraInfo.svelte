@@ -5,7 +5,9 @@
 </script>
 
 <div class="rounded-xl bg-white/10 p-3 backdrop-blur">
-	<div class="flex flex-wrap items-center justify-center gap-4 text-xs lg:justify-start">
+	<div
+		class="flex flex-wrap items-center justify-center gap-4 text-[var(--text-tiny)] lg:justify-start"
+	>
 		{#if label}
 			<span class="font-medium text-slate-400">{label}</span>
 		{/if}

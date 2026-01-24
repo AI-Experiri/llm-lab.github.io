@@ -1,19 +1,8 @@
+<!-- ABOUTME: muP (Maximum Update Parametrization) deep dive -->
+<!-- ABOUTME: Uses shared components for consistent styling -->
+
 <script>
-	const keyPapers = [
-		{
-			title:
-				'Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer',
-			authors: 'Yang et al. (2022)',
-			url: 'https://arxiv.org/abs/2203.03466',
-			description: 'The muP paper - enables hyperparameter transfer across model widths'
-		},
-		{
-			title: 'A Large-Scale Exploration of μ-Transfer',
-			authors: 'Lingle (2024)',
-			url: 'https://arxiv.org/abs/2404.05728',
-			description: 'Empirical validation of muP with extensive ablation studies'
-		}
-	];
+	import { HeroSection, Section, ContentBox, KeyTakeaway, Math } from '$lib/shared';
 
 	const coreProblem = {
 		title: 'The Hyperparameter Transfer Problem',
@@ -26,59 +15,58 @@
 	const conditions = [
 		{
 			name: 'Condition A1: Activation Stability',
-			formula: 'Activations at initialization remain O(1) as width increases',
+			formula: '\\text{Activations at initialization remain } O(1) \\text{ as width increases}',
 			explanation:
 				'All hidden activations should have constant variance regardless of model width. This prevents explosion or vanishing at initialization.'
 		},
 		{
 			name: 'Condition A2: Update Stability',
-			formula: 'After one gradient step, activation changes remain O(1)',
+			formula: '\\text{After one gradient step, activation changes remain } O(1)',
 			explanation:
 				'The change in activations from a gradient step should not depend on model width. This ensures consistent learning dynamics.'
 		}
 	];
 
-	const parametrizations = [
-		{
-			name: 'Standard Parametrization (SP)',
-			init: 'σ = 1/√fan_in',
-			lr: 'η = constant',
-			issue: 'Learning rate must be reduced as width increases'
-		},
-		{
-			name: 'Maximal Update Parametrization (muP)',
-			init: 'σ = Θ(1/√fan_in) × min(1, √(n_l/n_{l-1}))',
-			lr: 'η_l = Θ(1/n_{l-1})',
-			issue: 'Learning rate transfers across widths'
-		}
-	];
+	const parametrizationComparison = {
+		headers: ['Aspect', 'Standard (SP)', 'muP'],
+		rows: [
+			[
+				'Initialization',
+				'\\sigma = 1/\\sqrt{\\text{fan\\_in}}',
+				'\\sigma = \\Theta(1/\\sqrt{\\text{fan\\_in}}) \\times \\min(1, \\sqrt{n_l/n_{l-1}})'
+			],
+			['Learning Rate', '\\eta = \\text{constant}', '\\eta_l = \\Theta(1/n_{l-1})'],
+			['HP Transfer', 'Must re-tune at each scale', 'Transfers across widths']
+		]
+	};
 
 	const mathDetails = [
 		{
 			title: 'Initialization (muP)',
-			formula: 'σ_l = 1/√n_{l-1} × min(1, √(n_l/n_{l-1}))',
+			formula:
+				'\\sigma_l = \\frac{1}{\\sqrt{n_{l-1}}} \\times \\min\\left(1, \\sqrt{\\frac{n_l}{n_{l-1}}}\\right)',
 			note: 'For width n_l at layer l'
 		},
 		{
 			title: 'Learning Rate (muP with Adam)',
-			formula: 'η_l = η_base / n_{l-1}',
+			formula: '\\eta_l = \\frac{\\eta_{\\text{base}}}{n_{l-1}}',
 			note: 'Per-layer LR scales inversely with input width'
 		}
 	];
 
 	const whatWorks = [
-		{ item: 'Nonlinearities (SwiGLU, Squared ReLU)', status: 'works' },
-		{ item: 'Batch size variations', status: 'works' },
-		{ item: 'Zero-query initialization', status: 'works' },
-		{ item: 'Different model depths', status: 'works' },
-		{ item: 'Various optimizers (Adam, SGD)', status: 'works' }
+		'Nonlinearities (SwiGLU, Squared ReLU)',
+		'Batch size variations',
+		'Zero-query initialization',
+		'Different model depths',
+		'Various optimizers (Adam, SGD)'
 	];
 
 	const whatBreaks = [
-		{ item: 'RMSNorm learnable gains', status: 'breaks' },
-		{ item: 'Strong weight decay (0.1)', status: 'breaks' },
-		{ item: 'Exotic optimizers (Lion)', status: 'breaks' },
-		{ item: 'QK-normalization in some forms', status: 'breaks' }
+		'RMSNorm learnable gains',
+		'Strong weight decay (0.1)',
+		'Exotic optimizers (Lion)',
+		'QK-normalization in some forms'
 	];
 
 	const wsdSchedule = {
@@ -115,256 +103,250 @@
 	];
 </script>
 
-<div class="space-y-8">
-	<!-- Section Header -->
-	<section
-		class="rounded-2xl border border-[var(--color-primary)]/30 bg-gradient-to-br from-[var(--color-primary)]/20 to-pink-600/20 p-8"
-	>
-		<div class="flex items-start gap-4">
-			<div class="text-4xl">μ</div>
-			<div>
-				<h2 class="mb-2 font-bold text-[var(--color-text)] text-[var(--text-h2)]">
-					muP: Maximum Update Parametrization
-				</h2>
-				<p class="text-lg text-[var(--color-muted)]">
-					muP is a principled approach to neural network initialization and learning rate scaling
-					that enables hyperparameters to transfer reliably across model widths. This allows
-					expensive hyperparameter searches to be done once at small scale and reused at large
-					scale.
-				</p>
-			</div>
-		</div>
-	</section>
+<div class="space-y-6">
+	<HeroSection icon="μ" title="muP: Maximum Update Parametrization">
+		<p class="max-w-3xl leading-relaxed text-[var(--color-muted)] text-[var(--text-body)]">
+			muP is a principled approach to neural network initialization and learning rate scaling that
+			enables hyperparameters to transfer reliably across model widths. This allows expensive
+			hyperparameter searches to be done once at small scale and reused at large scale.
+		</p>
+	</HeroSection>
 
 	<!-- Key Papers -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">Key Papers</h3>
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-			{#each keyPapers as paper (paper.title)}
+	<Section title="Papers">
+		<div class="grid gap-4 md:grid-cols-2">
+			<ContentBox variant="dark" class="transition-colors hover:border-[var(--color-primary)]/50">
 				<a
-					href={paper.url}
+					href="https://arxiv.org/abs/2203.03466"
 					target="_blank"
 					rel="noopener noreferrer external"
-					class="block rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-4 transition-colors hover:border-[var(--color-primary)]/50"
+					class="block"
 				>
-					<h4 class="font-semibold text-[var(--color-text)]">{paper.title}</h4>
-					<p class="text-sm text-[var(--color-muted)]">{paper.authors}</p>
-					<p class="mt-2 text-sm text-[var(--color-muted)]">{paper.description}</p>
+					<h4 class="mb-1 font-semibold text-[var(--color-primary)] text-[var(--text-small)]">
+						Tensor Programs V: Zero-Shot Hyperparameter Transfer
+					</h4>
+					<p class="mb-2 text-[var(--color-accent)] text-[var(--text-tiny)]">
+						Yang et al. (2022) — Microsoft
+					</p>
+					<p class="text-[var(--color-muted)] text-[var(--text-small)]">
+						The muP paper - enables hyperparameter transfer across model widths through principled
+						initialization and learning rate scaling.
+					</p>
 				</a>
-			{/each}
+			</ContentBox>
+			<ContentBox variant="dark" class="transition-colors hover:border-[var(--color-primary)]/50">
+				<a
+					href="https://arxiv.org/abs/2404.05728"
+					target="_blank"
+					rel="noopener noreferrer external"
+					class="block"
+				>
+					<h4 class="mb-1 font-semibold text-[var(--color-primary)] text-[var(--text-small)]">
+						A Large-Scale Exploration of μ-Transfer
+					</h4>
+					<p class="mb-2 text-[var(--color-accent)] text-[var(--text-tiny)]">Lingle (2024)</p>
+					<p class="text-[var(--color-muted)] text-[var(--text-small)]">
+						Empirical validation of muP with extensive ablation studies on what works and what
+						breaks during transfer.
+					</p>
+				</a>
+			</ContentBox>
 		</div>
-	</section>
+	</Section>
 
 	<!-- The Problem -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-accent)]">{coreProblem.title}</h3>
-		<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-			<div class="rounded-lg border-l-4 border-red-500 bg-[var(--color-bg)] p-4">
-				<h4 class="mb-2 font-medium text-red-400">The Problem</h4>
-				<p class="text-[var(--color-muted)]">{coreProblem.description}</p>
-			</div>
-			<div class="rounded-lg border-l-4 border-green-500 bg-[var(--color-bg)] p-4">
-				<h4 class="mb-2 font-medium text-green-400">The Solution</h4>
-				<p class="text-[var(--color-muted)]">{coreProblem.solution}</p>
-			</div>
+	<Section title={coreProblem.title}>
+		<div class="grid gap-6 lg:grid-cols-2">
+			<ContentBox variant="dark" class="border-l-4 border-red-500">
+				<h4 class="mb-2 font-medium text-[var(--text-small)] text-red-400">The Problem</h4>
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">{coreProblem.description}</p>
+			</ContentBox>
+			<ContentBox variant="dark" class="border-l-4 border-green-500">
+				<h4 class="mb-2 font-medium text-[var(--text-small)] text-green-400">The Solution</h4>
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">{coreProblem.solution}</p>
+			</ContentBox>
 		</div>
-	</section>
+	</Section>
 
 	<!-- Core Conditions -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">
-			Core Conditions for Stability
-		</h3>
+	<Section title="Core Conditions for Stability">
 		<div class="space-y-4">
 			{#each conditions as condition (condition.name)}
-				<div class="rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-4">
-					<h4 class="mb-2 font-semibold text-[var(--color-accent)]">{condition.name}</h4>
+				<ContentBox variant="dark">
+					<h4 class="mb-2 font-semibold text-[var(--color-primary)] text-[var(--text-small)]">
+						{condition.name}
+					</h4>
 					<div
-						class="mb-3 rounded bg-[var(--color-secondary)] p-3 font-mono text-sm text-[var(--color-text)]"
+						class="mb-3 rounded bg-[var(--color-bg)] p-3 text-[var(--color-text)] text-[var(--text-small)]"
 					>
-						{condition.formula}
+						<Math formula={condition.formula} />
 					</div>
-					<p class="text-sm text-[var(--color-muted)]">{condition.explanation}</p>
-				</div>
+					<p class="text-[var(--color-muted)] text-[var(--text-small)]">{condition.explanation}</p>
+				</ContentBox>
 			{/each}
 		</div>
-	</section>
+	</Section>
 
 	<!-- Parametrization Comparison -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">Standard vs muP</h3>
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-			{#each parametrizations as param, i (param.name)}
-				<div
-					class="rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-4
-					{i === 1 ? 'border-[var(--color-primary)]/50' : ''}"
-				>
-					<h4
-						class="mb-3 font-semibold text-[var(--color-text)]
-						{i === 1 ? 'text-[var(--color-primary)]' : ''}"
-					>
-						{param.name}
-					</h4>
-					<div class="space-y-2 text-sm">
-						<div class="flex gap-2">
-							<span class="w-20 text-[var(--color-muted)]">Init:</span>
-							<span class="font-mono text-[var(--color-accent)]">{param.init}</span>
-						</div>
-						<div class="flex gap-2">
-							<span class="w-20 text-[var(--color-muted)]">LR:</span>
-							<span class="font-mono text-[var(--color-accent)]">{param.lr}</span>
-						</div>
-						<div class="mt-3 flex gap-2 border-t border-[var(--color-muted)]/20 pt-3">
-							<span class="text-[var(--color-muted)]">{param.issue}</span>
-						</div>
-					</div>
-				</div>
-			{/each}
+	<Section title="Standard vs muP">
+		<div class="overflow-x-auto">
+			<table class="w-full text-[var(--text-small)]">
+				<thead>
+					<tr class="border-b border-[var(--color-muted)]/20 text-left">
+						{#each parametrizationComparison.headers as header, idx (idx)}
+							<th
+								class="pr-4 pb-3 {idx === 0
+									? 'text-[var(--color-muted)]'
+									: 'text-[var(--color-primary)]'}">{header}</th
+							>
+						{/each}
+					</tr>
+				</thead>
+				<tbody>
+					{#each parametrizationComparison.rows as row, rowIdx (rowIdx)}
+						<tr class="border-b border-[var(--color-muted)]/10">
+							{#each row as cell, cellIdx (cellIdx)}
+								<td
+									class="py-3 pr-4 {cellIdx === 0
+										? 'text-[var(--color-text)]'
+										: 'text-[var(--color-muted)]'}"
+								>
+									{#if cell.startsWith('\\')}
+										<Math formula={cell} />
+									{:else}
+										{cell}
+									{/if}
+								</td>
+							{/each}
+						</tr>
+					{/each}
+				</tbody>
+			</table>
 		</div>
-	</section>
+	</Section>
 
 	<!-- Mathematical Details -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">Mathematical Details</h3>
-		<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+	<Section title="Mathematical Details">
+		<div class="grid gap-6 lg:grid-cols-2">
 			{#each mathDetails as detail (detail.title)}
-				<div class="rounded-lg bg-[var(--color-bg)] p-4">
-					<h4 class="mb-3 font-medium text-[var(--color-accent)]">{detail.title}</h4>
-					<div class="space-y-2 font-mono text-sm">
-						<p class="text-[var(--color-text)]">{detail.formula}</p>
-						<p class="mt-2 text-xs text-[var(--color-muted)]">{detail.note}</p>
+				<ContentBox variant="dark">
+					<h4 class="mb-3 font-medium text-[var(--color-primary)] text-[var(--text-small)]">
+						{detail.title}
+					</h4>
+					<div class="space-y-2 text-[var(--text-small)]">
+						<div class="text-[var(--color-text)]">
+							<Math formula={detail.formula} />
+						</div>
+						<p class="mt-2 text-[var(--color-muted)] text-[var(--text-tiny)]">{detail.note}</p>
 					</div>
-				</div>
+				</ContentBox>
 			{/each}
 		</div>
-	</section>
+	</Section>
 
 	<!-- What Works / What Breaks -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">Empirical Validation</h3>
-		<p class="mb-4 text-sm text-[var(--color-muted)]">
+	<Section title="Empirical Validation">
+		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
 			Based on Lucas Dax Lingle's extensive exploration of muP transfer properties:
 		</p>
-		<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-			<div>
-				<h4 class="mb-3 flex items-center gap-2 font-medium text-green-400">
+		<div class="grid gap-6 md:grid-cols-2">
+			<ContentBox variant="dark">
+				<h4
+					class="mb-3 flex items-center gap-2 font-medium text-[var(--text-small)] text-green-400"
+				>
 					<span>✓</span> What Works
 				</h4>
 				<ul class="space-y-2">
-					{#each whatWorks as item (item.item)}
-						<li class="flex items-center gap-2 text-sm text-[var(--color-muted)]">
+					{#each whatWorks as item, idx (idx)}
+						<li class="flex items-center gap-2 text-[var(--color-muted)] text-[var(--text-small)]">
 							<span class="h-2 w-2 rounded-full bg-green-500"></span>
-							{item.item}
+							{item}
 						</li>
 					{/each}
 				</ul>
-			</div>
-			<div>
-				<h4 class="mb-3 flex items-center gap-2 font-medium text-red-400">
+			</ContentBox>
+			<ContentBox variant="dark">
+				<h4 class="mb-3 flex items-center gap-2 font-medium text-[var(--text-small)] text-red-400">
 					<span>✗</span> What Breaks
 				</h4>
 				<ul class="space-y-2">
-					{#each whatBreaks as item (item.item)}
-						<li class="flex items-center gap-2 text-sm text-[var(--color-muted)]">
+					{#each whatBreaks as item, idx (idx)}
+						<li class="flex items-center gap-2 text-[var(--color-muted)] text-[var(--text-small)]">
 							<span class="h-2 w-2 rounded-full bg-red-500"></span>
-							{item.item}
+							{item}
 						</li>
 					{/each}
 				</ul>
-			</div>
+			</ContentBox>
 		</div>
-	</section>
+	</Section>
 
 	<!-- WSD Learning Rate Schedule -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">{wsdSchedule.name}</h3>
-		<p class="mb-4 text-[var(--color-muted)]">
+	<Section title={wsdSchedule.name}>
+		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
 			A practical alternative to cosine decay that enables efficient scaling law studies:
 		</p>
-		<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-			<div>
-				<div class="mb-4 flex gap-2">
-					{#each wsdSchedule.phases as phase (phase.name)}
-						<div class="flex-1 text-center">
-							<div
-								class="rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-3"
-							>
-								<div class="text-lg font-bold text-[var(--color-accent)]">{phase.name}</div>
-								<div class="text-sm text-[var(--color-muted)]">{phase.percentage}</div>
+		<div class="grid gap-6 lg:grid-cols-2">
+			<div class="flex gap-2">
+				{#each wsdSchedule.phases as phase (phase.name)}
+					<div class="flex-1 text-center">
+						<ContentBox variant="dark">
+							<div class="font-bold text-[var(--color-primary)] text-[var(--text-body)]">
+								{phase.name}
 							</div>
-							<div class="mt-2 text-xs text-[var(--color-muted)]">{phase.description}</div>
+							<div class="text-[var(--color-muted)] text-[var(--text-small)]">
+								{phase.percentage}
+							</div>
+						</ContentBox>
+						<div class="mt-2 text-[var(--color-muted)] text-[var(--text-tiny)]">
+							{phase.description}
 						</div>
-					{/each}
-				</div>
+					</div>
+				{/each}
 			</div>
-			<div>
-				<h4 class="mb-3 font-medium text-[var(--color-text)]">Benefits</h4>
+			<ContentBox variant="dark">
+				<h4 class="mb-3 font-medium text-[var(--color-primary)] text-[var(--text-small)]">
+					Benefits
+				</h4>
 				<ul class="space-y-2">
-					{#each wsdSchedule.benefits as benefit, i (i)}
-						<li class="flex items-start gap-2 text-sm text-[var(--color-muted)]">
+					{#each wsdSchedule.benefits as benefit, idx (idx)}
+						<li class="flex items-start gap-2 text-[var(--color-muted)] text-[var(--text-small)]">
 							<span class="text-[var(--color-primary)]">•</span>
 							{benefit}
 						</li>
 					{/each}
 				</ul>
-			</div>
+			</ContentBox>
 		</div>
-	</section>
+	</Section>
 
 	<!-- Practical Scaling Recipes -->
-	<section class="rounded-xl border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-6">
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">Practical Scaling Recipes</h3>
+	<Section title="Practical Scaling Recipes">
 		<div class="space-y-4">
 			{#each scalingRecipes as recipe (recipe.approach)}
-				<div class="rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-4">
+				<ContentBox variant="dark" class="transition-colors hover:border-[var(--color-primary)]/50">
 					<div class="mb-2 flex items-start justify-between">
-						<h4 class="font-semibold text-[var(--color-accent)]">{recipe.approach}</h4>
+						<h4 class="font-semibold text-[var(--color-primary)] text-[var(--text-small)]">
+							{recipe.approach}
+						</h4>
 						<span
-							class="rounded bg-[var(--color-secondary)] px-2 py-1 text-xs text-[var(--color-muted)]"
+							class="rounded bg-[var(--color-bg)] px-2 py-1 text-[var(--color-muted)] text-[var(--text-tiny)]"
 						>
 							{recipe.usedBy}
 						</span>
 					</div>
-					<p class="text-sm text-[var(--color-muted)]">{recipe.description}</p>
-				</div>
+					<p class="text-[var(--color-muted)] text-[var(--text-small)]">{recipe.description}</p>
+				</ContentBox>
 			{/each}
 		</div>
-	</section>
+	</Section>
 
-	<!-- Key Takeaways -->
-	<section
-		class="rounded-xl border border-[var(--color-accent)]/30 bg-gradient-to-r from-[var(--color-accent)]/10 to-[var(--color-primary)]/10 p-6"
-	>
-		<h3 class="mb-4 text-xl font-semibold text-[var(--color-text)]">Key Takeaways</h3>
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-			<div class="flex items-start gap-3">
-				<span class="font-bold text-[var(--color-primary)]">1.</span>
-				<p class="text-[var(--color-muted)]">
-					<strong class="text-[var(--color-text)]">muP enables HP transfer:</strong> Tune hyperparameters
-					on small models, apply directly to large models.
-				</p>
-			</div>
-			<div class="flex items-start gap-3">
-				<span class="font-bold text-[var(--color-primary)]">2.</span>
-				<p class="text-[var(--color-muted)]">
-					<strong class="text-[var(--color-text)]">Not universally applicable:</strong> Some components
-					(weight decay, exotic optimizers) break transfer.
-				</p>
-			</div>
-			<div class="flex items-start gap-3">
-				<span class="font-bold text-[var(--color-primary)]">3.</span>
-				<p class="text-[var(--color-muted)]">
-					<strong class="text-[var(--color-text)]">WSD complements muP:</strong> The warmup-stable-decay
-					schedule enables efficient scaling experiments.
-				</p>
-			</div>
-			<div class="flex items-start gap-3">
-				<span class="font-bold text-[var(--color-primary)]">4.</span>
-				<p class="text-[var(--color-muted)]">
-					<strong class="text-[var(--color-text)]">Multiple approaches work:</strong> muP, direct scaling
-					law fits, and IsoFLOP analysis all yield good results.
-				</p>
-			</div>
-		</div>
-	</section>
+	<KeyTakeaway
+		items={[
+			'muP enables HP transfer: Tune hyperparameters on small models, apply directly to large models',
+			'Not universally applicable: Some components (weight decay, exotic optimizers) break transfer',
+			'WSD complements muP: The warmup-stable-decay schedule enables efficient scaling experiments',
+			'Multiple approaches work: muP, direct scaling law fits, and IsoFLOP analysis all yield good results'
+		]}
+	/>
 </div>

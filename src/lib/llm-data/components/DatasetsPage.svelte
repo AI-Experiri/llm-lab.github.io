@@ -1,4 +1,6 @@
 <script>
+	import { HeroSection, Section } from '$lib/shared';
+
 	// Tier 1: Raw Data Sources (minimal processing)
 	const rawSources = [
 		{
@@ -208,53 +210,41 @@
 
 <div class="space-y-6">
 	<!-- Hero Section -->
-	<div
-		class="rounded-2xl border border-[var(--color-primary)]/30 bg-gradient-to-br from-[var(--color-primary)]/20 to-pink-600/20 p-8"
-	>
-		<div class="flex items-start gap-4">
-			<div class="text-5xl">📦</div>
-			<div>
-				<h2 class="mb-3 text-2xl font-bold text-[var(--color-text)] md:text-3xl">
-					LLM Training Datasets
-				</h2>
-				<p class="max-w-3xl text-lg leading-relaxed text-[var(--color-muted)]">
-					Explore the datasets used to train large language models, organized from raw sources to
-					instruction data. Understanding this pipeline is key to understanding modern AI.
-				</p>
-				<div class="mt-4 flex flex-wrap gap-2 text-xs">
-					<span
-						class="rounded-full border border-violet-500/30 bg-violet-500/20 px-3 py-1 text-violet-300"
-						>1. Raw Sources</span
-					>
-					<span class="text-[var(--color-muted)]">→</span>
-					<span
-						class="rounded-full border border-cyan-500/30 bg-cyan-500/20 px-3 py-1 text-cyan-300"
-						>2. Filtered Web</span
-					>
-					<span class="text-[var(--color-muted)]">→</span>
-					<span
-						class="rounded-full border border-emerald-500/30 bg-emerald-500/20 px-3 py-1 text-emerald-300"
-						>3. Combined</span
-					>
-					<span class="text-[var(--color-muted)]">→</span>
-					<span
-						class="rounded-full border border-amber-500/30 bg-amber-500/20 px-3 py-1 text-amber-300"
-						>4. Instruction</span
-					>
-				</div>
-			</div>
+	<HeroSection icon="📦" title="LLM Training Datasets">
+		<p class="max-w-3xl leading-relaxed text-[var(--color-muted)] text-[var(--text-body)]">
+			Explore the datasets used to train large language models, organized from raw sources to
+			instruction data. Understanding this pipeline is key to understanding modern AI.
+		</p>
+		<div class="mt-4 flex flex-wrap gap-2 text-[var(--text-tiny)]">
+			<span
+				class="rounded-full border border-violet-500/30 bg-violet-500/20 px-3 py-1 text-violet-300"
+				>1. Raw Sources</span
+			>
+			<span class="text-[var(--color-muted)]">→</span>
+			<span class="rounded-full border border-cyan-500/30 bg-cyan-500/20 px-3 py-1 text-cyan-300"
+				>2. Filtered Web</span
+			>
+			<span class="text-[var(--color-muted)]">→</span>
+			<span
+				class="rounded-full border border-emerald-500/30 bg-emerald-500/20 px-3 py-1 text-emerald-300"
+				>3. Combined</span
+			>
+			<span class="text-[var(--color-muted)]">→</span>
+			<span class="rounded-full border border-amber-500/30 bg-amber-500/20 px-3 py-1 text-amber-300"
+				>4. Instruction</span
+			>
 		</div>
-	</div>
+	</HeroSection>
 
 	<!-- TIER 1: Raw Data Sources -->
 	<div class="space-y-4">
 		<div class="flex items-center gap-3">
 			<span
-				class="rounded-full border border-violet-500/30 bg-violet-500/20 px-3 py-1 text-sm font-medium text-violet-300"
+				class="rounded-full border border-violet-500/30 bg-violet-500/20 px-3 py-1 font-medium text-[var(--text-small)] text-violet-300"
 				>Tier 1</span
 			>
-			<h2 class="text-xl font-bold text-[var(--color-text)]">Raw Data Sources</h2>
-			<span class="text-sm text-[var(--color-muted)]"
+			<h2 class="font-bold text-[var(--color-text)] text-[var(--text-h2)]">Raw Data Sources</h2>
+			<span class="text-[var(--color-muted)] text-[var(--text-small)]"
 				>Individual sources with minimal processing</span
 			>
 		</div>
@@ -268,11 +258,11 @@
 						<span>{source.icon}</span>
 						{source.name}
 					</h3>
-					<p class="mb-3 text-sm text-[var(--color-muted)]">{source.desc}</p>
+					<p class="mb-3 text-[var(--color-muted)] text-[var(--text-small)]">{source.desc}</p>
 
 					{#if source.stats}
 						<div class="mb-2 rounded-lg bg-[var(--color-bg)] p-3">
-							<div class="grid grid-cols-2 gap-2 text-xs">
+							<div class="grid grid-cols-2 gap-2 text-[var(--text-tiny)]">
 								{#each source.stats as stat (stat.label)}
 									<div>
 										<span class="text-[var(--color-muted)]">{stat.label}:</span>
@@ -285,7 +275,7 @@
 
 					{#if source.pros || source.cons || source.notes}
 						<div class="mb-2 rounded-lg bg-[var(--color-bg)] p-3">
-							<ul class="space-y-1 text-xs text-[var(--color-muted)]">
+							<ul class="space-y-1 text-[var(--color-muted)] text-[var(--text-tiny)]">
 								{#if source.pros}
 									{#each source.pros as pro, i (i)}
 										<li class="flex items-start gap-2">
@@ -316,7 +306,7 @@
 
 					{#if source.sources}
 						<div class="mb-2 rounded-lg bg-[var(--color-bg)] p-3">
-							<div class="space-y-1.5 text-xs text-[var(--color-muted)]">
+							<div class="space-y-1.5 text-[var(--color-muted)] text-[var(--text-tiny)]">
 								{#each source.sources as s (s.name)}
 									<div class="flex justify-between {s.warning ? 'text-amber-400' : ''}">
 										<span>{s.name}</span>
@@ -330,7 +320,7 @@
 					{/if}
 
 					{#if source.note}
-						<p class="text-xs text-[var(--color-muted)]">
+						<p class="text-[var(--color-muted)] text-[var(--text-tiny)]">
 							<span class="text-[var(--color-accent)]">Note:</span>
 							{source.note}
 						</p>
@@ -344,21 +334,25 @@
 	<div class="space-y-4">
 		<div class="flex items-center gap-3">
 			<span
-				class="rounded-full border border-cyan-500/30 bg-cyan-500/20 px-3 py-1 text-sm font-medium text-cyan-300"
+				class="rounded-full border border-cyan-500/30 bg-cyan-500/20 px-3 py-1 font-medium text-[var(--text-small)] text-cyan-300"
 				>Tier 2</span
 			>
-			<h2 class="text-xl font-bold text-[var(--color-text)]">Filtered Web Datasets</h2>
-			<span class="text-sm text-[var(--color-muted)]">Single source + filtering/processing</span>
+			<h2 class="font-bold text-[var(--color-text)] text-[var(--text-h2)]">
+				Filtered Web Datasets
+			</h2>
+			<span class="text-[var(--color-muted)] text-[var(--text-small)]"
+				>Single source + filtering/processing</span
+			>
 		</div>
 
-		<div class="rounded-xl border border-cyan-500/20 bg-[var(--color-secondary)] p-5">
-			<p class="mb-4 text-sm text-[var(--color-muted)]">
+		<Section class="border border-cyan-500/20">
+			<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
 				These datasets take Common Crawl or similar web sources and apply various filtering
 				techniques: language identification, perplexity filtering, deduplication, and quality
 				classifiers.
 			</p>
 			<div class="overflow-x-auto">
-				<table class="w-full text-sm">
+				<table class="w-full text-[var(--text-small)]">
 					<thead>
 						<tr class="border-b border-[var(--color-muted)]/20 text-left text-[var(--color-muted)]">
 							<th class="pr-4 pb-3">Dataset</th>
@@ -381,38 +375,40 @@
 										{ds.name} ↗
 									</a>
 								</td>
-								<td class="py-3 pr-4 font-mono text-xs">{ds.year}</td>
+								<td class="py-3 pr-4 font-mono text-[var(--text-tiny)]">{ds.year}</td>
 								<td class="py-3 pr-4">{ds.org}</td>
 								<td class="py-3 pr-4 font-mono text-[var(--color-primary)]">{ds.tokens}</td>
-								<td class="py-3 text-xs text-[var(--color-muted)]">{ds.desc}</td>
+								<td class="py-3 text-[var(--color-muted)] text-[var(--text-tiny)]">{ds.desc}</td>
 							</tr>
 						{/each}
 					</tbody>
 				</table>
 			</div>
-		</div>
+		</Section>
 	</div>
 
 	<!-- TIER 3: Combined/Curated Datasets -->
 	<div class="space-y-4">
 		<div class="flex items-center gap-3">
 			<span
-				class="rounded-full border border-emerald-500/30 bg-emerald-500/20 px-3 py-1 text-sm font-medium text-emerald-300"
+				class="rounded-full border border-emerald-500/30 bg-emerald-500/20 px-3 py-1 font-medium text-[var(--text-small)] text-emerald-300"
 				>Tier 3</span
 			>
-			<h2 class="text-xl font-bold text-[var(--color-text)]">Combined & Curated Datasets</h2>
-			<span class="text-sm text-[var(--color-muted)]"
+			<h2 class="font-bold text-[var(--color-text)] text-[var(--text-h2)]">
+				Combined & Curated Datasets
+			</h2>
+			<span class="text-[var(--color-muted)] text-[var(--text-small)]"
 				>Multiple sources aggregated with curation</span
 			>
 		</div>
 
-		<div class="rounded-xl border border-emerald-500/20 bg-[var(--color-secondary)] p-5">
-			<p class="mb-4 text-sm text-[var(--color-muted)]">
+		<Section class="border border-emerald-500/20">
+			<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
 				These datasets combine multiple sources (web, books, code, academic papers) with careful
 				curation and mixing ratios. They represent the state-of-the-art for pre-training data.
 			</p>
 			<div class="overflow-x-auto">
-				<table class="w-full text-sm">
+				<table class="w-full text-[var(--text-small)]">
 					<thead>
 						<tr class="border-b border-[var(--color-muted)]/20 text-left text-[var(--color-muted)]">
 							<th class="pr-4 pb-3">Dataset</th>
@@ -435,36 +431,40 @@
 										{ds.name} ↗
 									</a>
 								</td>
-								<td class="py-3 pr-4 font-mono text-xs">{ds.year}</td>
+								<td class="py-3 pr-4 font-mono text-[var(--text-tiny)]">{ds.year}</td>
 								<td class="py-3 pr-4">{ds.org}</td>
 								<td class="py-3 pr-4 font-mono text-[var(--color-primary)]">{ds.tokens}</td>
-								<td class="py-3 text-xs text-[var(--color-muted)]">{ds.desc}</td>
+								<td class="py-3 text-[var(--color-muted)] text-[var(--text-tiny)]">{ds.desc}</td>
 							</tr>
 						{/each}
 					</tbody>
 				</table>
 			</div>
-		</div>
+		</Section>
 	</div>
 
 	<!-- TIER 4: Instruction/Post-training Data -->
 	<div class="space-y-4">
 		<div class="flex items-center gap-3">
 			<span
-				class="rounded-full border border-amber-500/30 bg-amber-500/20 px-3 py-1 text-sm font-medium text-amber-300"
+				class="rounded-full border border-amber-500/30 bg-amber-500/20 px-3 py-1 font-medium text-[var(--text-small)] text-amber-300"
 				>Tier 4</span
 			>
-			<h2 class="text-xl font-bold text-[var(--color-text)]">Instruction & Post-training Data</h2>
-			<span class="text-sm text-[var(--color-muted)]">Fine-tuning for instruction following</span>
+			<h2 class="font-bold text-[var(--color-text)] text-[var(--text-h2)]">
+				Instruction & Post-training Data
+			</h2>
+			<span class="text-[var(--color-muted)] text-[var(--text-small)]"
+				>Fine-tuning for instruction following</span
+			>
 		</div>
 
-		<div class="rounded-xl border border-amber-500/20 bg-[var(--color-secondary)] p-5">
-			<p class="mb-4 text-sm text-[var(--color-muted)]">
+		<Section class="border border-amber-500/20">
+			<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
 				Smaller, high-quality datasets used for supervised fine-tuning (SFT) and RLHF. These teach
 				models to follow instructions and engage in helpful conversations.
 			</p>
 			<div class="overflow-x-auto">
-				<table class="w-full text-sm">
+				<table class="w-full text-[var(--text-small)]">
 					<thead>
 						<tr class="border-b border-[var(--color-muted)]/20 text-left text-[var(--color-muted)]">
 							<th class="pr-4 pb-3">Dataset</th>
@@ -487,16 +487,16 @@
 										{ds.name} ↗
 									</a>
 								</td>
-								<td class="py-3 pr-4 font-mono text-xs">{ds.year}</td>
+								<td class="py-3 pr-4 font-mono text-[var(--text-tiny)]">{ds.year}</td>
 								<td class="py-3 pr-4">{ds.org}</td>
 								<td class="py-3 pr-4 font-mono text-[var(--color-primary)]">{ds.size}</td>
-								<td class="py-3 text-xs text-[var(--color-muted)]">{ds.desc}</td>
+								<td class="py-3 text-[var(--color-muted)] text-[var(--text-tiny)]">{ds.desc}</td>
 							</tr>
 						{/each}
 					</tbody>
 				</table>
 			</div>
-		</div>
+		</Section>
 	</div>
 
 	<!-- Summary: The Pipeline -->
@@ -510,22 +510,22 @@
 			<div class="rounded-lg border border-violet-500/20 bg-violet-500/10 p-4 text-center">
 				<div class="mb-2 text-2xl">📥</div>
 				<div class="font-semibold text-violet-300">Raw Sources</div>
-				<div class="mt-1 text-xs text-[var(--color-muted)]">240T+ raw tokens</div>
+				<div class="mt-1 text-[var(--color-muted)] text-[var(--text-tiny)]">240T+ raw tokens</div>
 			</div>
 			<div class="rounded-lg border border-cyan-500/20 bg-cyan-500/10 p-4 text-center">
 				<div class="mb-2 text-2xl">🔍</div>
 				<div class="font-semibold text-cyan-300">Filter & Clean</div>
-				<div class="mt-1 text-xs text-[var(--color-muted)]">Keep ~1-5%</div>
+				<div class="mt-1 text-[var(--color-muted)] text-[var(--text-tiny)]">Keep ~1-5%</div>
 			</div>
 			<div class="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4 text-center">
 				<div class="mb-2 text-2xl">🎯</div>
 				<div class="font-semibold text-emerald-300">Combine & Curate</div>
-				<div class="mt-1 text-xs text-[var(--color-muted)]">3-15T tokens</div>
+				<div class="mt-1 text-[var(--color-muted)] text-[var(--text-tiny)]">3-15T tokens</div>
 			</div>
 			<div class="rounded-lg border border-amber-500/20 bg-amber-500/10 p-4 text-center">
 				<div class="mb-2 text-2xl">✨</div>
 				<div class="font-semibold text-amber-300">Instruct & Align</div>
-				<div class="mt-1 text-xs text-[var(--color-muted)]">~1-10B tokens</div>
+				<div class="mt-1 text-[var(--color-muted)] text-[var(--text-tiny)]">~1-10B tokens</div>
 			</div>
 		</div>
 	</div>

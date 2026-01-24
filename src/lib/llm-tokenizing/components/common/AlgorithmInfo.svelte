@@ -1,4 +1,7 @@
+<!-- ABOUTME: Displays algorithm info card with paper link, title, problem/solution -->
+<!-- ABOUTME: Uses HeroSection for consistent styling across all visualizers -->
 <script>
+	import { HeroSection } from '$lib/shared';
 	let { algorithm = 'bpe', expanded = $bindable(false) } = $props();
 
 	const algorithmInfo = {
@@ -190,7 +193,7 @@ return vocab`
 	let info = $derived(algorithmInfo[algorithm] || algorithmInfo.bpe);
 </script>
 
-<div class="bg-gradient-to-r {info.color} overflow-hidden rounded-lg p-3 text-white">
+<HeroSection customGradient={info.color} class="p-3 text-white">
 	<!-- Responsive flex layout -->
 	<div class="flex flex-wrap items-stretch justify-center gap-2">
 		<!-- Card 1: Paper/Year -->
@@ -201,15 +204,15 @@ return vocab`
 			class="group flex w-16 shrink-0 flex-col items-center justify-center rounded-lg bg-black/20 px-3 py-2 text-center transition-colors hover:bg-black/30"
 		>
 			<span class="text-2xl transition-transform group-hover:scale-110">📖</span>
-			<span class="text-xs opacity-75">{info.year}</span>
+			<span class="text-[var(--text-tiny)] opacity-75">{info.year}</span>
 		</a>
 
 		<!-- Card 2: Title -->
 		<div
-			class="flex min-w-[120px] flex-1 flex-col items-center justify-center rounded-lg bg-black/20 px-3 py-2 text-center"
+			class="flex w-56 shrink-0 flex-col items-center justify-center rounded-lg bg-black/20 px-3 py-2 text-center"
 		>
-			<h3 class="text-sm leading-tight font-bold">{info.name}</h3>
-			<span class="text-xs opacity-75">{info.tagline}</span>
+			<h3 class="leading-tight font-bold text-[var(--text-small)]">{info.name}</h3>
+			<span class="text-[var(--text-tiny)] opacity-75">{info.tagline}</span>
 		</div>
 
 		<!-- Card 3: Toggle Details Button -->
@@ -218,35 +221,35 @@ return vocab`
 			class="flex w-16 shrink-0 cursor-pointer flex-col items-center justify-center rounded-lg bg-black/20 px-3 py-2 text-center transition-colors hover:bg-black/30"
 		>
 			<span class="text-2xl">{expanded ? '✕' : 'ℹ️'}</span>
-			<span class="text-xs opacity-75">{expanded ? 'Close' : 'Details'}</span>
+			<span class="text-[var(--text-tiny)] opacity-75">{expanded ? 'Close' : 'Details'}</span>
 		</button>
 
 		<!-- Card 4: Problem + Solution stacked -->
 		<div
-			class="flex min-w-[180px] flex-1 flex-col justify-center gap-1 rounded-lg bg-black/20 px-3 py-2 text-sm"
+			class="flex min-w-[180px] flex-1 flex-col justify-center gap-1 rounded-lg bg-black/20 px-3 py-2 text-[var(--text-small)]"
 		>
 			<div>
-				<span class="text-xs tracking-wide uppercase opacity-60">Problem</span>
-				<p class="text-xs">{info.problem}</p>
+				<span class="tracking-wide text-[var(--text-tiny)] uppercase opacity-60">Problem</span>
+				<p class="text-[var(--text-tiny)]">{info.problem}</p>
 			</div>
 			<div>
-				<span class="text-xs tracking-wide uppercase opacity-60">Solution</span>
-				<p class="text-xs">{info.solution}</p>
+				<span class="tracking-wide text-[var(--text-tiny)] uppercase opacity-60">Solution</span>
+				<p class="text-[var(--text-tiny)]">{info.solution}</p>
 			</div>
 		</div>
 
 		<!-- Card 5: Improvement + Formula stacked -->
 		<div
-			class="flex min-w-[180px] flex-1 flex-col justify-center gap-1 rounded-lg bg-black/20 px-3 py-2 text-sm"
+			class="flex min-w-[180px] flex-1 flex-col justify-center gap-1 rounded-lg bg-black/20 px-3 py-2 text-[var(--text-small)]"
 		>
 			<div>
-				<span class="text-xs tracking-wide uppercase opacity-60">Improvement</span>
-				<p class="text-xs">{info.diff}</p>
+				<span class="tracking-wide text-[var(--text-tiny)] uppercase opacity-60">Improvement</span>
+				<p class="text-[var(--text-tiny)]">{info.diff}</p>
 			</div>
 			<div>
-				<span class="text-xs tracking-wide uppercase opacity-60">Formula</span>
-				<code class="block font-mono text-xs">{info.formula}</code>
+				<span class="tracking-wide text-[var(--text-tiny)] uppercase opacity-60">Formula</span>
+				<code class="block font-mono text-[var(--text-tiny)]">{info.formula}</code>
 			</div>
 		</div>
 	</div>
-</div>
+</HeroSection>

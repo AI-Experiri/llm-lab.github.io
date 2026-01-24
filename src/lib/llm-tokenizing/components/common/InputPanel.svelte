@@ -14,8 +14,8 @@
 		{placeholder}
 		{disabled}
 		maxlength="1000"
-		class="min-h-24 w-full flex-1 resize-none rounded-lg bg-slate-800/50 px-3 py-2 text-sm text-white disabled:opacity-50"
+		class="min-h-24 w-full flex-1 resize-none rounded-lg bg-slate-800/50 px-3 py-2 text-[var(--text-small)] text-white disabled:opacity-50"
 		rows="3"
 	></textarea>
-	<div class="mt-1 text-right text-xs text-slate-400">{value.length}/1000</div>
+	<div class="mt-1 text-right text-[var(--text-tiny)] text-slate-400">{value.length}/1000</div>
 </div>

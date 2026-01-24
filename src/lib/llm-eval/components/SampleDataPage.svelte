@@ -1,6 +1,14 @@
 <script>
 	import { tick } from 'svelte';
 	import {
+		HeroSection,
+		DatasetSelector,
+		DatasetInfoCard,
+		ErrorNotice,
+		LoadingSpinner,
+		GradientButton
+	} from '$lib/shared';
+	import {
 		categories,
 		datasets,
 		getDatasetsByCategory,
@@ -285,8 +293,8 @@
 		return categoryColors[cat] || 'gray';
 	}
 
-	function handleCategoryChange(e) {
-		selectedCategory = e.target.value;
+	function handleCategoryChange(value) {
+		selectedCategory = value;
 		selectedDataset = null;
 		samples = [];
 		error = null;
@@ -330,62 +338,26 @@
 </script>
 
 <div class="space-y-4">
-	<!-- Dataset Selector -->
-	<section
-		class="rounded-lg border border-[#0f3460] bg-gradient-to-br from-[#16213e] to-[#1a1a2e] p-4"
-	>
-		<div class="flex flex-col gap-3 sm:flex-row">
-			<!-- Category Filter -->
-			<div class="flex-1">
-				<label
-					for="category-select"
-					class="mb-1 block text-[var(--color-muted)] text-[var(--text-tiny)]"
-				>
-					Category
-				</label>
-				<select
-					id="category-select"
-					value={selectedCategory}
-					onchange={handleCategoryChange}
-					class="w-full cursor-pointer rounded-lg border border-[var(--color-secondary)] bg-[var(--color-bg)] px-3 py-2 text-[var(--color-text)] text-[var(--text-small)] transition-colors focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none"
-				>
-					{#each categories as cat (cat.id)}
-						{@const count =
-							cat.id === 'all' ? datasets.length : getDatasetsByCategory(cat.id).length}
-						<option value={cat.id}>{cat.label} ({count})</option>
-					{/each}
-				</select>
-			</div>
+	<HeroSection title="Sample Data">
+		<p class="mt-2 leading-relaxed text-[var(--color-text)] text-[var(--text-small)]">
+			Explore actual evaluation datasets from HuggingFace. See what benchmark questions look like
+			and understand the data format for each evaluation type.
+		</p>
+	</HeroSection>
 
-			<!-- Dataset Selector -->
-			<div class="flex-1">
-				<label
-					for="dataset-select"
-					class="mb-1 block text-[var(--color-muted)] text-[var(--text-tiny)]"
-				>
-					Dataset ({filteredDatasets.length})
-				</label>
-				<select
-					id="dataset-select"
-					value={selectedDataset?.id || ''}
-					onchange={handleDatasetChange}
-					class="w-full cursor-pointer rounded-lg border border-[var(--color-secondary)] bg-[var(--color-bg)] px-3 py-2 text-[var(--color-text)] text-[var(--text-small)] transition-colors focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none"
-				>
-					<option value="">-- Select --</option>
-					{#each filteredDatasets as dataset (dataset.id)}
-						<option
-							value={dataset.id}
-							style={dataset.inaccessible ? 'color: #f87171; background-color: #450a0a;' : ''}
-						>
-							{dataset.name}{dataset.inaccessible
-								? ` (${dataset.originalCategory || 'No API'})`
-								: ''}
-						</option>
-					{/each}
-				</select>
-			</div>
-		</div>
-	</section>
+	<!-- Dataset Selector -->
+	<DatasetSelector
+		{categories}
+		datasets={filteredDatasets}
+		{selectedCategory}
+		selectedDataset={selectedDataset?.id || ''}
+		onCategoryChange={handleCategoryChange}
+		onDatasetChange={handleDatasetChange}
+		getCategoryCount={(catId) =>
+			catId === 'all' ? datasets.length : getDatasetsByCategory(catId).length}
+		getDatasetLabel={(d) => d.name + (d.inaccessible ? ` (${d.originalCategory || 'No API'})` : '')}
+		isDatasetInaccessible={(d) => d.inaccessible}
+	/>
 
 	<!-- Selected Dataset Info -->
 	{#if selectedDataset}
@@ -395,147 +367,54 @@
 		{@const paperUrl = paperField.includes('http')
 			? paperField.split('\n').find((s) => s.startsWith('http'))
 			: null}
-		{@const paperTitle = paperField.split('\n')[0] || 'Paper'}
-		<section class="rounded-lg border-l-4 bg-[var(--color-surface)] p-4 border-{color}-500">
-			<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-				<div class="min-w-0 flex-1">
-					<div class="flex flex-wrap items-center gap-2">
-						<h3 class="font-semibold text-[var(--color-text)] text-[var(--text-body)]">
-							{selectedDataset.name}
-						</h3>
-						<span
-							class="bg-{color}-900/40 text-{color}-300 rounded-full border px-2 py-0.5 text-[var(--text-tiny)] border-{color}-700/50"
-						>
-							{selectedDataset.category}
-						</span>
-						{#if meta?.['Initial publication year']}
-							<span
-								class="rounded-full border border-gray-700 bg-gray-800 px-2 py-0.5 text-[var(--text-tiny)] text-gray-300"
-							>
-								{meta['Initial publication year']}
-							</span>
-						{/if}
-					</div>
-					<div class="mt-1.5 flex flex-wrap items-center gap-2">
-						{#if paperUrl}
-							<a
-								href={paperUrl}
-								target="_blank"
-								rel="noopener noreferrer external"
-								class="rounded-full border border-red-700/50 bg-red-900/30 px-2 py-0.5 text-[var(--text-tiny)] text-red-300 transition-colors hover:bg-red-900/50"
-								title={paperTitle}
-							>
-								Paper
-							</a>
-						{/if}
-						{#if meta?.['Code repository']?.startsWith('http')}
-							<a
-								href={meta['Code repository']}
-								target="_blank"
-								rel="noopener noreferrer external"
-								class="rounded-full border border-green-700/50 bg-green-900/30 px-2 py-0.5 text-[var(--text-tiny)] text-green-300 transition-colors hover:bg-green-900/50"
-							>
-								Code
-							</a>
-						{/if}
-						<a
-							href="https://huggingface.co/datasets/{selectedDataset.hf_id}"
-							target="_blank"
-							rel="noopener noreferrer"
-							class="rounded-full border border-yellow-700/50 bg-yellow-900/30 px-2 py-0.5 text-[var(--text-tiny)] text-yellow-300 transition-colors hover:bg-yellow-900/50"
-						>
-							HF
-						</a>
-						{#if meta?.License}
-							<span class="text-[var(--color-muted)] text-[var(--text-tiny)]">{meta.License}</span>
-						{/if}
-					</div>
-					<p class="mt-1 truncate text-[var(--color-muted)] text-[var(--text-tiny)]">
-						{meta?.Description || selectedDataset.description}
-					</p>
-				</div>
-				{#if !selectedDataset.inaccessible}
-					<button
-						onclick={loadSamples}
-						disabled={loading}
-						class="flex cursor-pointer items-center gap-2 rounded-lg bg-gradient-to-r from-[var(--color-primary)] to-pink-600 px-4 py-2 font-medium whitespace-nowrap text-[var(--text-small)] text-white shadow-[var(--color-primary)]/20 shadow-lg transition-all hover:from-pink-600 hover:to-[var(--color-primary)] disabled:cursor-not-allowed disabled:opacity-50"
-					>
-						{#if loading}
-							<svg
-								class="h-4 w-4 animate-spin"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-							>
-								<circle
-									class="opacity-25"
-									cx="12"
-									cy="12"
-									r="10"
-									stroke="currentColor"
-									stroke-width="4"
-								></circle>
-								<path
-									class="opacity-75"
-									fill="currentColor"
-									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-								></path>
-							</svg>
-							Loading...
-						{:else}
-							Resample
-						{/if}
-					</button>
-				{/if}
-			</div>
-		</section>
+		{@const codeUrl = meta?.['Code repository']?.startsWith('http')
+			? meta['Code repository']
+			: null}
+		<DatasetInfoCard
+			name={selectedDataset.name}
+			category={selectedDataset.category}
+			categoryColor={color}
+			description={meta?.Description || selectedDataset.description}
+			year={meta?.['Initial publication year'] || ''}
+			hfUrl="https://huggingface.co/datasets/{selectedDataset.hf_id}"
+			{paperUrl}
+			{codeUrl}
+			license={meta?.License || ''}
+		>
+			{#if !selectedDataset.inaccessible}
+				<GradientButton onclick={loadSamples} disabled={loading} {loading}>
+					{#if loading}Loading...{:else}Resample{/if}
+				</GradientButton>
+			{/if}
+		</DatasetInfoCard>
 
 		<!-- Inaccessible Dataset Notice -->
 		{#if selectedDataset.inaccessible}
-			<section
-				class="rounded-lg border border-red-500/50 bg-gradient-to-r from-red-900/30 to-red-950/20 p-4"
+			<ErrorNotice
+				title="No Public API Access"
+				message={selectedDataset.reason ||
+					'This dataset is gated or requires authentication. Sample data cannot be fetched via the public HuggingFace API.'}
 			>
-				<div class="flex items-start gap-3">
-					<div class="text-xl text-red-500">&#9888;</div>
-					<div class="flex-1">
-						<h4 class="font-medium text-[var(--text-small)] text-red-300">No Public API Access</h4>
-						<p class="mt-1 text-[var(--text-tiny)] text-red-200/80">
-							{selectedDataset.reason ||
-								'This dataset is gated or requires authentication. Sample data cannot be fetched via the public HuggingFace API.'}
-						</p>
-						<a
-							href="https://huggingface.co/datasets/{selectedDataset.hf_id}"
-							target="_blank"
-							rel="noopener noreferrer"
-							class="mt-2 inline-block text-[var(--text-tiny)] text-red-300 underline hover:text-red-200"
-						>
-							Request access on HuggingFace
-						</a>
-					</div>
-				</div>
-			</section>
+				<a
+					href="https://huggingface.co/datasets/{selectedDataset.hf_id}"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-[var(--text-tiny)] text-red-300 underline hover:text-red-200"
+				>
+					Request access on HuggingFace
+				</a>
+			</ErrorNotice>
 		{/if}
 	{/if}
 
 	<!-- Error Display -->
 	{#if error}
-		<section
-			class="rounded-lg border border-red-500/50 bg-gradient-to-r from-red-900/30 to-red-950/20 p-3"
-		>
-			<div class="flex items-center gap-2 text-[var(--text-small)]">
-				<span class="text-red-500">Error:</span>
-				<span class="text-red-300">{error}</span>
-			</div>
-		</section>
+		<ErrorNotice title="Error" message={error} />
 	{/if}
 
 	<!-- Loading State -->
 	{#if loading && samples.length === 0}
-		<section
-			class="rounded-lg border border-[var(--color-secondary)] bg-[var(--color-surface)] p-4 text-center"
-		>
-			<p class="text-[var(--color-muted)] text-[var(--text-small)]">Loading sample...</p>
-		</section>
+		<LoadingSpinner message="Loading sample..." />
 	{/if}
 
 	<!-- Sample Display -->

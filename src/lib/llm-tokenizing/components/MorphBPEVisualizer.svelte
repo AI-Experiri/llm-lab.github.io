@@ -311,11 +311,11 @@ return vocab`
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 			<!-- Left: Description -->
 			<div class="rounded-xl bg-white/10 p-4 backdrop-blur">
-				<h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-white">
+				<h3 class="mb-3 flex items-center gap-2 font-semibold text-[var(--text-body)] text-white">
 					<span class="h-2 w-2 rounded-full bg-teal-400"></span>
 					How MorphBPE Works
 				</h3>
-				<div class="space-y-3 text-sm leading-relaxed text-slate-300">
+				<div class="space-y-3 leading-relaxed text-[var(--text-small)] text-slate-300">
 					{#each algorithmDetails.description as para, i (i)}
 						<p>{para}</p>
 					{/each}
@@ -324,12 +324,12 @@ return vocab`
 
 			<!-- Right: Pseudocode -->
 			<div class="rounded-xl bg-white/10 p-4 backdrop-blur">
-				<h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-white">
+				<h3 class="mb-3 flex items-center gap-2 font-semibold text-[var(--text-body)] text-white">
 					<span class="h-2 w-2 rounded-full bg-blue-400"></span>
 					Pseudocode
 				</h3>
 				<pre
-					class="overflow-x-auto rounded-lg bg-slate-800/50 p-3 font-mono text-sm text-slate-300">{algorithmDetails.pseudocode}</pre>
+					class="overflow-x-auto rounded-lg bg-slate-800/50 p-3 font-mono text-[var(--text-small)] text-slate-300">{algorithmDetails.pseudocode}</pre>
 			</div>
 		</div>
 	{:else}
@@ -355,18 +355,18 @@ return vocab`
 				onReset={handleReset}
 			>
 				<div class="flex items-center gap-2">
-					<label for="morph-mode" class="text-sm text-teal-400">Mode:</label>
+					<label for="morph-mode" class="text-[var(--text-small)] text-teal-400">Mode:</label>
 					<select
 						id="morph-mode"
 						bind:value={mode}
-						class="rounded border border-teal-500/30 bg-teal-900/30 px-2 py-1.5 text-sm text-teal-200"
+						class="rounded border border-teal-500/30 bg-teal-900/30 px-2 py-1.5 text-[var(--text-small)] text-teal-200"
 					>
 						<option value="pretokenize">Pre-tokenize</option>
 						<option value="seeding">Seeding</option>
 					</select>
 				</div>
 				<div class="flex items-center gap-2">
-					<label for="morph-merges" class="text-sm text-slate-300">Merges:</label>
+					<label for="morph-merges" class="text-[var(--text-small)] text-slate-300">Merges:</label>
 					<input
 						id="morph-merges"
 						type="number"
@@ -415,15 +415,21 @@ return vocab`
 						<div class="flex items-center gap-1 rounded-lg bg-slate-800/50 px-2 py-1">
 							{#if pt.segments && pt.segments.length > 0}
 								{#each pt.segments as seg, i (i)}
-									<span class="rounded px-1.5 font-mono text-xs {getMorphColor(seg.type)}"
-										>{seg.text}</span
+									<span
+										class="rounded px-1.5 font-mono text-[var(--text-tiny)] {getMorphColor(
+											seg.type
+										)}">{seg.text}</span
 									>
-									{#if i < pt.segments.length - 1}<span class="text-xs text-slate-600">+</span>{/if}
+									{#if i < pt.segments.length - 1}<span
+											class="text-[var(--text-tiny)] text-slate-600">+</span
+										>{/if}
 								{/each}
 							{:else}
-								<span class="font-mono text-xs text-pink-300">{toDisplay(pt.text)}</span>
+								<span class="font-mono text-[var(--text-tiny)] text-pink-300"
+									>{toDisplay(pt.text)}</span
+								>
 							{/if}
-							<span class="ml-1 text-xs text-slate-500">×{pt.count}</span>
+							<span class="ml-1 text-[var(--text-tiny)] text-slate-500">×{pt.count}</span>
 						</div>
 					{/each}
 				</PreTokens>
@@ -442,7 +448,7 @@ return vocab`
 							<span class="px-1 font-bold text-slate-600">│</span>
 						{:else}
 							<span
-								class="token rounded-lg px-2 py-1 font-mono text-sm font-medium transition-all duration-200
+								class="token rounded-lg px-2 py-1 font-mono font-medium text-[var(--text-small)] transition-all duration-200
                 {token.highlight
 									? 'highlight bg-yellow-400 text-yellow-900 shadow-lg shadow-yellow-400/50'
 									: ''}
@@ -493,11 +499,13 @@ return vocab`
 
 				<VocabularyPanel {vocabulary} currentToken={currentMerge?.newToken}>
 					{#if vocabulary.length === 0}
-						<p class="py-4 text-center text-sm text-slate-500">Vocabulary appears here...</p>
+						<p class="py-4 text-center text-[var(--text-small)] text-slate-500">
+							Vocabulary appears here...
+						</p>
 					{:else}
 						{#each [...vocabulary].reverse() as item (item.token)}
 							<div
-								class="flex items-center justify-between rounded-lg px-2 py-1.5 text-sm transition-all
+								class="flex items-center justify-between rounded-lg px-2 py-1.5 text-[var(--text-small)] transition-all
                 {item.token === currentMerge?.newToken
 									? 'bg-yellow-400 font-bold text-yellow-900 shadow-lg'
 									: item.isSeeded
@@ -522,7 +530,9 @@ return vocab`
 								{:else if item.isMorpheme}
 									<span class="text-[10px] text-teal-400">morph</span>
 								{:else if item.from}
-									<span class="ml-2 truncate text-xs text-slate-500">{item.from}</span>
+									<span class="ml-2 truncate text-[var(--text-tiny)] text-slate-500"
+										>{item.from}</span
+									>
 								{/if}
 							</div>
 						{/each}

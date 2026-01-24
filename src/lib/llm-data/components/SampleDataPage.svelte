@@ -6,6 +6,13 @@
 		getDatasetsByCategory,
 		getDatasetMeta
 	} from '$lib/llm-data/data/datasets.js';
+	import {
+		DatasetSelector,
+		DatasetInfoCard,
+		ErrorNotice,
+		LoadingSpinner,
+		GradientButton
+	} from '$lib/shared';
 	import ToggleSwitch from './ToggleSwitch.svelte';
 
 	// Format components
@@ -158,236 +165,114 @@
 </script>
 
 <div class="space-y-4">
-	<!-- Dataset Selector Section -->
-	<section
-		class="rounded-lg border border-[#0f3460] bg-gradient-to-br from-[#16213e] to-[#1a1a2e] p-4"
-	>
-		<div class="flex flex-col gap-4">
-			<!-- Category and Dataset Dropdowns -->
-			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-				<!-- Category Dropdown -->
-				<div>
-					<label
-						for="category-select"
-						class="mb-1 block text-[var(--color-muted)] text-[var(--text-tiny)]"
-					>
-						Category
-					</label>
-					<select
-						id="category-select"
-						value={selectedCategory}
-						onchange={(e) => handleCategoryChange(e.target.value)}
-						class="w-full cursor-pointer rounded-lg border border-[var(--color-secondary)] bg-[var(--color-bg)] px-3 py-2.5 text-[var(--color-text)] text-[var(--text-small)] transition-colors focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none"
-					>
-						{#each categories as cat (cat.id)}
-							{@const count = getDatasetsByCategory(cat.id).length}
-							<option value={cat.id}>
-								{cat.name} ({count})
-							</option>
-						{/each}
-					</select>
-				</div>
-
-				<!-- Dataset Dropdown -->
-				<div>
-					<label
-						for="dataset-select"
-						class="mb-1 block text-[var(--color-muted)] text-[var(--text-tiny)]"
-					>
-						Dataset ({filteredDatasets.length})
-					</label>
-					<select
-						id="dataset-select"
-						value={selectedDataset}
-						onchange={handleDatasetChange}
-						class="w-full cursor-pointer rounded-lg border border-[var(--color-secondary)] bg-[var(--color-bg)] px-3 py-2.5 text-[var(--color-text)] text-[var(--text-small)] transition-colors focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none"
-					>
-						{#each filteredDatasets as datasetKey (datasetKey)}
-							{@const info = getDatasetInfo(datasetKey)}
-							<option
-								value={datasetKey}
-								style={info.inaccessible ? 'color: #f87171; background-color: #450a0a;' : ''}
-							>
-								{info.name}{info.inaccessible ? ' (Gated)' : ''}
-							</option>
-						{/each}
-					</select>
-				</div>
-			</div>
-
-			<!-- Fetch Sample Button -->
-			<div class="flex justify-end">
-				<button
-					type="button"
-					onclick={handleFetchSample}
-					disabled={loading || !selectedDataset || hfConfig[selectedDataset]?.inaccessible}
-					class="flex cursor-pointer items-center gap-2 rounded-lg bg-gradient-to-r from-[var(--color-primary)] to-pink-600 px-4 py-2 font-medium whitespace-nowrap text-[var(--text-small)] text-white shadow-[var(--color-primary)]/20 shadow-lg transition-all hover:from-pink-600 hover:to-[var(--color-primary)] disabled:cursor-not-allowed disabled:opacity-50"
-				>
-					{#if loading}
-						<!-- Loading Spinner -->
-						<svg
-							class="h-4 w-4 animate-spin"
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-						>
-							<circle
-								class="opacity-25"
-								cx="12"
-								cy="12"
-								r="10"
-								stroke="currentColor"
-								stroke-width="4"
-							></circle>
-							<path
-								class="opacity-75"
-								fill="currentColor"
-								d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-							></path>
-						</svg>
-						Loading...
-					{:else}
-						Resample
-					{/if}
-				</button>
-			</div>
-		</div>
-	</section>
+	<!-- Dataset Selector -->
+	<DatasetSelector
+		{categories}
+		datasets={filteredDatasets}
+		{selectedCategory}
+		{selectedDataset}
+		onCategoryChange={handleCategoryChange}
+		onDatasetChange={handleDatasetChange}
+		getCategoryCount={(catId) => getDatasetsByCategory(catId).length}
+		getDatasetLabel={(key) => {
+			const info = getDatasetInfo(key);
+			return info.name + (info.inaccessible ? ' (Gated)' : '');
+		}}
+		isDatasetInaccessible={(key) => getDatasetInfo(key).inaccessible}
+	/>
 
 	<!-- Selected Dataset Info -->
 	{#if selectedDataset}
 		{@const info = getDatasetInfo(selectedDataset)}
 		{@const color = getCategoryColor(info.category)}
-		<section
-			class="rounded-lg border-l-4 bg-[var(--color-surface)] p-4 border-{color}-500 bg-[var(--color-secondary)]"
+		<DatasetInfoCard
+			name={info.name}
+			category={info.category}
+			categoryColor={color}
+			size={info.size}
+			hfUrl={info.hfId ? `https://huggingface.co/datasets/${info.hfId}` : ''}
 		>
-			<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-				<div class="min-w-0 flex-1">
-					<div class="flex flex-wrap items-center gap-2">
-						<h3 class="font-semibold text-[var(--color-text)] text-[var(--text-body)]">
-							{info.name}
-						</h3>
-						<span
-							class="bg-{color}-900/40 text-{color}-300 rounded-full border px-2 py-0.5 text-[var(--text-tiny)] border-{color}-700/50"
-						>
-							{info.category}
-						</span>
-					</div>
-					<div class="mt-1.5 flex flex-wrap items-center gap-2">
-						{#if info.size}
-							<span
-								class="rounded-full border border-cyan-700/50 bg-cyan-900/30 px-2 py-0.5 text-[var(--text-tiny)] text-cyan-300"
-							>
-								{info.size}
-							</span>
-						{/if}
-						{#if info.lastUpdated}
-							<span
-								class="rounded-full border border-emerald-700/50 bg-emerald-900/30 px-2 py-0.5 text-[var(--text-tiny)] text-emerald-300"
-							>
-								Updated {info.lastUpdated}
-							</span>
-						{/if}
-						{#if info.hfId}
-							<a
-								href="https://huggingface.co/datasets/{info.hfId}"
-								target="_blank"
-								rel="noopener noreferrer"
-								class="rounded-full border border-yellow-700/50 bg-yellow-900/30 px-2 py-0.5 text-[var(--text-tiny)] text-yellow-300 transition-colors hover:bg-yellow-900/50"
-							>
-								HuggingFace
-							</a>
-						{/if}
-					</div>
-				</div>
-			</div>
-		</section>
+			{#if !info.inaccessible}
+				<GradientButton onclick={handleFetchSample} disabled={loading} {loading}>
+					{#if loading}Loading...{:else}Resample{/if}
+				</GradientButton>
+			{/if}
+		</DatasetInfoCard>
 
 		<!-- Inaccessible Dataset Notice -->
 		{#if info.inaccessible}
-			<section
-				class="rounded-lg border border-red-500/50 bg-gradient-to-r from-red-900/30 to-red-950/20 p-4"
+			<ErrorNotice
+				title="No Public API Access"
+				message={info.reason ||
+					'This dataset is gated or requires authentication. Sample data cannot be fetched via the public HuggingFace API.'}
 			>
-				<div class="flex items-start gap-3">
-					<div class="text-xl text-red-500">&#9888;</div>
-					<div class="flex-1">
-						<h4 class="font-medium text-[var(--text-small)] text-red-300">No Public API Access</h4>
-						<p class="mt-1 text-[var(--text-tiny)] text-red-200/80">
-							{info.reason ||
-								'This dataset is gated or requires authentication. Sample data cannot be fetched via the public HuggingFace API.'}
-						</p>
-						{#if info.hfId}
-							<a
-								href="https://huggingface.co/datasets/{info.hfId}"
-								target="_blank"
-								rel="noopener noreferrer"
-								class="mt-2 inline-block text-[var(--text-tiny)] text-red-300 underline hover:text-red-200"
-							>
-								Request access on HuggingFace
-							</a>
-						{/if}
-					</div>
-				</div>
-			</section>
+				{#if info.hfId}
+					<a
+						href="https://huggingface.co/datasets/{info.hfId}"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="text-[var(--text-tiny)] text-red-300 underline hover:text-red-200"
+					>
+						Request access on HuggingFace
+					</a>
+				{/if}
+			</ErrorNotice>
 		{/if}
 	{/if}
 
 	<!-- Error Display -->
 	{#if error}
-		<section
-			class="rounded-lg border border-red-500/50 bg-gradient-to-r from-red-900/30 to-red-950/20 p-3"
-		>
-			<div class="flex items-center gap-2 text-[var(--text-small)]">
-				<span class="text-red-500">Error:</span>
-				<span class="text-red-300">{error}</span>
-			</div>
-		</section>
+		<ErrorNotice title="Error" message={error} />
 	{/if}
 
 	<!-- Loading State -->
 	{#if loading && !sample}
-		<section
-			class="rounded-lg border border-[var(--color-secondary)] bg-[var(--color-secondary)] p-8 text-center"
-		>
-			<div class="flex flex-col items-center gap-3">
-				<svg
-					class="h-8 w-8 animate-spin text-[var(--color-primary)]"
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-				>
-					<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
-					></circle>
-					<path
-						class="opacity-75"
-						fill="currentColor"
-						d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-					></path>
-				</svg>
-				<p class="text-[var(--color-muted)] text-[var(--text-small)]">Fetching sample data...</p>
-			</div>
-		</section>
+		<LoadingSpinner message="Fetching sample data..." />
 	{/if}
 
 	<!-- Sample Display -->
 	{#if sample && !loading}
 		{@const info = getDatasetInfo(selectedDataset)}
 		{@const FormatComponent = getFormatComponent(selectedDataset)}
-		<section class="rounded-lg bg-[var(--color-secondary)] p-4">
+		<section class="rounded-lg bg-[var(--color-surface)] p-4">
 			<div class="mb-3 flex flex-wrap items-center justify-between gap-2">
 				<h3 class="font-semibold text-[var(--color-primary)] text-[var(--text-small)]">
 					Sample from {info.name}
 				</h3>
 
 				<div class="flex items-center gap-3">
-					<ToggleSwitch label="Raw" checked={showRaw} onchange={(v) => (showRaw = v)} />
+					<ToggleSwitch
+						label="Raw"
+						checked={showRaw}
+						color="yellow"
+						onchange={(v) => (showRaw = v)}
+					/>
 				</div>
 			</div>
 
 			<div
-				class="rounded-lg border border-[var(--color-secondary)] bg-gradient-to-br from-[var(--color-secondary)] to-[var(--color-bg)] p-4"
+				class="rounded-lg border border-[var(--color-secondary)] bg-gradient-to-br from-[var(--color-secondary)] to-[var(--color-bg)] p-3"
 			>
-				<FormatComponent {sample} {showRaw} />
+				{#if showRaw}
+					<!-- Raw JSON View -->
+					<div class="space-y-2">
+						<div class="flex items-center gap-2">
+							<span
+								class="rounded bg-yellow-600 px-2 py-0.5 font-mono font-bold text-[var(--text-tiny)] text-yellow-100"
+								>JSON</span
+							>
+						</div>
+						<pre
+							class="max-h-[32rem] overflow-auto rounded-lg border border-[var(--color-secondary)] bg-[var(--color-bg)] p-4 font-mono break-words whitespace-pre-wrap text-[var(--color-text)] text-[var(--text-small)]">{JSON.stringify(
+								sample,
+								null,
+								2
+							)}</pre>
+					</div>
+				{:else}
+					<!-- Formatted View -->
+					<FormatComponent {sample} />
+				{/if}
 			</div>
 		</section>
 	{/if}

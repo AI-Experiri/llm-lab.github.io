@@ -1,4 +1,6 @@
 <script>
+	import { HeroSection, Section, ContentBox, DataTable, ProsConsCard } from '$lib/shared';
+
 	// Filtering algorithms overview
 	const filteringAlgorithms = [
 		{
@@ -110,6 +112,12 @@
 		}
 	];
 
+	const realWorldExamplesColumns = [
+		{ key: 'paper', header: 'Paper/Dataset', color: 'accent' },
+		{ key: 'filtering', header: 'Filtering Approach', color: 'muted' },
+		{ key: 'dedup', header: 'Deduplication', color: 'muted' }
+	];
+
 	// Processing pipeline stages
 	const pipelineStages = [
 		{ name: 'Text Extraction', desc: 'HTML to text (Trafilatura)', icon: '📄' },
@@ -146,55 +154,40 @@
 </script>
 
 <div class="space-y-6">
-	<!-- Hero Section -->
-	<div
-		class="rounded-2xl border border-[var(--color-primary)]/30 bg-gradient-to-br from-[var(--color-primary)]/20 to-emerald-600/20 p-8"
-	>
-		<div class="flex items-start gap-4">
-			<div class="text-5xl">🔧</div>
-			<div>
-				<h2 class="mb-3 text-2xl font-bold text-[var(--color-text)] md:text-3xl">
-					Data Processing: Filtering & Deduplication
-				</h2>
-				<p class="max-w-3xl text-lg leading-relaxed text-[var(--color-muted)]">
-					Raw web data requires extensive processing before training. This involves
-					<span class="font-semibold text-[var(--color-primary)]">filtering algorithms</span> to
-					select high-quality content and
-					<span class="font-semibold text-[var(--color-primary)]">deduplication</span> to remove redundant
-					data. The key challenge: process billions of documents in linear time.
-				</p>
-				<div class="mt-4 flex flex-wrap gap-3">
-					<span
-						class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-sm text-[var(--color-accent)]"
-					>
-						KenLM
-					</span>
-					<span
-						class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-sm text-[var(--color-accent)]"
-					>
-						fastText
-					</span>
-					<span
-						class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-sm text-[var(--color-accent)]"
-					>
-						MinHash LSH
-					</span>
-					<span
-						class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-sm text-[var(--color-accent)]"
-					>
-						Bloom Filters
-					</span>
-				</div>
-			</div>
+	<HeroSection title="Data Processing: Filtering & Deduplication">
+		<p class="max-w-3xl leading-relaxed text-[var(--color-muted)] text-[var(--text-body)]">
+			Raw web data requires extensive processing before training. This involves
+			<span class="font-semibold text-[var(--color-primary)]">filtering algorithms</span> to select
+			high-quality content and
+			<span class="font-semibold text-[var(--color-primary)]">deduplication</span> to remove redundant
+			data. The key challenge: process billions of documents in linear time.
+		</p>
+		<div class="mt-4 flex flex-wrap gap-3">
+			<span
+				class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-[var(--color-accent)] text-[var(--text-small)]"
+			>
+				KenLM
+			</span>
+			<span
+				class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-[var(--color-accent)] text-[var(--text-small)]"
+			>
+				fastText
+			</span>
+			<span
+				class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-[var(--color-accent)] text-[var(--text-small)]"
+			>
+				MinHash LSH
+			</span>
+			<span
+				class="rounded-full bg-[var(--color-secondary)] px-3 py-1 text-[var(--color-accent)] text-[var(--text-small)]"
+			>
+				Bloom Filters
+			</span>
 		</div>
-	</div>
+	</HeroSection>
 
-	<!-- Processing Pipeline Flowchart -->
-	<div class="rounded-xl bg-[var(--color-secondary)] p-6">
-		<h2 class="mb-4 flex items-center gap-2 text-xl font-bold text-[var(--color-primary)]">
-			<span>📊</span> Data Processing Pipeline
-		</h2>
-		<p class="mb-6 text-[var(--color-muted)]">
+	<Section title="📊 Data Processing Pipeline">
+		<p class="mb-6 text-[var(--color-muted)] text-[var(--text-small)]">
 			From raw HTML to training-ready data: each stage filters or transforms the content.
 		</p>
 
@@ -203,15 +196,20 @@
 			<div class="flex flex-wrap justify-center gap-2 md:gap-0">
 				{#each pipelineStages as stage, i (stage.name)}
 					<div class="flex items-center">
-						<div
-							class="min-w-[100px] rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-3 text-center transition-colors hover:border-[var(--color-primary)]/50 md:min-w-[120px] md:p-4"
+						<ContentBox
+							variant="dark"
+							class="min-w-[100px] border border-[var(--color-muted)]/20 p-3 text-center transition-colors hover:border-[var(--color-primary)]/50 md:min-w-[120px] md:p-4"
 						>
 							<div class="mb-1 text-2xl">{stage.icon}</div>
-							<div class="text-xs font-semibold text-[var(--color-text)] md:text-sm">
+							<div
+								class="font-semibold text-[var(--color-text)] text-[var(--text-tiny)] md:text-[var(--text-small)]"
+							>
 								{stage.name}
 							</div>
-							<div class="hidden text-xs text-[var(--color-muted)] md:block">{stage.desc}</div>
-						</div>
+							<div class="hidden text-[var(--color-muted)] text-[var(--text-tiny)] md:block">
+								{stage.desc}
+							</div>
+						</ContentBox>
 						{#if i < pipelineStages.length - 1}
 							<div class="px-1 text-lg text-[var(--color-primary)] md:px-2">→</div>
 						{/if}
@@ -221,14 +219,14 @@
 		</div>
 
 		<div class="mt-4 rounded-lg border-l-4 border-[var(--color-primary)] bg-[var(--color-bg)] p-3">
-			<p class="text-sm text-[var(--color-muted)]">
+			<p class="text-[var(--color-muted)] text-[var(--text-small)]">
 				<span class="font-semibold text-[var(--color-accent)]">Key insight:</span> Each stage must
 				be
 				<span class="text-[var(--color-text)]">extremely fast</span> since we process the entire web.
 				A slow filter is worse than not filtering at all.
 			</p>
 		</div>
-	</div>
+	</Section>
 
 	<!-- Core Filtering Problem -->
 	<div class="rounded-xl bg-[var(--color-secondary)] p-6">
@@ -279,7 +277,9 @@
 							stroke="rgb(239, 68, 68)"
 							stroke-width="1.5"
 						/>
-						<text x="50" y="35" fill="currentColor" class="text-xs" font-size="10">Raw data R</text>
+						<text x="50" y="35" fill="currentColor" class="text-[var(--text-tiny)]" font-size="10"
+							>Raw data R</text
+						>
 
 						<!-- T' subset -->
 						<ellipse
@@ -291,7 +291,9 @@
 							stroke="rgb(139, 92, 246)"
 							stroke-width="1.5"
 						/>
-						<text x="65" y="58" fill="currentColor" class="text-xs" font-size="8">T'</text>
+						<text x="65" y="58" fill="currentColor" class="text-[var(--text-tiny)]" font-size="8"
+							>T'</text
+						>
 
 						<!-- Target T (small circle) -->
 						<ellipse
@@ -303,7 +305,9 @@
 							stroke="rgb(16, 185, 129)"
 							stroke-width="1.5"
 						/>
-						<text x="155" y="33" fill="currentColor" class="text-xs" font-size="8">Target T</text>
+						<text x="155" y="33" fill="currentColor" class="text-[var(--text-tiny)]" font-size="8"
+							>Target T</text
+						>
 
 						<!-- Arrow -->
 						<path
@@ -337,7 +341,7 @@
 						<span class="text-xl">🎯</span>
 						<div>
 							<span class="font-semibold text-[var(--color-text)]">Generalize from T</span>
-							<p class="text-sm text-[var(--color-muted)]">
+							<p class="text-[var(--color-muted)] text-[var(--text-small)]">
 								T' should be different from T (you already have T)
 							</p>
 						</div>
@@ -346,7 +350,7 @@
 						<span class="text-xl">⚡</span>
 						<div>
 							<span class="font-semibold text-[var(--color-text)]">Extremely fast</span>
-							<p class="text-sm text-[var(--color-muted)]">
+							<p class="text-[var(--color-muted)] text-[var(--text-small)]">
 								Must run on all of R - if slow, might as well just train
 							</p>
 						</div>
@@ -355,7 +359,7 @@
 						<span class="text-xl">📊</span>
 						<div>
 							<span class="font-semibold text-[var(--color-text)]">Scalable</span>
-							<p class="text-sm text-[var(--color-muted)]">
+							<p class="text-[var(--color-muted)] text-[var(--text-small)]">
 								Linear time algorithms only - quadratic is impossible
 							</p>
 						</div>
@@ -374,47 +378,14 @@
 			Three main approaches to implement filtering, each with different tradeoffs.
 		</p>
 
-		<div class="space-y-4">
+		<div class="grid gap-4 md:grid-cols-3">
 			{#each filteringAlgorithms as algo (algo.name)}
-				<div
-					class="rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-bg)] p-5 transition-colors hover:border-[var(--color-primary)]/40"
-				>
-					<div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-						<div class="flex-1">
-							<h3 class="mb-2 text-lg font-bold text-[var(--color-text)]">{algo.name}</h3>
-							<p class="mb-3 text-sm text-[var(--color-muted)]">{algo.description}</p>
-							<div
-								class="inline-block rounded bg-[var(--color-secondary)] px-2 py-1 text-xs text-[var(--color-accent)]"
-							>
-								Used in: {algo.useCase}
-							</div>
-						</div>
-						<div class="grid grid-cols-2 gap-3 md:w-72">
-							<div>
-								<span class="text-xs font-semibold text-green-400">Pros</span>
-								<ul class="mt-1 space-y-0.5 text-xs text-[var(--color-muted)]">
-									{#each algo.pros as pro, i (i)}
-										<li class="flex items-start gap-1">
-											<span class="text-green-400">+</span>
-											{pro}
-										</li>
-									{/each}
-								</ul>
-							</div>
-							<div>
-								<span class="text-xs font-semibold text-amber-400">Cons</span>
-								<ul class="mt-1 space-y-0.5 text-xs text-[var(--color-muted)]">
-									{#each algo.cons as con, i (i)}
-										<li class="flex items-start gap-1">
-											<span class="text-amber-400">-</span>
-											{con}
-										</li>
-									{/each}
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
+				<ProsConsCard
+					title={algo.name}
+					description="{algo.description} Used in: {algo.useCase}"
+					pros={algo.pros}
+					cons={algo.cons}
+				/>
 			{/each}
 		</div>
 	</div>
@@ -428,11 +399,13 @@
 		<div class="grid gap-6 md:grid-cols-2">
 			<div>
 				<h3 class="mb-3 font-semibold text-[var(--color-text)]">How It Works</h3>
-				<div class="space-y-3 text-sm text-[var(--color-muted)]">
+				<div class="space-y-3 text-[var(--color-muted)] text-[var(--text-small)]">
 					<p>N-gram models estimate probability of text based on local word sequences:</p>
-					<div class="rounded-lg bg-[var(--color-bg)] p-3 font-mono text-xs">
-						<div class="text-[var(--color-accent)]"># Maximum likelihood estimation</div>
-						<div>p(in | the cat) = count("the cat in") / count("the cat")</div>
+					<div class="rounded-lg bg-[var(--color-bg)] p-3">
+						<div class="text-[var(--color-muted)]"># Maximum likelihood estimation</div>
+						<div class="font-mono text-[var(--color-accent)]">
+							p(in | the cat) = count("the cat in") / count("the cat")
+						</div>
 					</div>
 					<p>
 						<span class="font-semibold text-[var(--color-text)]">Problem:</span> Sparse counts for rare
@@ -448,13 +421,15 @@
 			<div>
 				<h3 class="mb-3 font-semibold text-[var(--color-text)]">Perplexity Scoring</h3>
 				<div class="rounded-lg bg-[var(--color-bg)] p-4">
-					<div class="space-y-2 font-mono text-xs">
-						<div class="text-[var(--color-accent)]"># Compute perplexity</div>
-						<div>log_prob = model.score(content)</div>
-						<div>num_tokens = len(tokens)</div>
-						<div>perplexity = exp(-log_prob / num_tokens)</div>
+					<div class="space-y-2 text-[var(--text-small)]">
+						<div class="text-[var(--color-muted)]"># Compute perplexity</div>
+						<div class="font-mono text-[var(--color-accent)]">log_prob = model.score(content)</div>
+						<div class="font-mono text-[var(--color-accent)]">num_tokens = len(tokens)</div>
+						<div class="font-mono text-[var(--color-accent)]">
+							perplexity = exp(-log_prob / num_tokens)
+						</div>
 					</div>
-					<div class="mt-4 space-y-2 text-xs">
+					<div class="mt-4 space-y-2 text-[var(--text-small)]">
 						<div class="flex justify-between">
 							<span class="text-[var(--color-muted)]">"Stanford University was founded..."</span>
 							<span class="font-mono text-green-400">PPL: 187</span>
@@ -465,7 +440,7 @@
 						</div>
 					</div>
 				</div>
-				<p class="mt-2 text-xs text-[var(--color-muted)]">
+				<p class="mt-2 text-[var(--color-muted)] text-[var(--text-small)]">
 					<span class="text-[var(--color-accent)]">CCNet:</span> Sort paragraphs by perplexity, keep top
 					1/3
 				</p>
@@ -482,17 +457,23 @@
 		<div class="grid gap-6 md:grid-cols-2">
 			<div>
 				<h3 class="mb-3 font-semibold text-[var(--color-text)]">Architecture</h3>
-				<div class="space-y-2 rounded-lg bg-[var(--color-bg)] p-4 font-mono text-xs">
-					<div class="text-[var(--color-accent)]"># Bag of word embeddings</div>
-					<div>V = 8192 <span class="text-[var(--color-muted)]"># Vocab size</span></div>
-					<div>H = 16 <span class="text-[var(--color-muted)]"># Hidden dim</span></div>
-					<div>K = 2 <span class="text-[var(--color-muted)]"># Classes (good/bad)</span></div>
-					<div class="mt-2">W = Embedding(V, H)</div>
-					<div>U = Linear(H, K)</div>
-					<div>y = softmax(U(W(x).mean()))</div>
+				<div class="space-y-2 rounded-lg bg-[var(--color-bg)] p-4 text-[var(--text-small)]">
+					<div class="text-[var(--color-muted)]"># Bag of word embeddings</div>
+					<div class="font-mono text-[var(--color-accent)]">
+						V = 8192 <span class="text-[var(--color-muted)]"># Vocab size</span>
+					</div>
+					<div class="font-mono text-[var(--color-accent)]">
+						H = 16 <span class="text-[var(--color-muted)]"># Hidden dim</span>
+					</div>
+					<div class="font-mono text-[var(--color-accent)]">
+						K = 2 <span class="text-[var(--color-muted)]"># Classes (good/bad)</span>
+					</div>
+					<div class="mt-2 font-mono text-[var(--color-accent)]">W = Embedding(V, H)</div>
+					<div class="font-mono text-[var(--color-accent)]">U = Linear(H, K)</div>
+					<div class="font-mono text-[var(--color-accent)]">y = softmax(U(W(x).mean()))</div>
 					<div class="mt-2 text-[var(--color-muted)]"># Only H*(V + K) parameters!</div>
 				</div>
-				<p class="mt-2 text-xs text-[var(--color-muted)]">
+				<p class="mt-2 text-[var(--color-muted)] text-[var(--text-small)]">
 					Uses hashing trick for n-grams: ~10M bins instead of unbounded vocab
 				</p>
 			</div>
@@ -500,28 +481,36 @@
 			<div>
 				<h3 class="mb-3 font-semibold text-[var(--color-text)]">Language Identification</h3>
 				<div class="rounded-lg bg-[var(--color-bg)] p-4">
-					<div class="mb-3 text-sm text-[var(--color-muted)]">
-						Off-the-shelf model: <code class="text-[var(--color-accent)]">lid.176.bin</code>
+					<div class="mb-3 text-[var(--color-muted)] text-[var(--text-small)]">
+						Off-the-shelf model: <code class="font-mono text-[var(--color-accent)]"
+							>lid.176.bin</code
+						>
 					</div>
-					<div class="space-y-2 text-xs">
+					<div class="space-y-2 text-[var(--text-small)]">
 						<div class="flex items-center justify-between">
-							<span>"The quick brown fox..."</span>
-							<span class="rounded bg-green-500/20 px-2 py-0.5 text-green-400">EN 0.71</span>
+							<span class="text-[var(--color-muted)]">"The quick brown fox..."</span>
+							<span class="rounded bg-green-500/20 px-2 py-0.5 font-mono text-green-400"
+								>EN 0.71</span
+							>
 						</div>
 						<div class="flex items-center justify-between">
-							<span>"Auf dem Wasser zu singen"</span>
-							<span class="rounded bg-blue-500/20 px-2 py-0.5 text-blue-400">DE 0.99</span>
+							<span class="text-[var(--color-muted)]">"Auf dem Wasser zu singen"</span>
+							<span class="rounded bg-blue-500/20 px-2 py-0.5 font-mono text-blue-400">DE 0.99</span
+							>
 						</div>
 						<div class="flex items-center justify-between">
-							<span>"Bonjour!"</span>
-							<span class="rounded bg-pink-500/20 px-2 py-0.5 text-pink-400">FR 0.98</span>
+							<span class="text-[var(--color-muted)]">"Bonjour!"</span>
+							<span class="rounded bg-pink-500/20 px-2 py-0.5 font-mono text-pink-400">FR 0.98</span
+							>
 						</div>
 						<div class="flex items-center justify-between">
-							<span>"for (int i = 0; ...)"</span>
-							<span class="rounded bg-amber-500/20 px-2 py-0.5 text-amber-400">RU? 0.3</span>
+							<span class="text-[var(--color-muted)]">"for (int i = 0; ...)"</span>
+							<span class="rounded bg-amber-500/20 px-2 py-0.5 font-mono text-amber-400"
+								>RU? 0.3</span
+							>
 						</div>
 					</div>
-					<p class="mt-3 text-xs text-[var(--color-muted)]">
+					<p class="mt-3 text-[var(--color-muted)] text-[var(--text-small)]">
 						Caveats: struggles with short text, code, similar languages, dialects
 					</p>
 				</div>
@@ -538,17 +527,18 @@
 		<div class="grid gap-6 md:grid-cols-2">
 			<div>
 				<h3 class="mb-3 font-semibold text-[var(--color-text)]">Importance Sampling Intuition</h3>
-				<div class="space-y-3 text-sm text-[var(--color-muted)]">
+				<div class="space-y-3 text-[var(--color-muted)] text-[var(--text-small)]">
 					<p>Want samples from target distribution p, but only have samples from proposal q:</p>
 					<div class="rounded-lg bg-[var(--color-bg)] p-3">
-						<ol class="space-y-2 text-xs">
+						<ol class="space-y-2">
 							<li class="flex items-start gap-2">
 								<span class="font-bold text-[var(--color-primary)]">1.</span>
 								Sample from q (raw data)
 							</li>
 							<li class="flex items-start gap-2">
 								<span class="font-bold text-[var(--color-primary)]">2.</span>
-								Compute weights: w = p(x) / q(x)
+								Compute weights:
+								<span class="font-mono text-[var(--color-accent)]">w = p(x) / q(x)</span>
 							</li>
 							<li class="flex items-start gap-2">
 								<span class="font-bold text-[var(--color-primary)]">3.</span>
@@ -562,17 +552,23 @@
 
 			<div>
 				<h3 class="mb-3 font-semibold text-[var(--color-text)]">Hashed N-grams Solution</h3>
-				<div class="space-y-2 rounded-lg bg-[var(--color-bg)] p-4 font-mono text-xs">
-					<div class="text-[var(--color-accent)]"># Hash n-grams to fixed bins</div>
-					<div>num_bins = 10_000_000</div>
-					<div>ngrams = text.split(" ")</div>
-					<div>hashed = [hash(ng) % num_bins for ng in ngrams]</div>
-					<div class="mt-2 text-[var(--color-accent)]"># Estimate probabilities</div>
-					<div>probs = count(hashed) / len(hashed)</div>
-					<div class="mt-2 text-[var(--color-accent)]"># Score = p_target / p_raw</div>
-					<div>score = prod(p_T[h] / p_R[h] for h in hashed)</div>
+				<div class="space-y-2 rounded-lg bg-[var(--color-bg)] p-4 text-[var(--text-small)]">
+					<div class="text-[var(--color-muted)]"># Hash n-grams to fixed bins</div>
+					<div class="font-mono text-[var(--color-accent)]">num_bins = 10_000_000</div>
+					<div class="font-mono text-[var(--color-accent)]">ngrams = text.split(" ")</div>
+					<div class="font-mono text-[var(--color-accent)]">
+						hashed = [hash(ng) % num_bins for ng in ngrams]
+					</div>
+					<div class="mt-2 text-[var(--color-muted)]"># Estimate probabilities</div>
+					<div class="font-mono text-[var(--color-accent)]">
+						probs = count(hashed) / len(hashed)
+					</div>
+					<div class="mt-2 text-[var(--color-muted)]"># Score = p_target / p_raw</div>
+					<div class="font-mono text-[var(--color-accent)]">
+						score = prod(p_T[h] / p_R[h] for h in hashed)
+					</div>
 				</div>
-				<p class="mt-2 text-xs text-[var(--color-muted)]">
+				<p class="mt-2 text-[var(--color-muted)] text-[var(--text-small)]">
 					More principled than classification - captures distribution matching
 				</p>
 			</div>
@@ -595,12 +591,14 @@
 					<h3 class="mb-3 font-bold text-[var(--color-text)]">{method.name}</h3>
 					<div class="space-y-2">
 						<div class="rounded bg-[var(--color-secondary)] p-2">
-							<span class="text-xs text-[var(--color-muted)]">Score:</span>
-							<div class="font-mono text-sm text-[var(--color-accent)]">{method.score}</div>
+							<span class="text-[var(--color-muted)] text-[var(--text-tiny)]">Score:</span>
+							<div class="font-mono text-[var(--color-accent)] text-[var(--text-small)]">
+								{method.score}
+							</div>
 						</div>
 						<div class="rounded bg-[var(--color-secondary)] p-2">
-							<span class="text-xs text-[var(--color-muted)]">Action:</span>
-							<div class="text-sm text-[var(--color-text)]">{method.action}</div>
+							<span class="text-[var(--color-muted)] text-[var(--text-tiny)]">Action:</span>
+							<div class="text-[var(--color-text)] text-[var(--text-small)]">{method.action}</div>
 						</div>
 					</div>
 				</div>
@@ -623,8 +621,8 @@
 						<span class="text-3xl">{app.icon}</span>
 						<h3 class="font-bold text-[var(--color-text)]">{app.type}</h3>
 					</div>
-					<p class="mb-3 text-sm text-[var(--color-muted)]">{app.description}</p>
-					<div class="space-y-2 text-xs">
+					<p class="mb-3 text-[var(--color-muted)] text-[var(--text-small)]">{app.description}</p>
+					<div class="space-y-2 text-[var(--text-tiny)]">
 						<div class="flex items-start gap-2">
 							<span class="text-[var(--color-accent)]">Tool:</span>
 							<span class="text-[var(--color-muted)]">{app.tool}</span>
@@ -673,7 +671,7 @@
 				<h3 class="mb-3 flex items-center gap-2 font-bold text-[var(--color-text)]">
 					<span class="text-green-400">+</span> Benefits
 				</h3>
-				<ul class="space-y-2 text-sm text-[var(--color-muted)]">
+				<ul class="space-y-2 text-[var(--color-muted)] text-[var(--text-small)]">
 					<li class="flex items-start gap-2">
 						<span class="text-green-400">1.</span>
 						<span
@@ -702,7 +700,7 @@
 				<h3 class="mb-3 flex items-center gap-2 font-bold text-[var(--color-text)]">
 					<span class="text-amber-400">!</span> Duplicate Sources
 				</h3>
-				<ul class="space-y-2 text-sm text-[var(--color-muted)]">
+				<ul class="space-y-2 text-[var(--color-muted)] text-[var(--text-small)]">
 					<li class="flex items-start gap-2">
 						<span class="text-amber-400">*</span>
 						<span
@@ -748,7 +746,7 @@
 					<div class="flex flex-wrap gap-2">
 						{#each item.options as option, i (i)}
 							<span
-								class="rounded bg-[var(--color-secondary)] px-2 py-1 text-xs text-[var(--color-accent)]"
+								class="rounded bg-[var(--color-secondary)] px-2 py-1 text-[var(--color-accent)] text-[var(--text-tiny)]"
 							>
 								{option}
 							</span>
@@ -759,7 +757,7 @@
 		</div>
 
 		<div class="mt-4 rounded-lg border-l-4 border-amber-500 bg-[var(--color-bg)] p-4">
-			<p class="text-sm text-[var(--color-muted)]">
+			<p class="text-[var(--color-muted)] text-[var(--text-small)]">
 				<span class="font-semibold text-amber-400">Key challenge:</span> Deduplication is
 				fundamentally
 				<span class="text-[var(--color-text)]">pairwise</span> - comparing items to other items. With
@@ -778,7 +776,7 @@
 		</p>
 
 		<div class="overflow-x-auto">
-			<table class="w-full text-sm">
+			<table class="w-full text-[var(--text-small)]">
 				<thead>
 					<tr class="border-b border-[var(--color-muted)]/20 text-left text-[var(--color-muted)]">
 						<th class="pr-4 pb-3">Hash</th>
@@ -795,7 +793,7 @@
 							<td class="py-3 pr-4 text-[var(--color-text)]">{hash.type}</td>
 							<td class="py-3 pr-4">
 								<span
-									class="rounded px-2 py-0.5 text-xs {hash.speed === 'Fast'
+									class="rounded px-2 py-0.5 text-[var(--text-tiny)] {hash.speed === 'Fast'
 										? 'bg-green-500/20 text-green-400'
 										: 'bg-amber-500/20 text-amber-400'}"
 								>
@@ -820,7 +818,9 @@
 		<div class="grid gap-6 md:grid-cols-2">
 			<div>
 				<h3 class="mb-3 font-semibold text-[var(--color-text)]">Simple Hash-Based Approach</h3>
-				<div class="space-y-2 rounded-lg bg-[var(--color-bg)] p-4 font-mono text-xs">
+				<div
+					class="space-y-2 rounded-lg bg-[var(--color-bg)] p-4 font-mono text-[var(--text-tiny)]"
+				>
 					<div class="text-[var(--color-accent)]"># MapReduce style deduplication</div>
 					<div>items = ["hello", "world", "hello", "hi"]</div>
 					<div class="mt-2 text-[var(--color-accent)]"># Group by hash</div>
@@ -829,7 +829,7 @@
 					<div>deduped = [next(group) for h, group in hash_items]</div>
 					<div class="mt-2 text-[var(--color-muted)]"># Result: ["hello", "world", "hi"]</div>
 				</div>
-				<p class="mt-2 text-xs text-[var(--color-muted)]">
+				<p class="mt-2 text-[var(--color-muted)] text-[var(--text-tiny)]">
 					Simple, clear semantics, high precision. Used in C4 for 3-sentence spans.
 				</p>
 			</div>
@@ -837,10 +837,10 @@
 			<div>
 				<h3 class="mb-3 font-semibold text-[var(--color-text)]">Bloom Filters</h3>
 				<div class="rounded-lg bg-[var(--color-bg)] p-4">
-					<p class="mb-3 text-sm text-[var(--color-muted)]">
+					<p class="mb-3 text-[var(--color-muted)] text-[var(--text-small)]">
 						Memory-efficient probabilistic set membership:
 					</p>
-					<ul class="space-y-2 text-xs text-[var(--color-muted)]">
+					<ul class="space-y-2 text-[var(--color-muted)] text-[var(--text-tiny)]">
 						<li class="flex items-start gap-2">
 							<span class="text-green-400">+</span>
 							<span>If returns "no" → definitely not in set</span>
@@ -851,8 +851,10 @@
 						</li>
 					</ul>
 					<div class="mt-3 rounded bg-[var(--color-secondary)] p-2">
-						<span class="text-xs text-[var(--color-accent)]">Dolma:</span>
-						<span class="text-xs text-[var(--color-muted)]"> FPR = 10^-15, paragraph-level</span>
+						<span class="text-[var(--color-accent)] text-[var(--text-tiny)]">Dolma:</span>
+						<span class="text-[var(--color-muted)] text-[var(--text-tiny)]">
+							FPR = 10^-15, paragraph-level</span
+						>
 					</div>
 				</div>
 			</div>
@@ -868,7 +870,9 @@
 		<div class="grid gap-6 md:grid-cols-2">
 			<div>
 				<h3 class="mb-3 font-semibold text-[var(--color-text)]">How It Works</h3>
-				<div class="space-y-2 rounded-lg bg-[var(--color-bg)] p-4 font-mono text-xs">
+				<div
+					class="space-y-2 rounded-lg bg-[var(--color-bg)] p-4 font-mono text-[var(--text-tiny)]"
+				>
 					<div class="text-[var(--color-accent)]"># Initialize bit array</div>
 					<div>m = 1000 <span class="text-[var(--color-muted)]"># Number of bins</span></div>
 					<div>
@@ -887,22 +891,22 @@
 			<div>
 				<h3 class="mb-3 font-semibold text-[var(--color-text)]">False Positive Analysis</h3>
 				<div class="rounded-lg bg-[var(--color-bg)] p-4">
-					<div class="space-y-3 text-sm text-[var(--color-muted)]">
+					<div class="space-y-3 text-[var(--color-muted)] text-[var(--text-small)]">
 						<p>For m bins, k hash functions, n items:</p>
-						<div class="rounded bg-[var(--color-secondary)] p-2 font-mono text-xs">
+						<div class="rounded bg-[var(--color-secondary)] p-2 font-mono text-[var(--text-tiny)]">
 							f = (1 - (1 - 1/m)^(kn))^k
 						</div>
 						<p>Optimal k (given m/n ratio):</p>
-						<div class="rounded bg-[var(--color-secondary)] p-2 font-mono text-xs">
+						<div class="rounded bg-[var(--color-secondary)] p-2 font-mono text-[var(--text-tiny)]">
 							k = ln(2) * m / n
 						</div>
 						<p>Resulting false positive rate:</p>
-						<div class="rounded bg-[var(--color-secondary)] p-2 font-mono text-xs">
+						<div class="rounded bg-[var(--color-secondary)] p-2 font-mono text-[var(--text-tiny)]">
 							f = 0.5^k <span class="text-[var(--color-muted)]">(exponential decrease!)</span>
 						</div>
 					</div>
 				</div>
-				<p class="mt-2 text-xs text-[var(--color-muted)]">
+				<p class="mt-2 text-[var(--color-muted)] text-[var(--text-tiny)]">
 					Key insight: more hash functions exponentially reduces false positives
 				</p>
 			</div>
@@ -922,8 +926,10 @@
 			<div>
 				<h3 class="mb-3 font-semibold text-[var(--color-text)]">Jaccard Similarity</h3>
 				<div class="rounded-lg bg-[var(--color-bg)] p-4">
-					<div class="mb-3 font-mono text-xs">Jaccard(A, B) = |A ∩ B| / |A ∪ B|</div>
-					<div class="space-y-2 text-xs text-[var(--color-muted)]">
+					<div class="mb-3 font-mono text-[var(--text-tiny)]">
+						Jaccard(A, B) = |A ∩ B| / |A ∪ B|
+					</div>
+					<div class="space-y-2 text-[var(--color-muted)] text-[var(--text-tiny)]">
 						<div>A = {'{'}1, 2, 3, 4}</div>
 						<div>B = {'{'}1, 2, 3, 5}</div>
 						<div class="mt-2">
@@ -937,7 +943,7 @@
 						<div class="mt-2 font-semibold text-[var(--color-accent)]">Jaccard = 3/5 = 0.6</div>
 					</div>
 				</div>
-				<p class="mt-2 text-xs text-[var(--color-muted)]">
+				<p class="mt-2 text-[var(--color-muted)] text-[var(--text-tiny)]">
 					Two documents are near-duplicates if Jaccard >= threshold (often 0.8-0.99)
 				</p>
 			</div>
@@ -945,19 +951,19 @@
 			<div>
 				<h3 class="mb-3 font-semibold text-[var(--color-text)]">MinHash Magic</h3>
 				<div class="rounded-lg bg-[var(--color-bg)] p-4">
-					<p class="mb-3 text-sm text-[var(--color-muted)]">
+					<p class="mb-3 text-[var(--color-muted)] text-[var(--text-small)]">
 						MinHash: a hash where <span class="text-[var(--color-text)]"
 							>collision probability = Jaccard similarity</span
 						>
 					</p>
-					<div class="space-y-2 font-mono text-xs">
+					<div class="space-y-2 font-mono text-[var(--text-tiny)]">
 						<div class="text-[var(--color-accent)]"># MinHash definition</div>
 						<div>def minhash(S, seed):</div>
 						<div>return min(hash(x, seed) for x in S)</div>
 						<div class="mt-2 text-[var(--color-accent)]"># Key property:</div>
 						<div>P[minhash(A) == minhash(B)] = Jaccard(A, B)</div>
 					</div>
-					<p class="mt-3 text-xs text-[var(--color-muted)]">
+					<p class="mt-3 text-[var(--color-muted)] text-[var(--text-tiny)]">
 						Converts pairwise similarity to unary hash - enables linear time!
 					</p>
 				</div>
@@ -974,21 +980,23 @@
 		<div class="grid gap-6 md:grid-cols-2">
 			<div>
 				<h3 class="mb-3 font-semibold text-[var(--color-text)]">The Problem</h3>
-				<p class="mb-3 text-sm text-[var(--color-muted)]">
+				<p class="mb-3 text-[var(--color-muted)] text-[var(--text-small)]">
 					With MinHash, P[collision] = Jaccard. But we want:
 				</p>
-				<ul class="space-y-2 text-sm text-[var(--color-muted)]">
+				<ul class="space-y-2 text-[var(--color-muted)] text-[var(--text-small)]">
 					<li>If Jaccard > threshold → high collision probability</li>
 					<li>If Jaccard &lt; threshold → low collision probability</li>
 				</ul>
-				<p class="mt-3 text-sm text-[var(--color-muted)]">
+				<p class="mt-3 text-[var(--color-muted)] text-[var(--text-small)]">
 					Need to "sharpen" the probability curve around the threshold.
 				</p>
 			</div>
 
 			<div>
 				<h3 class="mb-3 font-semibold text-[var(--color-text)]">Band/Row Structure</h3>
-				<div class="space-y-2 rounded-lg bg-[var(--color-bg)] p-4 font-mono text-xs">
+				<div
+					class="space-y-2 rounded-lg bg-[var(--color-bg)] p-4 font-mono text-[var(--text-tiny)]"
+				>
 					<div>n = 9000 <span class="text-[var(--color-muted)]"># Total hash functions</span></div>
 					<div>b = 20 <span class="text-[var(--color-muted)]"># Number of bands</span></div>
 					<div>r = 450 <span class="text-[var(--color-muted)]"># Rows per band</span></div>
@@ -997,7 +1005,7 @@
 					</div>
 					<div>threshold = (1/b)^(1/r) = 0.99</div>
 				</div>
-				<p class="mt-2 text-xs text-[var(--color-muted)]">
+				<p class="mt-2 text-[var(--color-muted)] text-[var(--text-tiny)]">
 					AND-OR structure: must match all r hashes in some band
 				</p>
 			</div>
@@ -1006,7 +1014,7 @@
 		<!-- LSH Curve Visualization -->
 		<div class="mt-6 rounded-lg bg-[var(--color-bg)] p-4">
 			<h3 class="mb-3 font-semibold text-[var(--color-text)]">Probability Curve Sharpening</h3>
-			<div class="grid gap-4 text-xs md:grid-cols-3">
+			<div class="grid gap-4 text-[var(--text-tiny)] md:grid-cols-3">
 				<div class="rounded bg-[var(--color-secondary)] p-3">
 					<div class="mb-2 text-[var(--color-accent)]">Increasing r (rows)</div>
 					<p class="text-[var(--color-muted)]">
@@ -1031,26 +1039,7 @@
 			<span>📋</span> Real-World Pipeline Examples
 		</h2>
 
-		<div class="overflow-x-auto">
-			<table class="w-full text-sm">
-				<thead>
-					<tr class="border-b border-[var(--color-muted)]/20 text-left text-[var(--color-muted)]">
-						<th class="pr-4 pb-3">Paper/Dataset</th>
-						<th class="pr-4 pb-3">Filtering Approach</th>
-						<th class="pb-3">Deduplication</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each realWorldExamples as ex (ex.paper)}
-						<tr class="border-b border-[var(--color-muted)]/10">
-							<td class="py-3 pr-4 font-semibold text-[var(--color-accent)]">{ex.paper}</td>
-							<td class="py-3 pr-4 text-[var(--color-muted)]">{ex.filtering}</td>
-							<td class="py-3 text-[var(--color-muted)]">{ex.dedup}</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
+		<DataTable columns={realWorldExamplesColumns} data={realWorldExamples} keyField="paper" />
 	</div>
 
 	<!-- Key Takeaways -->
@@ -1063,44 +1052,44 @@
 		<div class="grid gap-4 sm:grid-cols-2">
 			<div class="flex items-start gap-3">
 				<div
-					class="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)]/20 text-sm font-bold text-[var(--color-primary)]"
+					class="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)]/20 font-bold text-[var(--color-primary)] text-[var(--text-small)]"
 				>
 					1
 				</div>
-				<p class="text-sm text-[var(--color-muted)]">
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">
 					<span class="font-semibold text-[var(--color-text)]">Filtering framework:</span>
 					Target T + Raw R → Score function → Keep high-scoring examples
 				</p>
 			</div>
 			<div class="flex items-start gap-3">
 				<div
-					class="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)]/20 text-sm font-bold text-[var(--color-primary)]"
+					class="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)]/20 font-bold text-[var(--color-primary)] text-[var(--text-small)]"
 				>
 					2
 				</div>
-				<p class="text-sm text-[var(--color-muted)]">
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">
 					<span class="font-semibold text-[var(--color-text)]">Three tools:</span>
 					KenLM (perplexity), fastText (classification), DSIR (importance sampling)
 				</p>
 			</div>
 			<div class="flex items-start gap-3">
 				<div
-					class="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)]/20 text-sm font-bold text-[var(--color-primary)]"
+					class="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)]/20 font-bold text-[var(--color-primary)] text-[var(--text-small)]"
 				>
 					3
 				</div>
-				<p class="text-sm text-[var(--color-muted)]">
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">
 					<span class="font-semibold text-[var(--color-text)]">Hashing is key:</span>
 					Enables linear-time dedup by converting pairwise to unary operations
 				</p>
 			</div>
 			<div class="flex items-start gap-3">
 				<div
-					class="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)]/20 text-sm font-bold text-[var(--color-primary)]"
+					class="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)]/20 font-bold text-[var(--color-primary)] text-[var(--text-small)]"
 				>
 					4
 				</div>
-				<p class="text-sm text-[var(--color-muted)]">
+				<p class="text-[var(--color-muted)] text-[var(--text-small)]">
 					<span class="font-semibold text-[var(--color-text)]">MinHash + LSH:</span>
 					Approximate Jaccard similarity with controllable precision via bands/rows
 				</p>
