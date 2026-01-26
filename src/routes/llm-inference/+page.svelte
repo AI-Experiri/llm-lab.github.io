@@ -1,6 +1,9 @@
+<!-- ABOUTME: LLM Inference Lab page using shared layout components -->
+<!-- ABOUTME: Overview + topic tabs structure for inference optimization -->
+
 <script>
 	import { PageLayout, PageHeader, TabBar, Footer } from '$lib/layout';
-	import FoundationPage from '$lib/llm-inference/components/FoundationPage.svelte';
+	import HomePage from '$lib/llm-inference/components/HomePage.svelte';
 	import TimelinePage from '$lib/llm-inference/components/TimelinePage.svelte';
 	import ChallengesPage from '$lib/llm-inference/components/ChallengesPage.svelte';
 	import ArchitecturePage from '$lib/llm-inference/components/ArchitecturePage.svelte';
@@ -30,7 +33,7 @@
 
 	<div class="flex-1">
 		{#if activeTab === 'overview'}
-			<FoundationPage />
+			<HomePage />
 		{:else if activeTab === 'timeline'}
 			<TimelinePage />
 		{:else if activeTab === 'challenges'}

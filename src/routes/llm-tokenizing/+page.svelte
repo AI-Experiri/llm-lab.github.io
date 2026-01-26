@@ -3,6 +3,7 @@
 
 <script>
 	import { PageLayout, PageHeader, TabBar, Footer } from '$lib/layout';
+	import HomePage from '$lib/llm-tokenizing/components/HomePage.svelte';
 	import BPEVisualizer from '$lib/llm-tokenizing/components/BPEVisualizer.svelte';
 	import ScaffoldBPEVisualizer from '$lib/llm-tokenizing/components/ScaffoldBPEVisualizer.svelte';
 	import WordPieceVisualizer from '$lib/llm-tokenizing/components/WordPieceVisualizer.svelte';
@@ -12,6 +13,7 @@
 	import AGBPEVisualizer from '$lib/llm-tokenizing/components/AGBPEVisualizer.svelte';
 
 	const tabs = [
+		{ id: 'overview', label: 'Overview' },
 		{ id: 'bpe', label: 'Standard BPE' },
 		{ id: 'wordpiece', label: 'WordPiece' },
 		{ id: 'scaffold', label: 'Scaffold-BPE' },
@@ -21,7 +23,7 @@
 		{ id: 'agbpe', label: 'AG-BPE' }
 	];
 
-	let activeTab = $state('bpe');
+	let activeTab = $state('overview');
 
 	function handleTabChange(tabId) {
 		activeTab = tabId;
@@ -34,6 +36,9 @@
 	</PageHeader>
 
 	<div class="flex-1">
+		{#if activeTab === 'overview'}
+			<HomePage />
+		{/if}
 		<div class:hidden={activeTab !== 'bpe'}>
 			<BPEVisualizer />
 		</div>

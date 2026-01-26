@@ -74,6 +74,12 @@
 				'Effects of data, model size, and compute can be studied independently (with caveats).'
 		}
 	];
+
+	// Formulas defined here to avoid Svelte parsing braces as expressions
+	const generalFormula = 'L(x) = L_\\infty + \\left(\\frac{x_c}{x}\\right)^\\alpha';
+	const lInfinity = 'L_\\infty';
+	const xCritical = 'x_c';
+	const alphaSymbol = '\\alpha';
 </script>
 
 <div class="space-y-6">
@@ -162,19 +168,19 @@
 				All scaling relationships follow the same power law form:
 			</p>
 			<div class="rounded-lg bg-[var(--color-bg)] p-6 text-[var(--text-body)]">
-				<Math formula="L(x) = L_\\infty + \\left(\\frac{x_c}{x}\\right)^\\alpha" display={true} />
+				<Math formula={generalFormula} display={true} />
 			</div>
 			<div class="mt-4 grid gap-4 text-left text-[var(--text-small)] md:grid-cols-3">
 				<div>
-					<Math formula="L_\\infty" class="text-[var(--color-primary)]" />
+					<Math formula={lInfinity} class="text-[var(--color-primary)]" />
 					<span class="text-[var(--color-muted)]"> — Irreducible loss (entropy)</span>
 				</div>
 				<div>
-					<Math formula="x_c" class="text-[var(--color-primary)]" />
+					<Math formula={xCritical} class="text-[var(--color-primary)]" />
 					<span class="text-[var(--color-muted)]"> — Critical scale constant</span>
 				</div>
 				<div>
-					<Math formula="\\alpha" class="text-[var(--color-primary)]" />
+					<Math formula={alphaSymbol} class="text-[var(--color-primary)]" />
 					<span class="text-[var(--color-muted)]"> — Scaling exponent</span>
 				</div>
 			</div>

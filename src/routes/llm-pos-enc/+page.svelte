@@ -3,6 +3,7 @@
 
 <script>
 	import { PageLayout, PageHeader, TabBar, Footer } from '$lib/layout';
+	import HomePage from '$lib/llm-pos-enc/components/HomePage.svelte';
 	import KeepAlive from '$lib/llm-pos-enc/components/KeepAlive.svelte';
 	import Sinusoidal from '$lib/llm-pos-enc/components/Sinusoidal.svelte';
 	import RelativePE from '$lib/llm-pos-enc/components/RelativePE.svelte';
@@ -15,6 +16,7 @@
 	import DroPE from '$lib/llm-pos-enc/components/DroPE.svelte';
 
 	const tabs = [
+		{ id: 'overview', label: 'Overview' },
 		{ id: 'sinusoidal', label: 'Sinusoidal' },
 		{ id: 'relative-pe', label: 'Relative-PE' },
 		{ id: 'transformer-xl', label: 'Transformer-XL' },
@@ -26,7 +28,7 @@
 		{ id: 'drope', label: 'DroPE' }
 	];
 
-	let activeTab = $state('sinusoidal');
+	let activeTab = $state('overview');
 
 	function handleTabChange(tabId) {
 		activeTab = tabId;
@@ -39,6 +41,9 @@
 	</PageHeader>
 
 	<div class="flex-1">
+		{#if activeTab === 'overview'}
+			<HomePage />
+		{/if}
 		<KeepAlive show={activeTab === 'sinusoidal'}>
 			<Sinusoidal />
 		</KeepAlive>

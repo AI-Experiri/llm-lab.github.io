@@ -2,7 +2,13 @@
 <!-- ABOUTME: Pass items array for numbered bullets, or children for simple callout -->
 
 <script>
-	let { items = [], title = 'Key Takeaways', children, class: className = '' } = $props();
+	let {
+		items = [],
+		title = 'Key Takeaways',
+		columns = 1,
+		children,
+		class: className = ''
+	} = $props();
 </script>
 
 {#if items.length > 0}
@@ -11,7 +17,7 @@
 		class="rounded-xl border border-[var(--color-primary)]/20 bg-gradient-to-br from-[var(--color-primary)]/10 to-pink-600/10 p-6 {className}"
 	>
 		<h2 class="mb-4 text-xl font-bold text-[var(--color-text)]">{title}</h2>
-		<div class="grid gap-4 sm:grid-cols-2">
+		<div class="grid gap-4 {columns === 1 ? '' : 'sm:grid-cols-2'}">
 			{#each items as item, i (i)}
 				<div class="flex items-start gap-3">
 					<div

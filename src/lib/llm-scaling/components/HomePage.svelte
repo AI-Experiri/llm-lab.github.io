@@ -55,8 +55,8 @@
 	const references = [
 		{
 			title: 'Stanford CS336: Language Modeling from Scratch',
-			url: 'https://web.stanford.edu/class/cs336/',
-			description: 'Spring 2025 course covering scaling laws in Lectures 9 and 11'
+			url: 'https://stanford-cs336.github.io/spring2025/',
+			description: 'Lectures 9 & 11: Scaling Laws'
 		},
 		{
 			title: 'Scaling Laws for Neural Language Models',
@@ -77,6 +77,11 @@
 			title: 'Deep Learning Scaling is Predictable, Empirically',
 			authors: 'Hestness et al. (2017)',
 			url: 'https://arxiv.org/abs/1712.00409'
+		},
+		{
+			title: "Veritasium: We're Building Computers Wrong",
+			url: 'https://www.youtube.com/watch?v=HBluLfX2F_k',
+			description: 'Video explaining power laws'
 		}
 	];
 </script>

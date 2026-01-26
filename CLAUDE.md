@@ -190,6 +190,7 @@ when changing drawings for attention flow diagrams
 4. Positional encoding utilities are in src/lib/utils/positionalEncoding.js
 5. All lectures from which the web page content are derived are in docs/references/2025/
 6. Each page name maps to a folder inside docs/references/2025/ based on lectures from Stanford CS336 Spring 2025 (https://stanford-cs336.github.io/spring2025/index.html#schedule)
+7. NEVER start the dev server (`npm run dev`) - Jay already has one running. Just make code changes and Jay will see them live.
 
 ## Design System Constraints
 
@@ -235,3 +236,17 @@ when changing drawings for attention flow diagrams
 NEVER use `text-xs`, `text-sm`, `text-base` directly. Always use CSS variables so font sizes can be changed globally from `app.css`.
 
 **Inline formulas/code:** Use `InlineCode` component or `font-mono text-[var(--color-accent)]` for formulas within text.
+
+## Content Sourcing Requirements
+
+**ZERO TOLERANCE FOR UNSOURCED CONTENT.** No approximations from Claude's knowledge. Every claim needs a reference.
+
+1. **Every claim needs a source**: ALL content (numbers, dates, comparisons, technical claims) MUST link to official documentation, research papers, or authoritative sources
+2. **No source = no content**: If you cannot find a verifiable reference for a claim, DO NOT include it. Ask Jay or remove the content.
+3. **Comment annotations required**: Add HTML comments in code to indicate sources for each section:
+   ```svelte
+   <!-- SOURCE: https://arxiv.org/abs/1234.5678 - Original paper -->
+   <!-- SOURCE: NVIDIA official datasheet - https://nvidia.com/... -->
+   ```
+4. **Claude's knowledge is NOT a source**: Never write content based on "what Claude knows" - always verify with web search and cite the actual source
+5. **When in doubt, remove it**: Better to have less content with solid references than more content with approximations

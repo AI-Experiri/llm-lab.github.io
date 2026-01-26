@@ -333,58 +333,56 @@
 		</div>
 	</Section>
 
-	<!-- CTA -->
+	<!-- References -->
+	<Section title="References">
+		<ul class="space-y-2 text-[var(--text-small)]">
+			<li class="flex items-start gap-3">
+				<span class="font-medium text-[var(--color-primary)]">1.</span>
+				<div>
+					<a
+						href="https://stanford-cs336.github.io/spring2025/"
+						target="_blank"
+						rel="noopener noreferrer external"
+						class="text-[var(--color-accent)] hover:underline"
+					>
+						Stanford CS336: Language Modeling from Scratch
+					</a>
+					<span class="text-[var(--color-muted)]"> — Lecture 12: Evaluation</span>
+				</div>
+			</li>
+			<li class="flex items-start gap-3">
+				<span class="font-medium text-[var(--color-primary)]">2.</span>
+				<div>
+					<a
+						href="https://www.evidentlyai.com/llm-evaluation-benchmarks-datasets"
+						target="_blank"
+						rel="noopener noreferrer external"
+						class="text-[var(--color-accent)] hover:underline"
+					>
+						Evidently AI - 250 LLM Evaluation Benchmarks & Datasets
+					</a>
+				</div>
+			</li>
+			<li class="flex items-start gap-3">
+				<span class="font-medium text-[var(--color-primary)]">3.</span>
+				<div>
+					<a
+						href="https://huggingface.co/docs/datasets-server"
+						target="_blank"
+						rel="noopener noreferrer external"
+						class="text-[var(--color-accent)] hover:underline"
+					>
+						HuggingFace Datasets Server API
+					</a>
+				</div>
+			</li>
+		</ul>
+	</Section>
+
 	<KeyTakeaway title="Next Step">
 		<p>
 			Go to <span class="font-semibold text-[var(--color-primary)]">Sample Data</span> to explore actual
 			evaluation datasets from HuggingFace.
 		</p>
 	</KeyTakeaway>
-
-	<!-- References -->
-	<Section title="References">
-		<ul class="space-y-2 text-[var(--text-tiny)]">
-			<li class="flex items-start gap-2">
-				<span class="text-[var(--color-primary)]">1.</span>
-				<span class="text-[var(--color-muted)]">
-					<a
-						href="https://www.youtube.com/watch?v=x-R5l2HsXqM&list=PLoROMvodv4rOY23Y0BoGoBGgQ1zmU_MT_&index=13"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="text-[var(--color-primary)] underline transition-colors hover:text-pink-400"
-					>
-						Stanford CS336: Language Modeling from Scratch | Spring 2025 | Lecture 12: Evaluation
-					</a>
-				</span>
-			</li>
-			<li class="flex items-start gap-2">
-				<span class="text-[var(--color-primary)]">2.</span>
-				<span class="text-[var(--color-muted)]">
-					Dataset collection from
-					<a
-						href="https://www.evidentlyai.com/llm-evaluation-benchmarks-datasets"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="text-[var(--color-primary)] underline transition-colors hover:text-pink-400"
-					>
-						Evidently AI - 250 LLM Evaluation Benchmarks & Datasets
-					</a>
-				</span>
-			</li>
-			<li class="flex items-start gap-2">
-				<span class="text-[var(--color-primary)]">3.</span>
-				<span class="text-[var(--color-muted)]">
-					Sample data obtained from
-					<a
-						href="https://huggingface.co/docs/datasets-server"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="text-[var(--color-primary)] underline transition-colors hover:text-pink-400"
-					>
-						HuggingFace Datasets Server API
-					</a>
-				</span>
-			</li>
-		</ul>
-	</Section>
 </div>

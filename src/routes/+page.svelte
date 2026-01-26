@@ -17,12 +17,57 @@
 
 	<HeroSection title="Reference Guide">
 		<p class="mt-2 leading-relaxed text-[var(--color-text)] text-[var(--text-small)]">
-			A personal reference for training LLMs from scratch. Inspired by Stanford CS336: Language
-			Modeling from Scratch (Spring 2025).
+			A personal reference for training LLMs from scratch. Inspiration for this came from many
+			lectures, YouTube videos, blogs, and books.
 		</p>
 	</HeroSection>
 
-	<div class="mt-4 grid flex-1 grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+	<div class="mt-4 grid flex-1 grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+		<!-- GPU Lab -->
+		<a
+			href={resolve('/llm-gpu')}
+			data-sveltekit-preload-data
+			class="group flex flex-col rounded-xl border border-transparent bg-[var(--color-surface)] p-6 transition-all duration-300 hover:border-[var(--color-primary)] hover:bg-[var(--color-secondary)]"
+		>
+			<div class="mb-4 flex items-center gap-3">
+				<div
+					class="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-green-600 to-teal-600"
+				>
+					<svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
+						/>
+					</svg>
+				</div>
+				<h2
+					class="font-semibold text-[var(--color-text)] text-[var(--text-h2)] transition-colors group-hover:text-[var(--color-primary)]"
+				>
+					GPU Lab
+				</h2>
+			</div>
+			<p class="mb-4 flex-1 text-[var(--color-muted)] text-[var(--text-small)]">
+				Deep dive into GPU architecture, memory hierarchy, optimization techniques, and
+				FlashAttention for efficient LLM training.
+			</p>
+			<div class="flex flex-wrap gap-2">
+				<span
+					class="rounded bg-white/10 px-2 py-1 text-[var(--color-muted)] text-[var(--text-tiny)]"
+					>Architecture</span
+				>
+				<span
+					class="rounded bg-white/10 px-2 py-1 text-[var(--color-muted)] text-[var(--text-tiny)]"
+					>Memory</span
+				>
+				<span
+					class="rounded bg-white/10 px-2 py-1 text-[var(--color-muted)] text-[var(--text-tiny)]"
+					>FlashAttn</span
+				>
+			</div>
+		</a>
+
 		<!-- Tokenizing Lab -->
 		<a
 			href={resolve('/llm-tokenizing')}
@@ -156,10 +201,48 @@
 					>Samples</span
 				>
 			</div>
-			<div class="mt-4 text-[var(--color-muted)] text-[var(--text-tiny)]">
-				CS336 Lectures 13 & 14
-			</div>
 		</a>
+
+		<!-- Architecture Lab (Placeholder) -->
+		<div
+			class="group flex flex-col rounded-xl border border-dashed border-[var(--color-muted)]/30 bg-[var(--color-surface)]/50 p-6 opacity-60"
+		>
+			<div class="mb-4 flex items-center gap-3">
+				<div
+					class="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-slate-600 to-zinc-600"
+				>
+					<svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+						/>
+					</svg>
+				</div>
+				<h2 class="font-semibold text-[var(--color-muted)] text-[var(--text-h2)]">
+					Architecture Lab
+				</h2>
+			</div>
+			<p class="mb-4 flex-1 text-[var(--color-muted)] text-[var(--text-small)]">
+				Coming soon: LLM architecture deep dive including attention mechanisms, layer normalization,
+				and modern transformer variants.
+			</p>
+			<div class="flex flex-wrap gap-2">
+				<span
+					class="rounded bg-white/10 px-2 py-1 text-[var(--color-muted)] text-[var(--text-tiny)]"
+					>Attention</span
+				>
+				<span
+					class="rounded bg-white/10 px-2 py-1 text-[var(--color-muted)] text-[var(--text-tiny)]"
+					>Transformer</span
+				>
+				<span
+					class="rounded bg-white/10 px-2 py-1 text-[var(--color-muted)] text-[var(--text-tiny)]"
+					>FFN</span
+				>
+			</div>
+		</div>
 
 		<!-- Inference Lab -->
 		<a
@@ -204,7 +287,6 @@
 					>Systems</span
 				>
 			</div>
-			<div class="mt-4 text-[var(--color-muted)] text-[var(--text-tiny)]">CS336 Lecture 10</div>
 		</a>
 
 		<!-- Evaluation Lab -->
@@ -250,7 +332,6 @@
 					>Samples</span
 				>
 			</div>
-			<div class="mt-4 text-[var(--color-muted)] text-[var(--text-tiny)]">CS336 Lecture 12</div>
 		</a>
 
 		<!-- Scaling Lab -->
@@ -261,7 +342,7 @@
 		>
 			<div class="mb-4 flex items-center gap-3">
 				<div
-					class="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-green-600 to-emerald-600"
+					class="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-rose-600 to-red-600"
 				>
 					<svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
@@ -295,9 +376,6 @@
 					class="rounded bg-white/10 px-2 py-1 text-[var(--color-muted)] text-[var(--text-tiny)]"
 					>Case Studies</span
 				>
-			</div>
-			<div class="mt-4 text-[var(--color-muted)] text-[var(--text-tiny)]">
-				CS336 Lectures 9 & 11
 			</div>
 		</a>
 	</div>

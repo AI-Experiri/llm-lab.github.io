@@ -3,7 +3,7 @@
 
 <script>
 	import { PageLayout, PageHeader, TabBar, Footer } from '$lib/layout';
-	import ImportancePage from '$lib/llm-data/components/ImportancePage.svelte';
+	import HomePage from '$lib/llm-data/components/HomePage.svelte';
 	import TimelinePage from '$lib/llm-data/components/TimelinePage.svelte';
 	import ProcessingPage from '$lib/llm-data/components/ProcessingPage.svelte';
 	import DatasetsPage from '$lib/llm-data/components/DatasetsPage.svelte';
@@ -31,7 +31,7 @@
 
 	<div class="flex-1">
 		{#if activeTab === 'overview'}
-			<ImportancePage />
+			<HomePage />
 		{:else if activeTab === 'timeline'}
 			<TimelinePage />
 		{:else if activeTab === 'processing'}
