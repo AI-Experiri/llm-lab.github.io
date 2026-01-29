@@ -3,7 +3,9 @@
 
 <script>
 	import { HeroSection, Section, ContentBox, KeyTakeaway } from '$lib/shared';
-	import AttentionFlow from './AttentionFlow.svelte';
+	import SHA from './SHA.svelte';
+	import MHA from './MHA.svelte';
+	import MQA from './MQA.svelte';
 
 	// Notation reference
 	const notation = [
@@ -85,7 +87,53 @@
 			use the notation above. Notice how Q, K, V matrices are created and combined.
 		</p>
 		<div class="overflow-x-auto">
-			<AttentionFlow />
+			<SHA instanceId="math-sha" />
+		</div>
+	</Section>
+
+	<!-- Multi-Head Attention -->
+	<Section title="Multi-Head Attention (MHA)">
+		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
+			In Multi-Head Attention, we run N independent attention heads in parallel. Each head has its
+			own W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub> projections, allowing the model to attend to different
+			representation subspaces at different positions.
+		</p>
+		<div class="overflow-x-auto">
+			<MHA />
+		</div>
+		<div
+			class="mt-4 rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-4"
+		>
+			<div class="font-mono text-[var(--text-small)]">
+				<span class="text-[var(--color-muted)]">KV Cache per layer:</span>
+				<span class="ml-2 text-[var(--color-accent)]">2 × N × S × H × 2 bytes</span>
+				<span class="ml-4 text-[var(--color-muted)]">(N heads, each with own K,V)</span>
+			</div>
+		</div>
+	</Section>
+
+	<!-- Multi-Query Attention -->
+	<Section title="Multi-Query Attention (MQA)">
+		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
+			Multi-Query Attention shares a single K,V projection across all N query heads (K=1). This
+			dramatically reduces KV cache size by factor of N, at minor quality cost.
+		</p>
+		<div class="overflow-x-auto">
+			<MQA />
+		</div>
+		<div class="mt-4 grid gap-4 md:grid-cols-2">
+			<div class="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4">
+				<div class="mb-1 font-semibold text-emerald-400">Memory Savings</div>
+				<div class="font-mono text-[var(--color-muted)] text-[var(--text-small)]">
+					KV cache reduced by <span class="text-emerald-400">N×</span> (e.g., 32× for N=32 heads)
+				</div>
+			</div>
+			<div class="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
+				<div class="mb-1 font-semibold text-amber-400">Trade-off</div>
+				<div class="text-[var(--color-muted)] text-[var(--text-small)]">
+					Slight quality degradation, but enables much larger batch sizes
+				</div>
+			</div>
 		</div>
 	</Section>
 

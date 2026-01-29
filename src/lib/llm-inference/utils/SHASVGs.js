@@ -223,7 +223,7 @@ export function drawAttentionHead(
 	const ktX = qkvMatrixX + matrixWidth + 30;
 
 	matrix(attentionHead, {
-		rows: dHead - 15,
+		rows: dHead - 30,
 		cols: ktCols,
 		cellWidth: ktCellWidth,
 		cellHeight: 3,
@@ -516,7 +516,7 @@ export function drawAttentionHead(
 
 	// L-shaped arrow from K to K^T
 	const kRightEdge = attentionHeadX + qkvMatrixX + matrixWidth;
-	const ktHeight = (dHead - 15) * 3;
+	const ktHeight = (dHead - 30) * 3; // K^T has (dHead-30) rows with cellHeight 3
 	const ktBottomY = attentionHeadY + qkvY + ktHeight;
 	const ktCenterX = attentionHeadX + ktX + ktWidth / 2;
 	const ktLabelOffset = 35;
