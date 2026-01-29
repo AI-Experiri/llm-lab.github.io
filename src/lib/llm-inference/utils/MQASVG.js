@@ -1,7 +1,7 @@
 // ABOUTME: Single Head Attention drawing function
-// ABOUTME: Exports drawAttentionHead that uses matrix from helperMatrixSVGs
+// ABOUTME: Exports drawAttentionHead that uses matrix from matrixSVG
 
-import { matrix } from './helperMatrixSVGs.js';
+import { matrix } from './matrixSVG.js';
 
 /**
  * Draws a complete attention head diagram into an SVG group.
@@ -516,7 +516,7 @@ export function drawAttentionHead(
 
 	// L-shaped arrow from K to K^T
 	const kRightEdge = attentionHeadX + qkvMatrixX + matrixWidth;
-	const ktHeight = (dHead - 30) * 3; // K^T has (dHead-30) rows with cellHeight 3
+	const ktHeight = (dHead - 30) * 3;
 	const ktBottomY = attentionHeadY + qkvY + ktHeight;
 	const ktCenterX = attentionHeadX + ktX + ktWidth / 2;
 	const ktLabelOffset = 35;

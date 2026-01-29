@@ -4,8 +4,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import { SVG } from '@svgdotjs/svg.js';
-	import { loadMathJax } from '$lib/llm-inference/utils/helperMatrixSVGs.js';
-	import { drawAttentionHead } from '$lib/llm-inference/utils/MQASVGs.js';
+	import { loadMathJax } from '$lib/llm-inference/utils/matrixSVG.js';
+	import { drawAttentionHead } from '$lib/llm-inference/utils/MQASVG.js';
 
 	let container;
 

@@ -1,11 +1,11 @@
 <!-- ABOUTME: Single Head Attention visualization component -->
-<!-- ABOUTME: Uses drawAttentionHead from SHASVGs.js -->
+<!-- ABOUTME: Uses drawAttentionHead from SHASVG.js -->
 
 <script>
 	import { onMount } from 'svelte';
 	import { SVG } from '@svgdotjs/svg.js';
-	import { loadMathJax } from '$lib/llm-inference/utils/helperMatrixSVGs.js';
-	import { drawAttentionHead } from '$lib/llm-inference/utils/SHASVGs.js';
+	import { loadMathJax } from '$lib/llm-inference/utils/matrixSVG.js';
+	import { drawAttentionHead } from '$lib/llm-inference/utils/SHASVG.js';
 
 	let {
 		showX = true,
