@@ -3,6 +3,24 @@
 
 <script>
 	import { HeroSection, Section, ContentBox, KeyTakeaway, ProsConsCard } from '$lib/shared';
+	import AttentionFlow from './AttentionFlow.svelte';
+
+	// Dimension notation reference
+	const dimensionNotation = [
+		{ symbol: 'B', name: 'Batch size', description: 'Number of sequences processed together' },
+		{ symbol: 'T', name: 'Sequence length (query)', description: 'Tokens being generated/queried' },
+		{ symbol: 'S', name: 'Sequence length (KV)', description: 'Tokens in KV cache (context)' },
+		{
+			symbol: 'D',
+			name: 'Model dimension',
+			description: 'd_model, embedding size (e.g., 768, 4096)'
+		},
+		{ symbol: 'F', name: 'MLP hidden dim', description: 'FFN intermediate size (typically 4×D)' },
+		{ symbol: 'N', name: 'Query heads', description: 'Number of attention query heads' },
+		{ symbol: 'K', name: 'KV heads', description: 'Number of key/value heads (K ≤ N)' },
+		{ symbol: 'H', name: 'Head dimension', description: 'Dimension per head (D = N×H)' },
+		{ symbol: 'L', name: 'Layers', description: 'Number of transformer layers' }
+	];
 
 	// KV Cache reduction techniques
 	const kvReductionTechniques = [
@@ -114,6 +132,91 @@
 </script>
 
 <div class="space-y-6">
+	<!-- Understanding Attention Head Dimensions -->
+	<Section title="Understanding Attention Head Dimensions">
+		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
+			Before diving into inference optimizations, let's establish a mental model of what happens
+			inside a single attention head. This diagram shows the data flow and dimensions at each step.
+		</p>
+
+		<!-- Attention Flow Diagram -->
+		<div class="mb-6 overflow-x-auto">
+			<AttentionFlow />
+		</div>
+
+		<!-- Dimension Notation Reference -->
+		<ContentBox variant="dark" class="border border-[var(--color-muted)]/20">
+			<h3 class="mb-4 font-bold text-[var(--color-text)]">Key Dimension Notation</h3>
+			<p class="mb-4 text-[var(--color-muted)] text-[var(--text-tiny)]">
+				These symbols appear throughout inference math. Understanding them is essential for
+				reasoning about memory and compute.
+			</p>
+			<div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+				{#each dimensionNotation as dim (dim.symbol)}
+					<div class="flex items-start gap-3 rounded bg-[var(--color-secondary)] p-3">
+						<span class="font-mono text-lg font-bold text-[var(--color-primary)]">{dim.symbol}</span
+						>
+						<div>
+							<div class="font-semibold text-[var(--color-text)] text-[var(--text-tiny)]">
+								{dim.name}
+							</div>
+							<div class="text-[var(--color-muted)] text-[var(--text-tiny)]">{dim.description}</div>
+						</div>
+					</div>
+				{/each}
+			</div>
+		</ContentBox>
+
+		<!-- Key Relationships -->
+		<div class="mt-4 grid gap-4 md:grid-cols-3">
+			<ContentBox variant="dark" class="border border-emerald-500/20">
+				<h4 class="mb-2 font-semibold text-[var(--text-small)] text-emerald-400">
+					Query Heads (N)
+				</h4>
+				<p class="text-[var(--color-muted)] text-[var(--text-tiny)]">
+					Each query head computes attention scores independently. Standard transformers have N
+					query heads.
+				</p>
+				<div class="mt-2 font-mono text-[var(--color-accent)] text-[var(--text-tiny)]">
+					Q shape: [B, N, T, H]
+				</div>
+			</ContentBox>
+
+			<ContentBox variant="dark" class="border border-cyan-500/20">
+				<h4 class="mb-2 font-semibold text-[var(--text-small)] text-cyan-400">KV Heads (K)</h4>
+				<p class="text-[var(--color-muted)] text-[var(--text-tiny)]">
+					In GQA, K &lt; N. Multiple query heads share the same K/V. This is where KV cache savings
+					come from.
+				</p>
+				<div class="mt-2 font-mono text-[var(--color-accent)] text-[var(--text-tiny)]">
+					K, V shape: [B, K, S, H]
+				</div>
+			</ContentBox>
+
+			<ContentBox variant="dark" class="border border-purple-500/20">
+				<h4 class="mb-2 font-semibold text-[var(--text-small)] text-purple-400">
+					Head Dimension (H)
+				</h4>
+				<p class="text-[var(--color-muted)] text-[var(--text-tiny)]">
+					Each head operates on H dimensions. Total model dimension D = N × H (e.g., 768 = 12 × 64).
+				</p>
+				<div class="mt-2 font-mono text-[var(--color-accent)] text-[var(--text-tiny)]">
+					D = N × H
+				</div>
+			</ContentBox>
+		</div>
+
+		<!-- Why This Matters for Inference -->
+		<KeyTakeaway title="Why This Matters for Inference" class="mt-4">
+			<p class="text-[var(--text-small)]">
+				The KV cache stores <span class="font-mono text-[var(--color-accent)]">[B, K, S, H]</span>
+				per layer. Reducing K (fewer KV heads) or H (smaller head dim) directly reduces memory. Since
+				inference is <span class="font-semibold text-red-400">memory-limited</span>, smaller KV
+				cache = faster generation.
+			</p>
+		</KeyTakeaway>
+	</Section>
+
 	<HeroSection title="Architectural Solutions for Efficient Inference">
 		<p class="max-w-3xl leading-relaxed text-[var(--color-muted)] text-[var(--text-body)]">
 			The Transformer's quadratic attention is a fundamental bottleneck. Modern architectures trade

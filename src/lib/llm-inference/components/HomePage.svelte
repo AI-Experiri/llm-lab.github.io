@@ -2,20 +2,7 @@
 <!-- ABOUTME: Covers why inference matters, key metrics, and compute analysis -->
 
 <script>
-	import { HeroSection, Section, ContentBox, KeyTakeaway, Math } from '$lib/shared';
-
-	// Formulas stored as constants to avoid template parsing issues
-	const formulas = {
-		intensity: '\\text{Arithmetic Intensity} = \\frac{\\text{FLOPs}}{\\text{Memory Accesses}}',
-		matmulFlops: '\\text{FLOPs} = 2mnk',
-		matmulMemory: '\\text{Memory} = (mn + nk + mk) \\times \\text{bytes}',
-		intensityPrefill: 'S/2',
-		intensityGen: '<1',
-		intensityBT: 'B \\cdot T',
-		intensityST: '\\frac{S \\cdot T}{S + T}',
-		threshold: '295',
-		sixN: '6N'
-	};
+	import { HeroSection, Section, ContentBox, KeyTakeaway } from '$lib/shared';
 
 	// Key metrics
 	const keyMetrics = [
@@ -45,34 +32,6 @@
 		{ context: 'Model Evaluation', desc: 'Running benchmarks, perplexity calculation' },
 		{ context: 'Test-Time Compute', desc: 'Chain-of-thought, self-consistency' },
 		{ context: 'RL Training', desc: 'Sampling from policy during RLHF' }
-	];
-
-	// Arithmetic intensity analysis
-	const arithmeticIntensity = [
-		{
-			operation: 'Matrix-Matrix (Training)',
-			intensity: 'B*T (high)',
-			bound: 'Compute-limited',
-			color: 'green'
-		},
-		{
-			operation: 'Matrix-Vector (Generation)',
-			intensity: '~1 (low)',
-			bound: 'Memory-limited',
-			color: 'red'
-		},
-		{
-			operation: 'MLP (batch B)',
-			intensity: 'B*T',
-			bound: 'Can improve with batching',
-			color: 'yellow'
-		},
-		{
-			operation: 'Attention (seq S)',
-			intensity: 'S*T/(S+T)',
-			bound: "Batching doesn't help",
-			color: 'red'
-		}
 	];
 </script>
 
@@ -214,71 +173,6 @@
 				</div>
 			</ContentBox>
 		</div>
-	</Section>
-
-	<!-- Arithmetic Intensity Analysis -->
-	<Section title="Arithmetic Intensity Analysis">
-		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
-			H100 GPU has arithmetic intensity of
-			<span class="font-mono text-[var(--color-accent)]">295 FLOPs/byte</span>. Operations are
-			compute-limited if intensity
-			<span class="font-mono text-[var(--color-accent)]">&gt; 295</span>, memory-limited if
-			<span class="font-mono text-[var(--color-accent)]">&lt; 295</span>.
-		</p>
-
-		<ContentBox variant="dark" class="mb-4">
-			<div class="mb-2 text-center text-[var(--text-small)]">
-				<Math formula={formulas.intensity} />
-			</div>
-			<p class="mt-3 text-center text-[var(--text-tiny)]">
-				<span class="text-[var(--color-muted)]">For matrix multiplication:</span>
-				<Math formula={formulas.matmulFlops} />
-				<span class="text-[var(--color-muted)]">,</span>
-				<Math formula={formulas.matmulMemory} />
-			</p>
-		</ContentBox>
-
-		<div class="overflow-x-auto">
-			<table class="w-full text-[var(--text-small)]">
-				<thead>
-					<tr class="border-b border-[var(--color-muted)]/20 text-left text-[var(--color-muted)]">
-						<th class="pr-4 pb-3">Operation</th>
-						<th class="pr-4 pb-3">Intensity</th>
-						<th class="pb-3">Bottleneck</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each arithmeticIntensity as item (item.operation)}
-						<tr class="border-b border-[var(--color-muted)]/10">
-							<td class="py-3 pr-4 text-[var(--color-text)]">{item.operation}</td>
-							<td class="py-3 pr-4 font-mono text-[var(--color-accent)]">{item.intensity}</td>
-							<td class="py-3">
-								<span
-									class="rounded px-2 py-0.5 text-[var(--text-tiny)] {item.color === 'green'
-										? 'bg-green-500/20 text-green-400'
-										: item.color === 'red'
-											? 'bg-red-500/20 text-red-400'
-											: 'bg-yellow-500/20 text-yellow-400'}"
-								>
-									{item.bound}
-								</span>
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-
-		<KeyTakeaway title="Key insight" class="mt-4">
-			<p>
-				During generation, we do matrix-vector products
-				<span class="font-mono text-[var(--color-accent)]">(B=1)</span>. With arithmetic intensity
-				<span class="font-mono text-[var(--color-accent)]">~1</span>
-				vs GPU's
-				<span class="font-mono text-[var(--color-accent)]">295 FLOPs/byte</span>, we waste 99%+ of
-				compute capability!
-			</p>
-		</KeyTakeaway>
 	</Section>
 
 	<!-- References -->
