@@ -1,7 +1,14 @@
-// ABOUTME: Single Head Attention drawing function
-// ABOUTME: Exports drawAttentionHead that uses matrix from matrixSVG
+// ABOUTME: Multi-Query Attention drawing function
+// ABOUTME: Exports drawAttentionHead that uses connectors for arrow connections
 
-import { matrix } from './matrixSVG.js';
+import {
+	createMatrix,
+	createPoint,
+	connect,
+	connectPath,
+	connectL,
+	connectFanOut
+} from './connectMatrix.js';
 
 /**
  * Draws a complete attention head diagram into an SVG group.
@@ -90,7 +97,8 @@ export function drawAttentionHead(
 	const xX = 70;
 	const xY = 210;
 
-	// Draw X matrix if enabled
+	// Draw X matrix if enabled - store reference for connections
+	let xMatrix = null;
 	if (showX) {
 		tokens.forEach((token, i) => {
 			const text = content.text(token).font({ family: 'sans-serif', size: 10 }).fill('#d4d4d4');
@@ -98,7 +106,7 @@ export function drawAttentionHead(
 			text.move(xX - textWidth - 5, xY + i * xCellHeight + xCellHeight / 2 - 5);
 		});
 
-		matrix(content, {
+		xMatrix = createMatrix(content, {
 			rows: seqLen,
 			cols: xCols,
 			cellWidth: xCellWidth,
@@ -181,8 +189,8 @@ export function drawAttentionHead(
 		showLabels
 	};
 
-	// W_Q, W_K, W_V matrices
-	matrix(attentionHead, {
+	// W_Q, W_K, W_V matrices - stored as connectables
+	const wqMatrix = createMatrix(attentionHead, {
 		...wMatrixConfig,
 		labelsTop: { left: '', center: 'W_Q', right: '' },
 		labelTopSizes: { left: 10, center: 20, right: 10 },
@@ -190,8 +198,9 @@ export function drawAttentionHead(
 		labelYTop: 15
 	}).move(wMatrixX, qkvY + matrixHeight / 2 - wMatrixHeight / 2);
 
+	let wkMatrix = null;
 	if (showWK) {
-		matrix(attentionHead, {
+		wkMatrix = createMatrix(attentionHead, {
 			...wMatrixConfig,
 			labelsTop: { left: '', center: 'W_K', right: '' },
 			labelTopSizes: { left: 10, center: 20, right: 10 },
@@ -200,8 +209,9 @@ export function drawAttentionHead(
 		}).move(wMatrixX, kY + matrixHeight / 2 - wMatrixHeight / 2);
 	}
 
+	let wvMatrix = null;
 	if (showWV) {
-		matrix(attentionHead, {
+		wvMatrix = createMatrix(attentionHead, {
 			...wMatrixConfig,
 			labelsTop: { left: '', center: 'W_V', right: '' },
 			labelTopSizes: { left: 10, center: 20, right: 10 },
@@ -211,7 +221,7 @@ export function drawAttentionHead(
 	}
 
 	// Q matrix
-	matrix(attentionHead, {
+	const qMatrix = createMatrix(attentionHead, {
 		...baseMatrixConfig,
 		labels: { left: '\\text{QUERIES}', center: 'Q = XW_Q', right: 'T \\times H' }
 	}).move(qkvMatrixX, qkvY);
@@ -221,12 +231,14 @@ export function drawAttentionHead(
 	const ktCellWidth = 8;
 	const ktWidth = ktCols * ktCellWidth;
 	const ktX = qkvMatrixX + matrixWidth + 30;
+	const ktRows = dHead - 30;
+	const ktCellHeight = 3;
 
-	matrix(attentionHead, {
-		rows: dHead - 30,
+	const ktMatrix = createMatrix(attentionHead, {
+		rows: ktRows,
 		cols: ktCols,
 		cellWidth: ktCellWidth,
-		cellHeight: 3,
+		cellHeight: ktCellHeight,
 		fill: smearColor || '#1e3a5f',
 		stroke: smearColor || '#3b82f6',
 		colorStart: smearColor || '#fde047',
@@ -242,10 +254,9 @@ export function drawAttentionHead(
 
 	// QK^T matrix
 	const qktCellSize = 12;
-	const qktWidth = seqLen * qktCellSize;
 	const qktX = ktX + ktWidth + 30;
 
-	matrix(attentionHead, {
+	const qktMatrix = createMatrix(attentionHead, {
 		rows: seqLen,
 		cols: seqLen,
 		cellWidth: qktCellSize,
@@ -264,7 +275,7 @@ export function drawAttentionHead(
 	}).move(qktX, qkvY);
 
 	// A matrix (Attention Pattern)
-	const aX = qktX + qktWidth + 80;
+	const aX = qktX + qktMatrix.width + 80;
 	const aCellSize = 25;
 	const aWidth = seqLen * aCellSize;
 	const aHeight = seqLen * aCellSize;
@@ -293,7 +304,7 @@ export function drawAttentionHead(
 		});
 	}
 
-	matrix(attentionHead, {
+	const aMatrix = createMatrix(attentionHead, {
 		rows: seqLen,
 		cols: seqLen,
 		cellWidth: aCellSize,
@@ -330,13 +341,13 @@ export function drawAttentionHead(
 	}
 
 	// K matrix
-	matrix(attentionHead, {
+	const kMatrix = createMatrix(attentionHead, {
 		...baseMatrixConfig,
 		labels: { left: '\\text{KEYS}', center: 'K = XW_K', right: 'S \\times H' }
 	}).move(qkvMatrixX, kY);
 
 	// V matrix
-	matrix(attentionHead, {
+	const vMatrix = createMatrix(attentionHead, {
 		...baseMatrixConfig,
 		labels: { left: '\\text{VALUES}', center: 'V = XW_V', right: 'S \\times H' }
 	}).move(qkvMatrixX, vY);
@@ -364,7 +375,7 @@ export function drawAttentionHead(
 		.line(circleX - 6, circleY + 6, circleX + 6, circleY - 6)
 		.stroke({ color: arrowColor, width: 1.5 });
 
-	matrix(attentionHead, {
+	const oMatrix = createMatrix(attentionHead, {
 		rows: seqLen,
 		cols: qkvCols,
 		cellWidth: qkvCellWidth,
@@ -408,130 +419,71 @@ export function drawAttentionHead(
 			.move(headerLabelX, headerLabelY);
 	}
 
-	// Arrow helpers
-	const drawArrow = (x1, y1, x2, y2, color = arrowColor) => {
-		const angle = Math.atan2(y2 - y1, x2 - x1);
-		const headLen = 12;
-		const lineEndX = x2 - headLen * Math.cos(angle);
-		const lineEndY = y2 - headLen * Math.sin(angle);
-		content.line(x1, y1, lineEndX, lineEndY).stroke({ color, width: 1.5 });
-		content
-			.polygon([
-				[x2, y2],
-				[
-					x2 - headLen * Math.cos(angle - Math.PI / 6),
-					y2 - headLen * Math.sin(angle - Math.PI / 6)
-				],
-				[x2 - headLen * 0.6 * Math.cos(angle), y2 - headLen * 0.6 * Math.sin(angle)],
-				[x2 - headLen * Math.cos(angle + Math.PI / 6), y2 - headLen * Math.sin(angle + Math.PI / 6)]
-			])
-			.fill(color);
-	};
+	// ========================================================================
+	// CONNECTIONS - Using anchor-based system
+	// Adjust matrix positions to absolute coordinates after attentionHead moves
+	// ========================================================================
 
-	const drawArrowHead = (x, y, angle, color = arrowColor) => {
-		const headLen = 12;
-		content
-			.polygon([
-				[x, y],
-				[x - headLen * Math.cos(angle - Math.PI / 6), y - headLen * Math.sin(angle - Math.PI / 6)],
-				[x - headLen * 0.6 * Math.cos(angle), y - headLen * 0.6 * Math.sin(angle)],
-				[x - headLen * Math.cos(angle + Math.PI / 6), y - headLen * Math.sin(angle + Math.PI / 6)]
-			])
-			.fill(color);
-	};
+	wqMatrix._x += attentionHeadX;
+	wqMatrix._y += attentionHeadY;
+	if (wkMatrix) {
+		wkMatrix._x += attentionHeadX;
+		wkMatrix._y += attentionHeadY;
+	}
+	if (wvMatrix) {
+		wvMatrix._x += attentionHeadX;
+		wvMatrix._y += attentionHeadY;
+	}
+	qMatrix._x += attentionHeadX;
+	qMatrix._y += attentionHeadY;
+	ktMatrix._x += attentionHeadX;
+	ktMatrix._y += attentionHeadY;
+	qktMatrix._x += attentionHeadX;
+	qktMatrix._y += attentionHeadY;
+	aMatrix._x += attentionHeadX;
+	aMatrix._y += attentionHeadY;
+	kMatrix._x += attentionHeadX;
+	kMatrix._y += attentionHeadY;
+	vMatrix._x += attentionHeadX;
+	vMatrix._y += attentionHeadY;
+	oMatrix._x += attentionHeadX;
+	oMatrix._y += attentionHeadY;
 
-	const drawLPath = (
-		x1,
-		y1,
-		cornerX,
-		cornerY,
-		x2,
-		y2,
-		radius = 10,
-		color = arrowColor,
-		withArrow = true
-	) => {
-		const goingDownToCorner = cornerY > y1;
-		const goingRightToCorner = cornerX > x1;
-		const goingDownFromCorner = y2 > cornerY;
-		const goingRightFromCorner = x2 > cornerX;
+	const circleXAbs = attentionHeadX + circleX;
+	const circleYAbs = attentionHeadY + circleY;
+	const connOpts = { color: arrowColor, strokeWidth: 1.5 };
 
-		let pathStr = `M ${x1} ${y1} `;
-		if (x1 === cornerX) {
-			pathStr += `L ${cornerX} ${cornerY + (goingDownToCorner ? -radius : radius)} `;
-			pathStr += `Q ${cornerX} ${cornerY} ${cornerX + (goingRightFromCorner ? radius : -radius)} ${cornerY} `;
-			pathStr += `L ${x2} ${y2}`;
-		} else {
-			pathStr += `L ${cornerX + (goingRightToCorner ? -radius : radius)} ${y1} `;
-			pathStr += `Q ${cornerX} ${y1} ${cornerX} ${y1 + (goingDownFromCorner ? radius : -radius)} `;
-			pathStr += `L ${x2} ${y2}`;
-		}
-
-		content.path(pathStr).fill('none').stroke({ color, width: 1.5 });
-		if (withArrow) {
-			const angle = Math.atan2(y2 - cornerY, x2 - cornerX);
-			drawArrowHead(x2, y2, angle, color);
-		}
-	};
-
-	// Arrows from X to W matrices
-	const xRightEdge = xX + xWidth;
-	const wLeftEdge = attentionHeadX + wMatrixX;
-	const junctionX = xRightEdge + 40;
-
-	const wqTopY = qkvY + matrixHeight / 2 - wMatrixHeight / 2;
-	const wkTopY = kY + matrixHeight / 2 - wMatrixHeight / 2;
-	const wvTopY = vY + matrixHeight / 2 - wMatrixHeight / 2;
-
-	const wqAbsY = attentionHeadY + wqTopY + wMatrixHeight / 2;
-	const wkAbsY = attentionHeadY + wkTopY + wMatrixHeight / 2;
-	const wvAbsY = attentionHeadY + wvTopY + wMatrixHeight / 2;
-
-	if (showX) {
-		content
-			.line(xRightEdge + 5, wkAbsY, junctionX, wkAbsY)
-			.stroke({ color: arrowColor, width: 1.5 });
-		content.line(junctionX, wqAbsY, junctionX, wvAbsY).stroke({ color: arrowColor, width: 1.5 });
-		drawArrow(junctionX, wqAbsY, wLeftEdge - 5, wqAbsY);
-		drawArrow(junctionX, wkAbsY, wLeftEdge - 5, wkAbsY);
-		drawArrow(junctionX, wvAbsY, wLeftEdge - 5, wvAbsY);
+	// X → W matrices (fan-out pattern)
+	if (showX && xMatrix) {
+		const targets = [{ target: wqMatrix, anchor: 'left' }];
+		if (wkMatrix) targets.push({ target: wkMatrix, anchor: 'left' });
+		if (wvMatrix) targets.push({ target: wvMatrix, anchor: 'left' });
+		connectFanOut(content, xMatrix, 'right', targets, { ...connOpts, junctionOffset: 40 });
 	}
 
-	// Arrows from W to Q, K, V
-	const wRightEdge = attentionHeadX + wMatrixX + wMatrixWidth;
-	const qkvLeftEdge = attentionHeadX + qkvMatrixX;
+	// W → Q, K, V
+	connect(content, wqMatrix, 'right', qMatrix, 'left', connOpts);
+	if (wkMatrix) connect(content, wkMatrix, 'right', kMatrix, 'left', connOpts);
+	if (wvMatrix) connect(content, wvMatrix, 'right', vMatrix, 'left', connOpts);
 
-	const qCenterY = attentionHeadY + qkvY + matrixHeight / 2;
-	const kCenterY = attentionHeadY + kY + matrixHeight / 2;
-	const vCenterY = attentionHeadY + vY + matrixHeight / 2;
+	// Q → K^T
+	connect(content, qMatrix, 'right', ktMatrix, 'left', connOpts);
 
-	drawArrow(wRightEdge + 5, wqAbsY, qkvLeftEdge - 5, qCenterY);
-	drawArrow(wRightEdge + 5, wkAbsY, qkvLeftEdge - 5, kCenterY);
-	drawArrow(wRightEdge + 5, wvAbsY, qkvLeftEdge - 5, vCenterY);
-
-	// Arrow from Q to K^T
-	const qRightEdge = attentionHeadX + qkvMatrixX + matrixWidth;
-	const ktLeftEdge = attentionHeadX + ktX;
-	drawArrow(qRightEdge + 5, qCenterY, ktLeftEdge - 5, qCenterY);
-
-	// L-shaped arrow from K to K^T
-	const kRightEdge = attentionHeadX + qkvMatrixX + matrixWidth;
-	const ktHeight = (dHead - 30) * 3;
-	const ktBottomY = attentionHeadY + qkvY + ktHeight;
-	const ktCenterX = attentionHeadX + ktX + ktWidth / 2;
+	// K → K^T (L-shaped)
 	const ktLabelOffset = 35;
-	drawLPath(
-		kRightEdge + 5,
-		kCenterY,
-		ktCenterX,
-		kCenterY,
-		ktCenterX,
-		ktBottomY + ktLabelOffset,
-		10
+	const ktBottomPoint = createPoint(
+		ktMatrix.anchor('bottom').x,
+		ktMatrix.anchor('bottom').y + ktLabelOffset
 	);
+	connectL(content, kMatrix, 'right', ktBottomPoint, 'center', {
+		...connOpts,
+		cornerY: kMatrix.anchor('center').y
+	});
 
 	// Transpose label
 	if (showLabels) {
+		const kCenterY = kMatrix.anchor('center').y;
+		const ktCenterX = ktMatrix.anchor('center').x;
 		const transposeText = content
 			.text('Transpose')
 			.font({ family: 'sans-serif', size: 14 })
@@ -540,77 +492,65 @@ export function drawAttentionHead(
 		transposeText.move(ktCenterX - transposeWidth / 2, kCenterY + 20);
 	}
 
-	// Arrow from K^T to QK^T
-	const ktRightEdge = attentionHeadX + ktX + ktWidth;
-	const qktLeftEdge = attentionHeadX + qktX;
-	drawArrow(ktRightEdge + 5, qCenterY, qktLeftEdge - 5, qCenterY);
+	// K^T → QK^T
+	connect(content, ktMatrix, 'right', qktMatrix, 'left', connOpts);
 
-	// L-shaped arrow from QK^T to A
-	const qktHeight = seqLen * qktCellSize;
-	const qktCenterX = attentionHeadX + qktX + qktWidth / 2;
-	const aLeftEdge = attentionHeadX + aX;
+	// QK^T → A (with Mask & Softmax label)
 	const qktLabelOffset = 30;
-	const qktBottomWithLabels = attentionHeadY + qkvY + qktHeight + qktLabelOffset;
-	const maskSoftmaxY = qktBottomWithLabels + 60;
+	const qktBottomY = qktMatrix.anchor('bottom').y + qktLabelOffset;
+	const maskSoftmaxY = qktBottomY + 60;
 	const aRowLabelSpace = 55;
-	drawLPath(
-		qktCenterX,
-		qktBottomWithLabels,
-		qktCenterX,
-		maskSoftmaxY,
-		aLeftEdge - aRowLabelSpace,
-		maskSoftmaxY,
-		10
+
+	connectPath(
+		content,
+		[
+			{ x: qktMatrix.anchor('bottom').x, y: qktBottomY },
+			{ x: qktMatrix.anchor('bottom').x, y: maskSoftmaxY },
+			{ x: aMatrix.anchor('left').x - aRowLabelSpace, y: maskSoftmaxY }
+		],
+		{ ...connOpts, radius: 10, showArrow: true }
 	);
 
-	// Mask & Softmax label
 	if (showLabels) {
 		content
 			.text('Mask &')
 			.font({ family: 'sans-serif', size: 14 })
 			.fill(arrowColor)
-			.move(qktCenterX - 20, maskSoftmaxY + 15);
+			.move(qktMatrix.anchor('center').x - 20, maskSoftmaxY + 15);
 		content
 			.text('Softmax')
 			.font({ family: 'sans-serif', size: 14 })
 			.fill(arrowColor)
-			.move(qktCenterX - 20, maskSoftmaxY + 30);
+			.move(qktMatrix.anchor('center').x - 20, maskSoftmaxY + 30);
 	}
 
-	// Arrow from V to circle
-	const vRightEdgeAbs = attentionHeadX + qkvMatrixX + matrixWidth;
-	const circleXAbs = attentionHeadX + circleX;
-	const circleYAbs = attentionHeadY + circleY;
-	drawArrow(vRightEdgeAbs + 5, vCenterY, circleXAbs - circleRadius - 5, circleYAbs);
+	// V → ⊗
+	const circleLeftPoint = createPoint(circleXAbs - circleRadius, circleYAbs);
+	connect(content, vMatrix, 'right', circleLeftPoint, 'center', connOpts);
 
-	// Arrow from circle to O
-	const oLeftEdgeAbs = attentionHeadX + oX;
-	drawArrow(circleXAbs + circleRadius + 5, circleYAbs, oLeftEdgeAbs - 5, vCenterY);
+	// ⊗ → O
+	const circleRightPoint = createPoint(circleXAbs + circleRadius, circleYAbs);
+	connect(content, circleRightPoint, 'center', oMatrix, 'left', connOpts);
 
-	// Arrow from A to circle
-	const aBottomY = attentionHeadY + qkvY + aHeight;
-	const aBottomLabelsY = aBottomY + 110;
-	const aCenterXAbs = attentionHeadX + aX + aWidth / 2;
-	const corner1Y = aBottomY + 130;
-	const pathRadius = 10;
+	// A → ⊗ (complex path)
+	const aBottomY = aMatrix.anchor('bottom').y + 110;
+	const corner1Y = aBottomY + 20;
+	connectPath(
+		content,
+		[
+			{ x: aMatrix.anchor('bottom').x, y: aBottomY },
+			{ x: aMatrix.anchor('bottom').x, y: corner1Y },
+			{ x: circleXAbs, y: corner1Y },
+			{ x: circleXAbs, y: circleYAbs - circleRadius - 5 }
+		],
+		{ ...connOpts, radius: 10, showArrow: true }
+	);
 
-	const pathStr =
-		`M ${aCenterXAbs} ${aBottomLabelsY} ` +
-		`L ${aCenterXAbs} ${corner1Y - pathRadius} ` +
-		`Q ${aCenterXAbs} ${corner1Y} ${aCenterXAbs - pathRadius} ${corner1Y} ` +
-		`L ${circleXAbs + pathRadius} ${corner1Y} ` +
-		`Q ${circleXAbs} ${corner1Y} ${circleXAbs} ${corner1Y + pathRadius} ` +
-		`L ${circleXAbs} ${circleYAbs - circleRadius - 5}`;
-
-	content.path(pathStr).fill('none').stroke({ color: arrowColor, width: 1.5 });
-	drawArrowHead(circleXAbs, circleYAbs - circleRadius - 5, Math.PI / 2);
-
-	// Thick arrow from O to outside
-	const oRightEdgeAbs = attentionHeadX + oX + oWidth;
-	const oCenterY = vCenterY;
+	// O → output (thick arrow)
 	const borderRightEdge = attentionHeadX + borderWidth;
-	const thickHeadLen = 18;
 	const thickArrowX = borderRightEdge + 40;
+	const oCenterY = oMatrix.anchor('center').y;
+	const thickHeadLen = 18;
 
 	content
 		.polygon([
@@ -621,7 +561,7 @@ export function drawAttentionHead(
 		])
 		.fill(arrowColor);
 	content
-		.line(oRightEdgeAbs + 5, oCenterY, thickArrowX - thickHeadLen, oCenterY)
+		.line(oMatrix.anchor('right').x + 5, oCenterY, thickArrowX - thickHeadLen, oCenterY)
 		.stroke({ color: arrowColor, width: 3 });
 
 	// Apply offset to entire content group
