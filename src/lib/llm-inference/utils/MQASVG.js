@@ -28,6 +28,7 @@ import {
  * @param {string} [options.headLabelText='ATTENTION HEAD'] - Custom label text
  * @param {string} [options.smearColor=null] - If set, use this single color for all matrices (shadow effect)
  * @param {string} [options.arrowColor='#9ca3af'] - Color for arrows and connectors
+ * @param {boolean} [options.showSharedKV=true] - Show shared K/V matrices (W_K, K, W_V, V) and their arrows
  * @returns {Object} { group, width, height } - The drawn group and its dimensions
  */
 export function drawAttentionHead(
@@ -46,8 +47,7 @@ export function drawAttentionHead(
 		smearColor = null,
 		arrowColor = '#9ca3af',
 		headLabelWeight = 'bold',
-		showWK = true,
-		showWV = true
+		showSharedKV = true
 	} = {}
 ) {
 	// Create a group for this head, offset as specified
@@ -125,17 +125,31 @@ export function drawAttentionHead(
 		}).move(xX, xY);
 	}
 
-	// Attention head positioning
-	const gapBetweenXAndHead = 15;
-	const attentionHeadX = xX + xWidth + gapBetweenXAndHead;
-
 	// Matrix configuration
 	const qkvCellHeight = 10;
-	const qkvCols = 64;
+	const qkvCols = 32;
 	const qkvCellWidth = 5;
 	const matrixHeight = seqLen * qkvCellHeight;
 	const matrixWidth = qkvCols * qkvCellWidth;
 	const spacing = 100;
+
+	// Weight matrix configuration (needed before positioning)
+	const wMatrixCols = 1;
+	const wMatrixRows = 1;
+	const wCellWidth = 50;
+	const wCellHeight = 50;
+	const wMatrixWidth = wMatrixCols * wCellWidth;
+	const wMatrixHeight = wMatrixRows * wCellHeight;
+
+	// Shared W_K and K positioning (OUTSIDE the head border)
+	const sharedMatrixGap = 15;
+	const wkX = xX + xWidth + sharedMatrixGap; // W_K starts after X
+	const kX = wkX + wMatrixWidth + sharedMatrixGap; // K starts after W_K
+
+	// Attention head positioning - always positioned after where K would be
+	// so all heads align regardless of whether shared K/V is shown
+	const headGapFromK = 50;
+	const attentionHeadX = kX + matrixWidth + headGapFromK;
 
 	const attentionHead = content.group();
 
@@ -161,14 +175,8 @@ export function drawAttentionHead(
 	const kY = qkvY + matrixHeight + spacing;
 	const vY = qkvY + 2 * (matrixHeight + spacing);
 
-	// Weight matrix configuration
-	const wMatrixCols = 1;
-	const wMatrixRows = 1;
-	const wCellWidth = 50;
-	const wCellHeight = 50;
+	// W matrix positioning inside attentionHead
 	const wMatrixX = 50;
-	const wMatrixWidth = wMatrixCols * wCellWidth;
-	const wMatrixHeight = wMatrixRows * wCellHeight;
 	const qkvMatrixX = wMatrixX + wMatrixWidth + 50;
 
 	const wMatrixConfig = {
@@ -189,7 +197,10 @@ export function drawAttentionHead(
 		showLabels
 	};
 
-	// W_Q, W_K, W_V matrices - stored as connectables
+	// Border starts at the left edge of attentionHead (K is outside, to the left)
+	const borderStartX = 0;
+
+	// W_Q inside attention head
 	const wqMatrix = createMatrix(attentionHead, {
 		...wMatrixConfig,
 		labelsTop: { left: '', center: 'W_Q', right: '' },
@@ -198,27 +209,11 @@ export function drawAttentionHead(
 		labelYTop: 15
 	}).move(wMatrixX, qkvY + matrixHeight / 2 - wMatrixHeight / 2);
 
+	// W_K is OUTSIDE the attention head (shared in MQA) - will be drawn in content group later
 	let wkMatrix = null;
-	if (showWK) {
-		wkMatrix = createMatrix(attentionHead, {
-			...wMatrixConfig,
-			labelsTop: { left: '', center: 'W_K', right: '' },
-			labelTopSizes: { left: 10, center: 20, right: 10 },
-			labelTopColors: { left: '#ffffff', center: '#ffffff', right: '#ffffff' },
-			labelYTop: 15
-		}).move(wMatrixX, kY + matrixHeight / 2 - wMatrixHeight / 2);
-	}
 
+	// W_V is OUTSIDE the attention head (shared in MQA) - will be drawn in content group later
 	let wvMatrix = null;
-	if (showWV) {
-		wvMatrix = createMatrix(attentionHead, {
-			...wMatrixConfig,
-			labelsTop: { left: '', center: 'W_V', right: '' },
-			labelTopSizes: { left: 10, center: 20, right: 10 },
-			labelTopColors: { left: '#ffffff', center: '#ffffff', right: '#ffffff' },
-			labelYTop: 15
-		}).move(wMatrixX, vY + matrixHeight / 2 - wMatrixHeight / 2);
-	}
 
 	// Q matrix
 	const qMatrix = createMatrix(attentionHead, {
@@ -340,17 +335,11 @@ export function drawAttentionHead(
 		}
 	}
 
-	// K matrix
-	const kMatrix = createMatrix(attentionHead, {
-		...baseMatrixConfig,
-		labels: { left: '\\text{KEYS}', center: 'K = XW_K', right: 'S \\times H' }
-	}).move(qkvMatrixX, kY);
+	// K matrix - placeholder, will be drawn in content group (shared in MQA)
+	let kMatrix = null;
 
-	// V matrix
-	const vMatrix = createMatrix(attentionHead, {
-		...baseMatrixConfig,
-		labels: { left: '\\text{VALUES}', center: 'V = XW_V', right: 'S \\times H' }
-	}).move(qkvMatrixX, vY);
+	// V matrix - placeholder, will be drawn in content group (shared in MQA)
+	let vMatrix = null;
 
 	// O matrix
 	const aRightEdge = aX + aWidth;
@@ -393,13 +382,14 @@ export function drawAttentionHead(
 		showLabels
 	}).move(oX, vY);
 
-	// Dashed border
+	// Dashed border - starts at borderStartX to exclude shared W_K and K
 	const borderPadding = 60;
-	const borderWidth = aRightEdge + borderPadding;
+	const borderWidth = aRightEdge + borderPadding - borderStartX;
 	const borderHeight = vY + matrixHeight + 60;
 
 	attentionHead
 		.rect(borderWidth, borderHeight)
+		.move(borderStartX, 0)
 		.fill('none')
 		.stroke({ color: arrowColor, width: 1.5, dasharray: '8,4' })
 		.radius(8);
@@ -407,6 +397,45 @@ export function drawAttentionHead(
 	// Position attention head
 	const attentionHeadY = xY + xHeight / 2 - borderHeight / 2;
 	attentionHead.move(attentionHeadX, attentionHeadY);
+
+	// Shared W_K and K matrices - drawn in content group (LEFT of the border)
+	// wkX and kX are defined at the top of the function
+	if (showSharedKV) {
+		wkMatrix = createMatrix(content, {
+			...wMatrixConfig,
+			labelsTop: { left: '', center: 'W_K', right: '' },
+			labelTopSizes: { left: 10, center: 20, right: 10 },
+			labelTopColors: { left: '#ffffff', center: '#ffffff', right: '#ffffff' },
+			labelYTop: 15
+		}).move(wkX, attentionHeadY + kY + matrixHeight / 2 - wMatrixHeight / 2);
+	}
+
+	// K matrix (shared across heads in MQA)
+	if (showSharedKV) {
+		kMatrix = createMatrix(content, {
+			...baseMatrixConfig,
+			labels: { left: '\\text{KEYS}', center: 'K = XW_K', right: 'S \\times H' }
+		}).move(kX, attentionHeadY + kY);
+	}
+
+	// Shared W_V and V matrices - drawn in content group (LEFT of the border)
+	if (showSharedKV) {
+		wvMatrix = createMatrix(content, {
+			...wMatrixConfig,
+			labelsTop: { left: '', center: 'W_V', right: '' },
+			labelTopSizes: { left: 10, center: 20, right: 10 },
+			labelTopColors: { left: '#ffffff', center: '#ffffff', right: '#ffffff' },
+			labelYTop: 15
+		}).move(wkX, attentionHeadY + vY + matrixHeight / 2 - wMatrixHeight / 2);
+	}
+
+	// V matrix (shared across heads in MQA)
+	if (showSharedKV) {
+		vMatrix = createMatrix(content, {
+			...baseMatrixConfig,
+			labels: { left: '\\text{VALUES}', center: 'V = XW_V', right: 'S \\times H' }
+		}).move(kX, attentionHeadY + vY);
+	}
 
 	// Head label
 	if (showHeadLabel) {
@@ -424,16 +453,10 @@ export function drawAttentionHead(
 	// Adjust matrix positions to absolute coordinates after attentionHead moves
 	// ========================================================================
 
+	// Adjust positions for matrices inside attentionHead to absolute coordinates
 	wqMatrix._x += attentionHeadX;
 	wqMatrix._y += attentionHeadY;
-	if (wkMatrix) {
-		wkMatrix._x += attentionHeadX;
-		wkMatrix._y += attentionHeadY;
-	}
-	if (wvMatrix) {
-		wvMatrix._x += attentionHeadX;
-		wvMatrix._y += attentionHeadY;
-	}
+	// wkMatrix, kMatrix, wvMatrix, vMatrix are already at absolute positions (drawn in content group)
 	qMatrix._x += attentionHeadX;
 	qMatrix._y += attentionHeadY;
 	ktMatrix._x += attentionHeadX;
@@ -442,10 +465,6 @@ export function drawAttentionHead(
 	qktMatrix._y += attentionHeadY;
 	aMatrix._x += attentionHeadX;
 	aMatrix._y += attentionHeadY;
-	kMatrix._x += attentionHeadX;
-	kMatrix._y += attentionHeadY;
-	vMatrix._x += attentionHeadX;
-	vMatrix._y += attentionHeadY;
 	oMatrix._x += attentionHeadX;
 	oMatrix._y += attentionHeadY;
 
@@ -454,42 +473,46 @@ export function drawAttentionHead(
 	const connOpts = { color: arrowColor, strokeWidth: 1.5 };
 
 	// X → W matrices (fan-out pattern)
+	// W_K is outside the border (shared), W_Q and W_V are inside
 	if (showX && xMatrix) {
-		const targets = [{ target: wqMatrix, anchor: 'left' }];
+		const targets = [];
 		if (wkMatrix) targets.push({ target: wkMatrix, anchor: 'left' });
+		targets.push({ target: wqMatrix, anchor: 'left' });
 		if (wvMatrix) targets.push({ target: wvMatrix, anchor: 'left' });
 		connectFanOut(content, xMatrix, 'right', targets, { ...connOpts, junctionOffset: 40 });
 	}
 
 	// W → Q, K, V
 	connect(content, wqMatrix, 'right', qMatrix, 'left', connOpts);
-	if (wkMatrix) connect(content, wkMatrix, 'right', kMatrix, 'left', connOpts);
-	if (wvMatrix) connect(content, wvMatrix, 'right', vMatrix, 'left', connOpts);
+	if (wkMatrix && kMatrix) connect(content, wkMatrix, 'right', kMatrix, 'left', connOpts);
+	if (wvMatrix && vMatrix) connect(content, wvMatrix, 'right', vMatrix, 'left', connOpts);
 
 	// Q → K^T
 	connect(content, qMatrix, 'right', ktMatrix, 'left', connOpts);
 
 	// K → K^T (L-shaped)
-	const ktLabelOffset = 35;
-	const ktBottomPoint = createPoint(
-		ktMatrix.anchor('bottom').x,
-		ktMatrix.anchor('bottom').y + ktLabelOffset
-	);
-	connectL(content, kMatrix, 'right', ktBottomPoint, 'center', {
-		...connOpts,
-		cornerY: kMatrix.anchor('center').y
-	});
+	if (kMatrix) {
+		const ktLabelOffset = 35;
+		const ktBottomPoint = createPoint(
+			ktMatrix.anchor('bottom').x,
+			ktMatrix.anchor('bottom').y + ktLabelOffset
+		);
+		connectL(content, kMatrix, 'right', ktBottomPoint, 'center', {
+			...connOpts,
+			cornerY: kMatrix.anchor('center').y
+		});
 
-	// Transpose label
-	if (showLabels) {
-		const kCenterY = kMatrix.anchor('center').y;
-		const ktCenterX = ktMatrix.anchor('center').x;
-		const transposeText = content
-			.text('Transpose')
-			.font({ family: 'sans-serif', size: 14 })
-			.fill(arrowColor);
-		const transposeWidth = transposeText.bbox().width || 50;
-		transposeText.move(ktCenterX - transposeWidth / 2, kCenterY + 20);
+		// Transpose label
+		if (showLabels) {
+			const kCenterY = kMatrix.anchor('center').y;
+			const ktCenterX = ktMatrix.anchor('center').x;
+			const transposeText = content
+				.text('Transpose')
+				.font({ family: 'sans-serif', size: 14 })
+				.fill(arrowColor);
+			const transposeWidth = transposeText.bbox().width || 50;
+			transposeText.move(ktCenterX - transposeWidth / 2, kCenterY + 20);
+		}
 	}
 
 	// K^T → QK^T
@@ -526,7 +549,9 @@ export function drawAttentionHead(
 
 	// V → ⊗
 	const circleLeftPoint = createPoint(circleXAbs - circleRadius, circleYAbs);
-	connect(content, vMatrix, 'right', circleLeftPoint, 'center', connOpts);
+	if (vMatrix) {
+		connect(content, vMatrix, 'right', circleLeftPoint, 'center', connOpts);
+	}
 
 	// ⊗ → O
 	const circleRightPoint = createPoint(circleXAbs + circleRadius, circleYAbs);

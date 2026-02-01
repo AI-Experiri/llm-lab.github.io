@@ -9,36 +9,44 @@
 
 	let container;
 
+	// Extra offset needed to align background heads with HEAD 1
+	// (accounts for space taken by shared W_K, K, W_V, V matrices)
+	// = sharedMatrixGap(15) + wMatrixWidth(50) + sharedMatrixGap(15) + matrixWidth(160) + headGapFromK(50)
+	const sharedMatrixOffset = 290;
+
 	const heads = [
 		{
 			label: 'N',
-			offsetX: 120,
+			offsetX: 120 + sharedMatrixOffset,
 			offsetY: -120,
 			highlight: false,
 			showLabels: false,
 			smearColor: '#1f2937',
 			arrowColor: '#1f2937',
-			headLabelWeight: 'normal'
+			headLabelWeight: 'normal',
+			showSharedKV: false
 		},
 		{
 			label: 3,
-			offsetX: 40,
+			offsetX: 40 + sharedMatrixOffset,
 			offsetY: -40,
 			highlight: false,
 			showLabels: false,
 			smearColor: '#374151',
 			arrowColor: '#374151',
-			headLabelWeight: 'normal'
+			headLabelWeight: 'normal',
+			showSharedKV: false
 		},
 		{
 			label: 2,
-			offsetX: 20,
+			offsetX: 20 + sharedMatrixOffset,
 			offsetY: -20,
 			highlight: false,
 			showLabels: false,
 			smearColor: '#4b5563',
 			arrowColor: '#4b5563',
-			headLabelWeight: 'normal'
+			headLabelWeight: 'normal',
+			showSharedKV: false
 		},
 		{
 			label: 1,
@@ -49,7 +57,8 @@
 			showLabels: true,
 			smearColor: null,
 			arrowColor: '#9ca3af',
-			headLabelWeight: 900
+			headLabelWeight: 900,
+			showSharedKV: true
 		}
 	];
 
@@ -78,11 +87,12 @@
 				offsetY: head.offsetY,
 				smearColor: head.smearColor,
 				arrowColor: head.arrowColor,
-				headLabelWeight: head.headLabelWeight
+				headLabelWeight: head.headLabelWeight,
+				showSharedKV: head.showSharedKV
 			});
 		});
 
-		const baseArrowTipX = 1000;
+		const baseArrowTipX = 850;
 		const baseArrowTipY = 408;
 		const head3 = heads.find((h) => h.label === 3);
 		const headN = heads.find((h) => h.label === 'N');
