@@ -56,3 +56,40 @@
 <div class="w-full rounded-lg p-6" class:bg-[#0a0a1a]={showBackground}>
 	<div bind:this={container} class="min-h-[500px] w-full"></div>
 </div>
+
+<!-- Key Notation -->
+<div class="mt-4">
+	<div class="mb-2 font-semibold text-[var(--color-primary)] text-[var(--text-small)]">
+		Key Notation
+	</div>
+	<div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
+		<div class="rounded bg-[var(--color-secondary)] p-3">
+			<span class="font-mono text-lg font-bold text-[var(--color-primary)]">B = 1</span>
+			<span class="ml-2 text-[var(--color-muted)] text-[var(--text-tiny)]">Batch size</span>
+		</div>
+		<div class="rounded bg-[var(--color-secondary)] p-3">
+			<span class="font-mono text-lg font-bold text-[var(--color-primary)]">T</span>
+			<span class="ml-2 text-[var(--color-muted)] text-[var(--text-tiny)]"
+				>Query sequence length</span
+			>
+		</div>
+		<div class="rounded bg-[var(--color-secondary)] p-3">
+			<span class="font-mono text-lg font-bold text-[var(--color-primary)]">S</span>
+			<span class="ml-2 text-[var(--color-muted)] text-[var(--text-tiny)]"
+				>Key/Value sequence length</span
+			>
+		</div>
+		<div class="rounded bg-[var(--color-secondary)] p-3">
+			<span class="font-mono text-lg font-bold text-[var(--color-primary)]">D</span>
+			<span class="ml-2 text-[var(--color-muted)] text-[var(--text-tiny)]">Model dimension</span>
+		</div>
+		<div class="rounded bg-[var(--color-secondary)] p-3">
+			<span class="font-mono text-lg font-bold text-[var(--color-primary)]">H</span>
+			<span class="ml-2 text-[var(--color-muted)] text-[var(--text-tiny)]">Head dimension</span>
+		</div>
+		<div class="rounded bg-[var(--color-secondary)] p-3">
+			<span class="font-mono text-lg font-bold text-[var(--color-primary)]">N = K = 1</span>
+			<span class="ml-2 text-[var(--color-muted)] text-[var(--text-tiny)]">Single head</span>
+		</div>
+	</div>
+</div>

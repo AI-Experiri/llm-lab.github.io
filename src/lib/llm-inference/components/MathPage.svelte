@@ -6,6 +6,7 @@
 	import SHA from './SHA.svelte';
 	import MHA from './MHA.svelte';
 	import MQA from './MQA.svelte';
+	import AttentionLayers from './AttentionLayers.svelte';
 
 	// Notation reference
 	const notation = [
@@ -101,15 +102,6 @@
 		<div class="overflow-x-auto">
 			<MHA />
 		</div>
-		<div
-			class="mt-4 rounded-lg border border-[var(--color-muted)]/20 bg-[var(--color-secondary)] p-4"
-		>
-			<div class="font-mono text-[var(--text-small)]">
-				<span class="text-[var(--color-muted)]">KV Cache per layer:</span>
-				<span class="ml-2 text-[var(--color-accent)]">2 × N × S × H × 2 bytes</span>
-				<span class="ml-4 text-[var(--color-muted)]">(N heads, each with own K,V)</span>
-			</div>
-		</div>
 	</Section>
 
 	<!-- Multi-Query Attention -->
@@ -121,19 +113,16 @@
 		<div class="overflow-x-auto">
 			<MQA />
 		</div>
-		<div class="mt-4 grid gap-4 md:grid-cols-2">
-			<div class="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4">
-				<div class="mb-1 font-semibold text-emerald-400">Memory Savings</div>
-				<div class="font-mono text-[var(--color-muted)] text-[var(--text-small)]">
-					KV cache reduced by <span class="text-emerald-400">N×</span> (e.g., 32× for N=32 heads)
-				</div>
-			</div>
-			<div class="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
-				<div class="mb-1 font-semibold text-amber-400">Trade-off</div>
-				<div class="text-[var(--color-muted)] text-[var(--text-small)]">
-					Slight quality degradation, but enables much larger batch sizes
-				</div>
-			</div>
+	</Section>
+
+	<!-- Attention Layers -->
+	<Section title="Attention Layers">
+		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
+			A transformer stacks L attention layers in sequence. Each layer contains Multi-Head Attention
+			followed by feedforward networks. The output of one layer becomes the input to the next.
+		</p>
+		<div class="overflow-x-auto">
+			<AttentionLayers />
 		</div>
 	</Section>
 

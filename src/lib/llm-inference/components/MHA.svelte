@@ -117,3 +117,18 @@
 <div class="w-full rounded-lg bg-[#0a0a1a] p-6">
 	<div bind:this={container} class="min-h-[500px] w-full"></div>
 </div>
+
+<!-- Key Notation - Only new notations not in SHA -->
+<div class="mt-4">
+	<div class="mb-2 font-semibold text-[var(--color-primary)] text-[var(--text-small)]">
+		Key Notation
+	</div>
+	<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+		<div class="rounded bg-[var(--color-secondary)] p-3">
+			<span class="font-mono text-lg font-bold text-[var(--color-primary)]">N = K</span>
+			<span class="ml-2 text-[var(--color-muted)] text-[var(--text-tiny)]"
+				>Each head has its own Q, K, V</span
+			>
+		</div>
+	</div>
+</div>
