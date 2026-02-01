@@ -29,6 +29,7 @@ import {
  * @param {string} [options.smearColor=null] - If set, use this single color for all matrices (shadow effect)
  * @param {string} [options.arrowColor='#9ca3af'] - Color for arrows and connectors
  * @param {boolean} [options.showSharedKV=true] - Show shared K/V matrices (W_K, K, W_V, V) and their arrows
+ * @param {number} [options.kvXAdjust=0] - X adjustment for K/V position (allows K/V to be positioned independently from border)
  * @returns {Object} { group, width, height } - The drawn group and its dimensions
  */
 export function drawAttentionHead(
@@ -47,7 +48,8 @@ export function drawAttentionHead(
 		smearColor = null,
 		arrowColor = '#9ca3af',
 		headLabelWeight = 'bold',
-		showSharedKV = true
+		showSharedKV = true,
+		kvXAdjust = 0
 	} = {}
 ) {
 	// Create a group for this head, offset as specified
@@ -398,44 +400,44 @@ export function drawAttentionHead(
 	const attentionHeadY = xY + xHeight / 2 - borderHeight / 2;
 	attentionHead.move(attentionHeadX, attentionHeadY);
 
-	// Shared W_K and K matrices - drawn in content group (LEFT of the border)
+	// Shared W_K, K, W_V, V matrices - ALWAYS drawn to maintain consistent bounding box
+	// When showSharedKV is false, draw invisible placeholders to reserve space
 	// wkX and kX are defined at the top of the function
-	if (showSharedKV) {
-		wkMatrix = createMatrix(content, {
-			...wMatrixConfig,
-			labelsTop: { left: '', center: 'W_K', right: '' },
-			labelTopSizes: { left: 10, center: 20, right: 10 },
-			labelTopColors: { left: '#ffffff', center: '#ffffff', right: '#ffffff' },
-			labelYTop: 15
-		}).move(wkX, attentionHeadY + kY + matrixHeight / 2 - wMatrixHeight / 2);
-	}
+	// kvXAdjust allows positioning K/V independently from the border (for shadow effect)
+
+	// W_K matrix
+	wkMatrix = createMatrix(content, {
+		...wMatrixConfig,
+		labelsTop: { left: '', center: 'W_K', right: '' },
+		labelTopSizes: { left: 10, center: 20, right: 10 },
+		labelTopColors: { left: '#ffffff', center: '#ffffff', right: '#ffffff' },
+		labelYTop: 15,
+		visible: showSharedKV
+	}).move(wkX + kvXAdjust, attentionHeadY + kY + matrixHeight / 2 - wMatrixHeight / 2);
 
 	// K matrix (shared across heads in MQA)
-	if (showSharedKV) {
-		kMatrix = createMatrix(content, {
-			...baseMatrixConfig,
-			labels: { left: '\\text{KEYS}', center: 'K = XW_K', right: 'S \\times H' }
-		}).move(kX, attentionHeadY + kY);
-	}
+	kMatrix = createMatrix(content, {
+		...baseMatrixConfig,
+		labels: { left: '\\text{KEYS}', center: 'K = XW_K', right: 'S \\times H' },
+		visible: showSharedKV
+	}).move(kX + kvXAdjust, attentionHeadY + kY);
 
-	// Shared W_V and V matrices - drawn in content group (LEFT of the border)
-	if (showSharedKV) {
-		wvMatrix = createMatrix(content, {
-			...wMatrixConfig,
-			labelsTop: { left: '', center: 'W_V', right: '' },
-			labelTopSizes: { left: 10, center: 20, right: 10 },
-			labelTopColors: { left: '#ffffff', center: '#ffffff', right: '#ffffff' },
-			labelYTop: 15
-		}).move(wkX, attentionHeadY + vY + matrixHeight / 2 - wMatrixHeight / 2);
-	}
+	// W_V matrix
+	wvMatrix = createMatrix(content, {
+		...wMatrixConfig,
+		labelsTop: { left: '', center: 'W_V', right: '' },
+		labelTopSizes: { left: 10, center: 20, right: 10 },
+		labelTopColors: { left: '#ffffff', center: '#ffffff', right: '#ffffff' },
+		labelYTop: 15,
+		visible: showSharedKV
+	}).move(wkX + kvXAdjust, attentionHeadY + vY + matrixHeight / 2 - wMatrixHeight / 2);
 
 	// V matrix (shared across heads in MQA)
-	if (showSharedKV) {
-		vMatrix = createMatrix(content, {
-			...baseMatrixConfig,
-			labels: { left: '\\text{VALUES}', center: 'V = XW_V', right: 'S \\times H' }
-		}).move(kX, attentionHeadY + vY);
-	}
+	vMatrix = createMatrix(content, {
+		...baseMatrixConfig,
+		labels: { left: '\\text{VALUES}', center: 'V = XW_V', right: 'S \\times H' },
+		visible: showSharedKV
+	}).move(kX + kvXAdjust, attentionHeadY + vY);
 
 	// Head label
 	if (showHeadLabel) {
@@ -476,22 +478,22 @@ export function drawAttentionHead(
 	// W_K is outside the border (shared), W_Q and W_V are inside
 	if (showX && xMatrix) {
 		const targets = [];
-		if (wkMatrix) targets.push({ target: wkMatrix, anchor: 'left' });
+		if (showSharedKV) targets.push({ target: wkMatrix, anchor: 'left' });
 		targets.push({ target: wqMatrix, anchor: 'left' });
-		if (wvMatrix) targets.push({ target: wvMatrix, anchor: 'left' });
+		if (showSharedKV) targets.push({ target: wvMatrix, anchor: 'left' });
 		connectFanOut(content, xMatrix, 'right', targets, { ...connOpts, junctionOffset: 40 });
 	}
 
 	// W → Q, K, V
 	connect(content, wqMatrix, 'right', qMatrix, 'left', connOpts);
-	if (wkMatrix && kMatrix) connect(content, wkMatrix, 'right', kMatrix, 'left', connOpts);
-	if (wvMatrix && vMatrix) connect(content, wvMatrix, 'right', vMatrix, 'left', connOpts);
+	if (showSharedKV) connect(content, wkMatrix, 'right', kMatrix, 'left', connOpts);
+	if (showSharedKV) connect(content, wvMatrix, 'right', vMatrix, 'left', connOpts);
 
 	// Q → K^T
 	connect(content, qMatrix, 'right', ktMatrix, 'left', connOpts);
 
 	// K → K^T (L-shaped)
-	if (kMatrix) {
+	if (showSharedKV) {
 		const ktLabelOffset = 35;
 		const ktBottomPoint = createPoint(
 			ktMatrix.anchor('bottom').x,
@@ -549,7 +551,7 @@ export function drawAttentionHead(
 
 	// V → ⊗
 	const circleLeftPoint = createPoint(circleXAbs - circleRadius, circleYAbs);
-	if (vMatrix) {
+	if (showSharedKV) {
 		connect(content, vMatrix, 'right', circleLeftPoint, 'center', connOpts);
 	}
 

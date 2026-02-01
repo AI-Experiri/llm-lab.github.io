@@ -9,15 +9,10 @@
 
 	let container;
 
-	// Extra offset needed to align background heads with HEAD 1
-	// (accounts for space taken by shared W_K, K, W_V, V matrices)
-	// = sharedMatrixGap(15) + wMatrixWidth(50) + sharedMatrixGap(15) + matrixWidth(160) + headGapFromK(50)
-	const sharedMatrixOffset = 290;
-
 	const heads = [
 		{
 			label: 'N',
-			offsetX: 120 + sharedMatrixOffset,
+			baseOffsetX: 120,
 			offsetY: -120,
 			highlight: false,
 			showLabels: false,
@@ -28,18 +23,18 @@
 		},
 		{
 			label: 3,
-			offsetX: 40 + sharedMatrixOffset,
+			baseOffsetX: 40,
 			offsetY: -40,
 			highlight: false,
 			showLabels: false,
 			smearColor: '#374151',
 			arrowColor: '#374151',
 			headLabelWeight: 'normal',
-			showSharedKV: false
+			showSharedKV: true
 		},
 		{
 			label: 2,
-			offsetX: 20 + sharedMatrixOffset,
+			baseOffsetX: 20,
 			offsetY: -20,
 			highlight: false,
 			showLabels: false,
@@ -50,7 +45,7 @@
 		},
 		{
 			label: 1,
-			offsetX: 0,
+			baseOffsetX: 0,
 			offsetY: 0,
 			highlight: true,
 			highlightColor: '#fde047',
@@ -74,6 +69,8 @@
 		const content = draw.group();
 
 		heads.forEach((head, _index) => {
+			// All heads use baseOffsetX - borders stack naturally
+			// Heads without K/V will have empty space on left, but borders align
 			drawAttentionHead(content, {
 				mathjax,
 				instanceId: `mqa-head-${head.label}`,
@@ -83,24 +80,29 @@
 				highlight: head.highlight,
 				highlightColor: head.highlightColor || '#fde047',
 				showLabels: head.showLabels,
-				offsetX: head.offsetX,
+				offsetX: head.baseOffsetX,
 				offsetY: head.offsetY,
 				smearColor: head.smearColor,
 				arrowColor: head.arrowColor,
 				headLabelWeight: head.headLabelWeight,
-				showSharedKV: head.showSharedKV
+				showSharedKV: head.showSharedKV,
+				kvXAdjust: 0
 			});
 		});
 
-		const baseArrowTipX = 850;
+		const baseArrowTipX = 1110;
 		const baseArrowTipY = 408;
 		const head3 = heads.find((h) => h.label === 3);
 		const headN = heads.find((h) => h.label === 'N');
 
 		if (head3 && headN) {
-			const x1 = baseArrowTipX + head3.offsetX + 10;
+			// Use baseOffsetX directly (same as forEach loop)
+			const head3OffsetX = head3.baseOffsetX;
+			const headNOffsetX = headN.baseOffsetX;
+
+			const x1 = baseArrowTipX + head3OffsetX + 10;
 			const y1 = baseArrowTipY + head3.offsetY - 10;
-			const x2 = baseArrowTipX + headN.offsetX;
+			const x2 = baseArrowTipX + headNOffsetX;
 			const y2 = baseArrowTipY + headN.offsetY;
 
 			content

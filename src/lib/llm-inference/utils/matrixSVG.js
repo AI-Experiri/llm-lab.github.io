@@ -157,12 +157,19 @@ export function matrix(
 		highlightColor = '#fde047',
 		highlightWidth = 3,
 		// Toggle all labels on/off
-		showLabels = true
+		showLabels = true,
+		// Visibility: when false, matrix is invisible but still occupies space
+		visible = true
 	} = {}
 ) {
 	const width = cols * cellWidth;
 	const height = rows * cellHeight;
 	const group = draw.group();
+
+	// Apply visibility - group still occupies space but is invisible
+	if (!visible) {
+		group.opacity(0);
+	}
 
 	// Highlight border (drawn first so it's behind)
 	if (highlight) {
