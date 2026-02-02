@@ -30,7 +30,7 @@
 			smearColor: '#374151',
 			arrowColor: '#374151',
 			headLabelWeight: 'normal',
-			showSharedKV: true
+			showSharedKV: false
 		},
 		{
 			label: 2,

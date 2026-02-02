@@ -142,7 +142,7 @@
 				// "N Heads" label
 				content
 					.text('N Heads')
-					.font({ family: 'sans-serif', size: 14, weight: 'bold' })
+					.font({ family: 'sans-serif', size: 24, weight: 'bold' })
 					.fill('#93c5fd')
 					.move(x + boxWidth / 2 - 35, boxY + boxHeight - 25);
 			}
@@ -150,7 +150,7 @@
 			// Layer label (below box)
 			content
 				.text(layer.label)
-				.font({ family: 'sans-serif', size: 20, weight: 'bold' })
+				.font({ family: 'sans-serif', size: 32, weight: 'bold' })
 				.fill('#e5e7eb')
 				.move(x + boxWidth / 2 - 40, boxY + boxHeight + 25);
 
@@ -185,7 +185,7 @@
 		const inputY = boxY + boxHeight / 2;
 		content
 			.text('Input')
-			.font({ family: 'sans-serif', size: 14, weight: 'bold' })
+			.font({ family: 'sans-serif', size: 24, weight: 'bold' })
 			.fill('#9ca3af')
 			.move(-70, inputY - 8);
 		content.line(-30, inputY, -15, inputY).stroke({ color: '#9ca3af', width: 3 });
@@ -197,23 +197,120 @@
 			])
 			.fill('#9ca3af');
 
-		// Output arrow
+		// MLP block to the right of Layer L (in the main flow)
 		const lastX = layers[layers.length - 1].x;
+		const mlpGap = 60;
+		const mlpX = lastX + boxWidth + mlpGap;
+		const mlpWidth = boxWidth * 0.5;
+		const mlpHeight = boxHeight;
+
+		// Arrow from Layer L to MLP
 		content
-			.line(lastX + boxWidth + 15, inputY, lastX + boxWidth + 50, inputY)
+			.line(lastX + boxWidth + 15, inputY, mlpX - 15, inputY)
 			.stroke({ color: '#9ca3af', width: 3 });
 		content
 			.polygon([
-				[lastX + boxWidth + 65, inputY],
-				[lastX + boxWidth + 53, inputY - 6],
-				[lastX + boxWidth + 53, inputY + 6]
+				[mlpX, inputY],
+				[mlpX - 12, inputY - 6],
+				[mlpX - 12, inputY + 6]
+			])
+			.fill('#9ca3af');
+
+		// MLP box
+		content
+			.rect(mlpWidth, mlpHeight)
+			.move(mlpX, boxY)
+			.fill('#1a1a2e')
+			.stroke({ color: '#7c3aed', width: 2 })
+			.radius(12);
+
+		// MLP visual - D→F→D expansion bars showing the hidden dimension
+		const barPadding = 15;
+		const barSpacing = 8;
+		const narrowWidth = (mlpWidth - barPadding * 2 - barSpacing * 2) * 0.25;
+		const wideWidth = (mlpWidth - barPadding * 2 - barSpacing * 2) * 0.5;
+		const barHeight = mlpHeight * 0.5;
+		const barY = boxY + (mlpHeight - barHeight) / 2;
+
+		// D input (narrow)
+		const bar1X = mlpX + barPadding;
+		content
+			.rect(narrowWidth, barHeight)
+			.move(bar1X, barY)
+			.fill('#8b5cf6')
+			.stroke({ color: '#c4b5fd', width: 1 })
+			.radius(4);
+
+		// F hidden (wide)
+		const bar2X = bar1X + narrowWidth + barSpacing;
+		content
+			.rect(wideWidth, barHeight)
+			.move(bar2X, barY)
+			.fill('#a78bfa')
+			.stroke({ color: '#c4b5fd', width: 1 })
+			.radius(4);
+
+		// D output (narrow)
+		const bar3X = bar2X + wideWidth + barSpacing;
+		content
+			.rect(narrowWidth, barHeight)
+			.move(bar3X, barY)
+			.fill('#8b5cf6')
+			.stroke({ color: '#c4b5fd', width: 1 })
+			.radius(4);
+
+		// Arrows inside MLP showing flow D→F→D
+		const arrowInY = barY + barHeight / 2;
+		// Arrow D→F
+		content
+			.line(bar1X + narrowWidth + 2, arrowInY, bar2X - 2, arrowInY)
+			.stroke({ color: '#e9d5ff', width: 2 });
+		// Arrow F→D
+		content
+			.line(bar2X + wideWidth + 2, arrowInY, bar3X - 2, arrowInY)
+			.stroke({ color: '#e9d5ff', width: 2 });
+
+		// Labels above bars: D, F, D
+		content
+			.text('D')
+			.font({ family: 'sans-serif', size: 16, weight: 'bold' })
+			.fill('#c4b5fd')
+			.move(bar1X + narrowWidth / 2 - 5, barY - 22);
+		content
+			.text('F')
+			.font({ family: 'sans-serif', size: 20, weight: 'bold' })
+			.fill('#fde047')
+			.move(bar2X + wideWidth / 2 - 6, barY - 25);
+		content
+			.text('D')
+			.font({ family: 'sans-serif', size: 16, weight: 'bold' })
+			.fill('#c4b5fd')
+			.move(bar3X + narrowWidth / 2 - 5, barY - 22);
+
+		// "MLP" label below box
+		content
+			.text('MLP')
+			.font({ family: 'sans-serif', size: 32, weight: 'bold' })
+			.fill('#a78bfa')
+			.move(mlpX + mlpWidth / 2 - 30, boxY + mlpHeight + 25);
+
+		// Output arrow from MLP (continuing right)
+		const outputArrowStartX = mlpX + mlpWidth + 15;
+		content
+			.line(outputArrowStartX, inputY, outputArrowStartX + 35, inputY)
+			.stroke({ color: '#9ca3af', width: 3 });
+		content
+			.polygon([
+				[outputArrowStartX + 50, inputY],
+				[outputArrowStartX + 38, inputY - 6],
+				[outputArrowStartX + 38, inputY + 6]
 			])
 			.fill('#9ca3af');
 		content
 			.text('Output')
-			.font({ family: 'sans-serif', size: 14, weight: 'bold' })
+			.font({ family: 'sans-serif', size: 24, weight: 'bold' })
 			.fill('#9ca3af')
-			.move(lastX + boxWidth + 70, inputY - 8);
+			.move(outputArrowStartX + 55, inputY - 8);
 
 		// Auto-fit viewbox
 		const bbox = content.bbox();
@@ -243,6 +340,12 @@
 			<span class="font-mono text-lg font-bold text-[var(--color-primary)]">L</span>
 			<span class="ml-2 text-[var(--color-muted)] text-[var(--text-tiny)]"
 				>Number of layers (depth of transformer)</span
+			>
+		</div>
+		<div class="rounded bg-[var(--color-secondary)] p-3">
+			<span class="font-mono text-lg font-bold text-[#a78bfa]">F</span>
+			<span class="ml-2 text-[var(--color-muted)] text-[var(--text-tiny)]"
+				>FFN intermediate size (typically 4×D)</span
 			>
 		</div>
 	</div>

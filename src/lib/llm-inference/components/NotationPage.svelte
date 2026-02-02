@@ -1,9 +1,12 @@
 <!-- ABOUTME: Notation page explaining attention head dimensions and key symbols -->
-<!-- ABOUTME: Covers query heads, KV heads, head dimension, and why they matter for inference -->
+<!-- ABOUTME: Shows SHA, MHA, MQA, AttentionLayers diagrams with notation reference -->
 
 <script>
 	import { HeroSection, Section, ContentBox, KeyTakeaway } from '$lib/shared';
-	import AttentionFlow from './AttentionFlow.svelte';
+	import SHA from './SHA.svelte';
+	import MHA from './MHA.svelte';
+	import MQA from './MQA.svelte';
+	import AttentionLayers from './AttentionLayers.svelte';
 
 	// Dimension notation reference
 	const dimensionNotation = [
@@ -19,12 +22,13 @@
 		{ symbol: 'N', name: 'Query heads', description: 'Number of attention query heads' },
 		{ symbol: 'K', name: 'KV heads', description: 'Number of key/value heads (K ≤ N)' },
 		{ symbol: 'H', name: 'Head dimension', description: 'Dimension per head (D = N×H)' },
-		{ symbol: 'L', name: 'Layers', description: 'Number of transformer layers' }
+		{ symbol: 'L', name: 'Layers', description: 'Number of transformer layers' },
+		{ symbol: 'V', name: 'Vocabulary size', description: 'Number of tokens in vocabulary' }
 	];
 </script>
 
 <div class="space-y-6">
-	<HeroSection title="Attention Head Notation">
+	<HeroSection title="Attention Notation & Data Flow">
 		<p class="max-w-3xl leading-relaxed text-[var(--color-muted)] text-[var(--text-body)]">
 			Understanding the dimensions and notation used in attention mechanisms is essential for
 			reasoning about <span class="font-semibold text-emerald-400">memory usage</span>,
@@ -33,43 +37,79 @@
 		</p>
 	</HeroSection>
 
-	<!-- Understanding Attention Head Dimensions -->
-	<Section title="Understanding Attention Head Dimensions">
+	<!-- Key Dimension Notation at the top -->
+	<Section title="Key Dimension Notation">
 		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
-			Before diving into inference optimizations, let's establish a mental model of what happens
-			inside a single attention head. This diagram shows the data flow and dimensions at each step.
+			These symbols appear throughout inference math. Understanding them is essential for reasoning
+			about memory and compute.
+		</p>
+		<div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+			{#each dimensionNotation as dim (dim.symbol)}
+				<div class="flex items-start gap-3 rounded bg-[var(--color-secondary)] p-3">
+					<span class="font-mono text-lg font-bold text-[var(--color-primary)]">{dim.symbol}</span>
+					<div>
+						<div class="font-semibold text-[var(--color-text)] text-[var(--text-tiny)]">
+							{dim.name}
+						</div>
+						<div class="text-[var(--color-muted)] text-[var(--text-tiny)]">{dim.description}</div>
+					</div>
+				</div>
+			{/each}
+		</div>
+	</Section>
+
+	<!-- Single Head Attention -->
+	<Section title="Single Attention Head Data Flow">
+		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
+			This diagram shows how data flows through a single attention head. The dimensions at each step
+			use the notation above. Notice how Q, K, V matrices are created and combined.
+		</p>
+		<div class="overflow-x-auto">
+			<SHA instanceId="notation-sha" />
+		</div>
+	</Section>
+
+	<!-- Multi-Head Attention -->
+	<Section title="Multi-Head Attention (MHA)">
+		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
+			In Multi-Head Attention, we run N independent attention heads in parallel. Each head has its
+			own W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub> projections, allowing the model to attend to different
+			representation subspaces at different positions.
+		</p>
+		<div class="overflow-x-auto">
+			<MHA />
+		</div>
+	</Section>
+
+	<!-- Multi-Query Attention -->
+	<Section title="Multi-Query Attention (MQA)">
+		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
+			Multi-Query Attention shares a single K,V projection across all N query heads (K=1). This
+			dramatically reduces KV cache size by factor of N, at minor quality cost.
+		</p>
+		<div class="overflow-x-auto">
+			<MQA />
+		</div>
+	</Section>
+
+	<!-- Attention Layers -->
+	<Section title="Attention Layers">
+		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
+			A transformer stacks L attention layers in sequence. Each layer contains Multi-Head Attention
+			followed by feedforward networks. The output of one layer becomes the input to the next.
+		</p>
+		<div class="overflow-x-auto">
+			<AttentionLayers />
+		</div>
+	</Section>
+
+	<!-- Key Relationships -->
+	<Section title="Query Heads (N) vs KV Heads (K)">
+		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
+			The ratio between N and K determines the attention variant and KV cache size:
 		</p>
 
-		<!-- Attention Flow Diagram -->
-		<div class="mb-6 overflow-x-auto">
-			<AttentionFlow />
-		</div>
-
-		<!-- Dimension Notation Reference -->
-		<ContentBox variant="dark" class="border border-[var(--color-muted)]/20">
-			<h3 class="mb-4 font-bold text-[var(--color-text)]">Key Dimension Notation</h3>
-			<p class="mb-4 text-[var(--color-muted)] text-[var(--text-tiny)]">
-				These symbols appear throughout inference math. Understanding them is essential for
-				reasoning about memory and compute.
-			</p>
-			<div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-				{#each dimensionNotation as dim (dim.symbol)}
-					<div class="flex items-start gap-3 rounded bg-[var(--color-secondary)] p-3">
-						<span class="font-mono text-lg font-bold text-[var(--color-primary)]">{dim.symbol}</span
-						>
-						<div>
-							<div class="font-semibold text-[var(--color-text)] text-[var(--text-tiny)]">
-								{dim.name}
-							</div>
-							<div class="text-[var(--color-muted)] text-[var(--text-tiny)]">{dim.description}</div>
-						</div>
-					</div>
-				{/each}
-			</div>
-		</ContentBox>
-
-		<!-- Key Relationships -->
-		<div class="mt-4 grid gap-4 md:grid-cols-3">
+		<div class="grid gap-4 md:grid-cols-3">
 			<ContentBox variant="dark" class="border border-emerald-500/20">
 				<h4 class="mb-2 font-semibold text-[var(--text-small)] text-emerald-400">
 					Query Heads (N)
@@ -119,11 +159,7 @@
 	</Section>
 
 	<!-- Relationship Between N and K -->
-	<Section title="Relationship Between Query Heads (N) and KV Heads (K)">
-		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
-			The ratio between N and K determines the attention variant and KV cache size:
-		</p>
-
+	<Section title="Attention Variants by N:K Ratio">
 		<div class="grid gap-4 md:grid-cols-3">
 			<ContentBox variant="dark" class="border border-[var(--color-muted)]/20">
 				<h4 class="mb-2 font-semibold text-[var(--color-text)]">N = K (MHA)</h4>

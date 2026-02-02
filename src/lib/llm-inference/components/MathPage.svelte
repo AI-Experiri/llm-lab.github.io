@@ -3,24 +3,6 @@
 
 <script>
 	import { HeroSection, Section, ContentBox, KeyTakeaway } from '$lib/shared';
-	import SHA from './SHA.svelte';
-	import MHA from './MHA.svelte';
-	import MQA from './MQA.svelte';
-	import AttentionLayers from './AttentionLayers.svelte';
-
-	// Notation reference
-	const notation = [
-		{ symbol: 'B', meaning: 'Batch size' },
-		{ symbol: 'T', meaning: 'Sequence length (query/generate)' },
-		{ symbol: 'S', meaning: 'Sequence length (conditioning/KV cache)' },
-		{ symbol: 'D', meaning: 'Model dimension' },
-		{ symbol: 'F', meaning: 'MLP hidden dimension (typically 4D)' },
-		{ symbol: 'N', meaning: 'Number of query heads' },
-		{ symbol: 'K', meaning: 'Number of KV heads' },
-		{ symbol: 'H', meaning: 'Head dimension' },
-		{ symbol: 'L', meaning: 'Number of layers' },
-		{ symbol: 'V', meaning: 'Vocabulary size' }
-	];
 
 	// Batch size examples for LLaMA-2 13B
 	const batchExamples = [
@@ -68,63 +50,6 @@
 			compute bound. Reducing memory transfers matters more than reducing FLOPs.
 		</p>
 	</HeroSection>
-
-	<!-- Notation Reference -->
-	<Section title="Key Notation">
-		<div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
-			{#each notation as { symbol, meaning } (symbol)}
-				<div class="rounded bg-[var(--color-secondary)] p-3">
-					<span class="font-mono text-lg font-bold text-[var(--color-primary)]">{symbol}</span>
-					<span class="ml-2 text-[var(--color-muted)] text-[var(--text-tiny)]">{meaning}</span>
-				</div>
-			{/each}
-		</div>
-	</Section>
-
-	<!-- Attention Flow Diagram -->
-	<Section title="Single Attention Head Data Flow">
-		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
-			This diagram shows how data flows through a single attention head. The dimensions at each step
-			use the notation above. Notice how Q, K, V matrices are created and combined.
-		</p>
-		<div class="overflow-x-auto">
-			<SHA instanceId="math-sha" />
-		</div>
-	</Section>
-
-	<!-- Multi-Head Attention -->
-	<Section title="Multi-Head Attention (MHA)">
-		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
-			In Multi-Head Attention, we run N independent attention heads in parallel. Each head has its
-			own W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub> projections, allowing the model to attend to different
-			representation subspaces at different positions.
-		</p>
-		<div class="overflow-x-auto">
-			<MHA />
-		</div>
-	</Section>
-
-	<!-- Multi-Query Attention -->
-	<Section title="Multi-Query Attention (MQA)">
-		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
-			Multi-Query Attention shares a single K,V projection across all N query heads (K=1). This
-			dramatically reduces KV cache size by factor of N, at minor quality cost.
-		</p>
-		<div class="overflow-x-auto">
-			<MQA />
-		</div>
-	</Section>
-
-	<!-- Attention Layers -->
-	<Section title="Attention Layers">
-		<p class="mb-4 text-[var(--color-muted)] text-[var(--text-small)]">
-			A transformer stacks L attention layers in sequence. Each layer contains Multi-Head Attention
-			followed by feedforward networks. The output of one layer becomes the input to the next.
-		</p>
-		<div class="overflow-x-auto">
-			<AttentionLayers />
-		</div>
-	</Section>
 
 	<!-- 1. Arithmetic Intensity -->
 	<Section title="1. Arithmetic Intensity (The Core Insight)">
