@@ -47,11 +47,7 @@
 	onMount(async () => {
 		const mathjax = await loadMathJax();
 
-		const draw = SVG().addTo(container).attr({
-			width: '100%',
-			height: '100%',
-			preserveAspectRatio: 'xMidYMid meet'
-		});
+		const draw = SVG().addTo(container);
 
 		const content = draw.group();
 
@@ -312,22 +308,24 @@
 			.fill('#9ca3af')
 			.move(outputArrowStartX + 55, inputY - 8);
 
-		// Auto-fit viewbox
+		// Auto-fit viewbox and set size to fit container height
 		const bbox = content.bbox();
 		const padding = 40;
-		draw.viewbox(
-			bbox.x - padding,
-			bbox.y - padding,
-			bbox.width + padding * 2,
-			bbox.height + padding * 2
-		);
+		const vbWidth = bbox.width + padding * 2;
+		const vbHeight = bbox.height + padding * 2;
+		draw.viewbox(bbox.x - padding, bbox.y - padding, vbWidth, vbHeight);
+
+		// Scale to fit within 200px height while maintaining aspect ratio
+		const maxHeight = 200;
+		const scale = maxHeight / vbHeight;
+		draw.size(vbWidth * scale, maxHeight);
 
 		return () => draw.remove();
 	});
 </script>
 
-<div class="w-full rounded-lg bg-[#0a0a1a] p-6">
-	<div bind:this={container} class="min-h-[350px] w-full"></div>
+<div class="flex h-[250px] w-full items-center justify-center rounded-lg bg-[#0a0a1a] p-6">
+	<div bind:this={container}></div>
 </div>
 
 <!-- Key Notation -->

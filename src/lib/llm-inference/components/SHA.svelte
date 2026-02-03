@@ -6,6 +6,7 @@
 	import { SVG } from '@svgdotjs/svg.js';
 	import { loadMathJax } from '$lib/llm-inference/utils/matrixSVG.js';
 	import { drawAttentionHead } from '$lib/llm-inference/utils/SHASVG.js';
+	import { DiagramBox } from '$lib/shared';
 
 	let {
 		showX = true,
@@ -24,7 +25,6 @@
 
 		const draw = SVG().addTo(container).attr({
 			width: '100%',
-			height: '100%',
 			preserveAspectRatio: 'xMidYMid meet'
 		});
 
@@ -53,9 +53,15 @@
 	});
 </script>
 
-<div class="w-full rounded-lg p-6" class:bg-[#0a0a1a]={showBackground}>
-	<div bind:this={container} class="min-h-[500px] w-full"></div>
-</div>
+{#if showBackground}
+	<DiagramBox>
+		<div bind:this={container} class="w-full"></div>
+	</DiagramBox>
+{:else}
+	<div class="w-full p-6">
+		<div bind:this={container} class="w-full"></div>
+	</div>
+{/if}
 
 <!-- Key Notation -->
 <div class="mt-4">

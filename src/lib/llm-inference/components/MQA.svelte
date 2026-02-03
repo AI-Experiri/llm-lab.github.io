@@ -6,6 +6,7 @@
 	import { SVG } from '@svgdotjs/svg.js';
 	import { loadMathJax } from '$lib/llm-inference/utils/matrixSVG.js';
 	import { drawAttentionHead } from '$lib/llm-inference/utils/MQASVG.js';
+	import { DiagramBox } from '$lib/shared';
 
 	let container;
 
@@ -62,7 +63,6 @@
 
 		const draw = SVG().addTo(container).attr({
 			width: '100%',
-			height: '100%',
 			preserveAspectRatio: 'xMidYMid meet'
 		});
 
@@ -123,9 +123,9 @@
 	});
 </script>
 
-<div class="w-full rounded-lg bg-[#0a0a1a] p-6">
-	<div bind:this={container} class="min-h-[500px] w-full"></div>
-</div>
+<DiagramBox>
+	<div bind:this={container} class="w-full"></div>
+</DiagramBox>
 
 <!-- Key Notation - Only new notations not in SHA/MHA -->
 <div class="mt-4">

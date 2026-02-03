@@ -22,3 +22,4 @@ export { default as NumberedSteps } from './NumberedSteps.svelte';
 export { default as DataTable } from './DataTable.svelte';
 export { default as CategoryList } from './CategoryList.svelte';
 export { default as Math } from './Math.svelte';
+export { default as DiagramBox } from './DiagramBox.svelte';
